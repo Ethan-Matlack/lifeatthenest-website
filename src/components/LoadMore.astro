@@ -1,0 +1,134 @@
+---
+/**
+ * "Load more" link + infinite scroll for listing pages.
+ *
+ * Without JS it's a normal link to the next page. With JS it fetches that
+ * page, appends its cards to the grid, and auto-loads as the visitor nears
+ * the bottom; after a few auto-loads it waits for a click so the footer
+ * stays reachable.
+ *
+ * The next page must render the same grid id and its own <LoadMore>.
+ */
+interface Props {
+	/** URL of the next page, or null when there is none */
+	nextUrl: string | null;
+	/** id of the grid whose children are the cards */
+	gridId: string;
+	/** Plural noun for button/status text, e.g. "posts" */
+	noun: string;
+	maxAutoLoads?: number;
+}
+
+const { nextUrl, gridId, noun, maxAutoLoads = 3 } = Astro.props;
+---
+
+{
+	nextUrl && (
+		<div
+			class="load-more"
+			data-load-more
+			data-grid={gridId}
+			data-noun={noun}
+			data-max-auto={maxAutoLoads}
+		>
+			<a class="btn btn--outline" href={nextUrl} data-next>
+				Load more {noun}
+			</a>
+		</div>
+	)
+}
+<p class="visually-hidden" aria-live="polite" data-load-status></p>
+
+<script>
+	for (const wrapperEl of document.querySelectorAll("[data-load-more]")) {
+		if (!(wrapperEl instanceof HTMLElement)) continue;
+		let wrapper: HTMLElement | null = wrapperEl;
+		const grid = document.getElementById(wrapperEl.dataset.grid ?? "");
+		const link = wrapperEl.querySelector("[data-next]");
+		const status = document.querySelector("[data-load-status]");
+		const noun = wrapperEl.dataset.noun ?? "items";
+		const maxAuto = Number(wrapperEl.dataset.maxAuto) || 3;
+		if (!grid || !(link instanceof HTMLAnchorElement)) continue;
+
+		let autoLoads = 0;
+		let loading = false;
+		let observer: IntersectionObserver | null = null;
+
+		// Re-observing makes the observer report again, so a button that is
+		// still on screen after a load (tall screens, few items) keeps going.
+		const rearm = () => {
+			if (!observer || !wrapper) return;
+			if (autoLoads >= maxAuto) {
+				observer.disconnect();
+				observer = null;
+				return;
+			}
+			observer.unobserve(wrapper);
+			observer.observe(wrapper);
+		};
+
+		const loadNext = async (fromClick: boolean) => {
+			if (loading) return;
+			loading = true;
+			link.setAttribute("aria-busy", "true");
+			link.textContent = "Loading…";
+			try {
+				const res = await fetch(link.href, { headers: { Accept: "text/html" } });
+				if (!res.ok) throw new Error(String(res.status));
+				const doc = new DOMParser().parseFromString(await res.text(), "text/html");
+				const cards = Array.from(doc.querySelectorAll(`#${CSS.escape(grid.id)} > *`)).map(
+					(card) => document.importNode(card, true),
+				);
+				for (const card of cards) grid.appendChild(card);
+				const word = cards.length === 1 ? noun.replace(/s$/, "") : noun;
+				if (status) status.textContent = `Loaded ${cards.length} more ${word}.`;
+
+				const next = doc.querySelector("[data-load-more] [data-next]");
+				if (next instanceof HTMLAnchorElement) {
+					link.href = next.href;
+					link.textContent = `Load more ${noun}`;
+					link.removeAttribute("aria-busy");
+				} else {
+					wrapper?.remove();
+					wrapper = null;
+					if (status) status.textContent += " That's everything.";
+				}
+				// Keyboard users: move focus to the first new card's link.
+				if (fromClick) {
+					cards[0]?.querySelector<HTMLAnchorElement>('a[href]:not([tabindex="-1"])')?.focus();
+				}
+			} catch {
+				// Fall back to a normal page load.
+				window.location.href = link.href;
+			} finally {
+				loading = false;
+			}
+			rearm();
+		};
+
+		link.addEventListener("click", (e) => {
+			e.preventDefault();
+			loadNext(true);
+		});
+
+		if ("IntersectionObserver" in window) {
+			observer = new IntersectionObserver(
+				(items) => {
+					if (loading || !wrapper || !items.some((i) => i.isIntersecting)) return;
+					autoLoads++;
+					loadNext(false);
+				},
+				{ rootMargin: "600px 0px" },
+			);
+			observer.observe(wrapperEl);
+		}
+	}
+</script>
+
+<style>
+	.load-more {
+		display: flex;
+		justify-content: center;
+		margin-top: var(--space-2xl);
+	}
+</style>

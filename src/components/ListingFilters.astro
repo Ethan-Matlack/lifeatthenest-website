@@ -1,0 +1,445 @@
+---
+/**
+ * Filter bar for listing pages: search box, category-style chips, one
+ * dropdown, and removable "active filter" pills.
+ *
+ * Layout: phones show [search][Filters] with chips + dropdown in a panel
+ * the button opens (always open without JS). Tablets put search + dropdown
+ * on one row with chips below; wide screens put everything on one row.
+ *
+ * Each control is its own form/link and carries the other filters along, so
+ * changing one never resets the others.
+ */
+interface Chip {
+	label: string;
+	href: string;
+	current: boolean;
+}
+
+interface Option {
+	value: string;
+	label: string;
+}
+
+interface ActiveFilter {
+	label: string;
+	removeHref: string;
+	/** Screen-reader text, e.g. "Remove category filter: Desserts" */
+	removeLabel: string;
+}
+
+interface Props {
+	/** Form action, e.g. "/posts" */
+	action: string;
+	/** Current committed filter values, carried as hidden fields */
+	state: Record<string, string | number | null | undefined>;
+	search: { value: string; placeholder: string; label: string };
+	chips: { label: string; items: Chip[] };
+	select?: { name: string; label: string; anyLabel: string; options: Option[]; value: string };
+	active: ActiveFilter[];
+	clearHref: string;
+	/** Number of active filters hidden behind the phone "Filters" button */
+	panelCount: number;
+}
+
+const { action, state, search, chips, select, active, clearHref, panelCount } = Astro.props;
+
+const hiddenFields = (except: string) =>
+	Object.entries(state).filter(
+		([k, v]) => k !== except && v !== null && v !== undefined && v !== "",
+	) as [string, string | number][];
+
+const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
+---
+
+<div class="listing-filters" data-listing-filters>
+	<form class="lf-search" method="get" action={action} role="search">
+		{hiddenFields("q").map(([k, v]) => <input type="hidden" name={k} value={v} />)}
+		<label class="visually-hidden" for={`${uid}-q`}>{search.label}</label>
+		<div class="lf-search-box">
+			<input
+				id={`${uid}-q`}
+				type="search"
+				name="q"
+				value={search.value}
+				placeholder={search.placeholder}
+				autocomplete="off"
+				maxlength="100"
+			/>
+			<button type="submit" aria-label="Search">
+				<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+					<circle cx="11" cy="11" r="7" />
+					<path d="m20 20-3.5-3.5" />
+				</svg>
+			</button>
+		</div>
+	</form>
+
+	<button
+		type="button"
+		class="lf-toggle"
+		aria-expanded="false"
+		aria-controls={`${uid}-panel`}
+		hidden
+	>
+		<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+			<path d="M4 6h16M7 12h10M10 18h4" />
+		</svg>
+		Filters
+		{panelCount > 0 && <span class="lf-count" aria-label={`${panelCount} active`}>{panelCount}</span>}
+	</button>
+
+	<div class="lf-panel" id={`${uid}-panel`}>
+		<nav class="lf-chips" aria-label={chips.label}>
+			{
+				chips.items.map((c) => (
+					<a class="chip" href={c.href} aria-current={c.current ? "page" : undefined}>
+						{c.label}
+					</a>
+				))
+			}
+		</nav>
+
+		{
+			select && (
+				<form class="lf-select" method="get" action={action}>
+					{hiddenFields(select.name).map(([k, v]) => (
+						<input type="hidden" name={k} value={v} />
+					))}
+					<label class="visually-hidden" for={`${uid}-${select.name}`}>
+						{select.label}
+					</label>
+					<select id={`${uid}-${select.name}`} name={select.name} data-autosubmit>
+						<option value="">{select.anyLabel}</option>
+						{select.options.map((o) => (
+							<option value={o.value} selected={o.value === select.value}>
+								{o.label}
+							</option>
+						))}
+					</select>
+					<noscript>
+						<button class="btn btn--outline" type="submit">
+							Apply
+						</button>
+					</noscript>
+				</form>
+			)
+		}
+	</div>
+
+	{
+		active.length > 0 && (
+			<div class="lf-active">
+				<span class="visually-hidden" id={`${uid}-active`}>
+					Active filters
+				</span>
+				<ul aria-labelledby={`${uid}-active`}>
+					{active.map((f) => (
+						<li>
+							<a class="lf-pill" href={f.removeHref} aria-label={f.removeLabel}>
+								{f.label}
+								<span aria-hidden="true">&times;</span>
+							</a>
+						</li>
+					))}
+				</ul>
+				{active.length > 1 && (
+					<a class="lf-clear" href={clearHref}>
+						Clear all
+					</a>
+				)}
+			</div>
+		)
+	}
+</div>
+
+<script>
+	for (const root of document.querySelectorAll("[data-listing-filters]")) {
+		// Phones: "Filters" button opens the chips/dropdown panel.
+		const toggle = root.querySelector(".lf-toggle");
+		if (toggle instanceof HTMLButtonElement) {
+			root.classList.add("has-js");
+			toggle.hidden = false;
+			toggle.addEventListener("click", () => {
+				const open = toggle.getAttribute("aria-expanded") !== "true";
+				toggle.setAttribute("aria-expanded", String(open));
+				root.classList.toggle("is-open", open);
+			});
+		}
+
+		// Dropdown applies immediately.
+		for (const select of root.querySelectorAll("select[data-autosubmit]")) {
+			if (!(select instanceof HTMLSelectElement)) continue;
+			select.addEventListener("change", () => select.form?.requestSubmit());
+		}
+	}
+</script>
+
+<style>
+	.listing-filters {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-areas:
+			"search toggle"
+			"panel panel"
+			"active active";
+		gap: var(--space-xs) var(--space-2xs);
+		margin-bottom: var(--space-lg);
+		padding-bottom: var(--space-md);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.lf-search {
+		grid-area: search;
+	}
+
+	.lf-toggle {
+		grid-area: toggle;
+	}
+
+	.lf-panel {
+		grid-area: panel;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-xs);
+	}
+
+	.lf-active {
+		grid-area: active;
+	}
+
+	/* Collapsed on phones once JS can open it; always visible without JS. */
+	.listing-filters.has-js:not(.is-open) .lf-panel {
+		display: none;
+	}
+
+	.lf-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2.75rem;
+		padding: 0 0.95rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--radius-pill);
+		background: var(--color-surface);
+		color: var(--color-olive);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.lf-toggle[hidden] {
+		display: none;
+	}
+
+	.lf-toggle[aria-expanded="true"] {
+		border-color: var(--color-olive);
+		background: var(--color-olive);
+		color: #fff;
+	}
+
+	.lf-toggle svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+		stroke-linecap: round;
+	}
+
+	.lf-count {
+		display: grid;
+		place-items: center;
+		min-width: 1.25rem;
+		height: 1.25rem;
+		padding: 0 0.3rem;
+		border-radius: var(--radius-pill);
+		background: var(--color-teal);
+		color: #fff;
+		font-size: 0.75rem;
+		line-height: 1;
+	}
+
+	.lf-toggle[aria-expanded="true"] .lf-count {
+		background: #fff;
+		color: var(--color-olive);
+	}
+
+	.lf-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+	}
+
+	/* Slightly smaller chips on phones */
+	.lf-chips .chip {
+		min-height: 2.25rem;
+		padding: 0.25rem 0.8rem;
+	}
+
+	.lf-search-box {
+		position: relative;
+	}
+
+	.lf-search-box input,
+	.lf-select select {
+		width: 100%;
+		min-height: 2.75rem;
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--radius-pill);
+		background: var(--color-surface);
+		font-size: var(--text-sm);
+	}
+
+	.lf-search-box input {
+		padding: 0.5rem 3.25rem 0.5rem 1rem;
+	}
+
+	.lf-search-box button {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		bottom: 4px;
+		display: grid;
+		place-items: center;
+		width: 2.5rem;
+		border: 0;
+		border-radius: 50%;
+		background: var(--color-olive);
+		color: #fff;
+		cursor: pointer;
+	}
+
+	.lf-search-box button:hover {
+		background: var(--color-moss);
+	}
+
+	.lf-search-box svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+	}
+
+	.lf-select {
+		display: flex;
+		gap: var(--space-2xs);
+	}
+
+	.lf-select select {
+		width: 11rem;
+		padding: 0.5rem 2.25rem 0.5rem 1rem;
+		appearance: none;
+		background-image:
+			linear-gradient(45deg, transparent 50%, var(--color-moss) 50%),
+			linear-gradient(135deg, var(--color-moss) 50%, transparent 50%);
+		background-position:
+			right 1.1rem center,
+			right 0.8rem center;
+		background-size: 5px 5px;
+		background-repeat: no-repeat;
+		cursor: pointer;
+	}
+
+	/* Tablet: no toggle; search + dropdown on one row, chips underneath. */
+	@media (min-width: 48rem) {
+		.listing-filters {
+			grid-template-columns: minmax(0, 1fr) auto;
+			grid-template-areas:
+				"search select"
+				"chips chips"
+				"active active";
+			gap: var(--space-sm);
+			margin-bottom: var(--space-xl);
+			padding-bottom: var(--space-lg);
+		}
+
+		.lf-toggle,
+		.lf-toggle:not([hidden]) {
+			display: none;
+		}
+
+		/* Let the chips and dropdown join the grid directly. */
+		.lf-panel,
+		.listing-filters.has-js:not(.is-open) .lf-panel {
+			display: contents;
+		}
+
+		.lf-chips {
+			grid-area: chips;
+		}
+
+		.lf-select {
+			grid-area: select;
+		}
+
+		.lf-chips .chip {
+			min-height: 2.5rem;
+			padding: 0.3rem 0.95rem;
+		}
+	}
+
+	/* Wide screens: everything on one row (wraps back if chips are many). */
+	@media (min-width: 72rem) {
+		.listing-filters {
+			grid-template-columns: auto auto minmax(14rem, 1fr);
+			grid-template-areas:
+				"chips select search"
+				"active active active";
+			align-items: center;
+		}
+	}
+
+	.lf-active {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2xs) var(--space-sm);
+	}
+
+	.lf-active ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.lf-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2rem;
+		padding: 0.15rem 0.5rem 0.15rem 0.85rem;
+		border-radius: var(--radius-pill);
+		background: var(--color-aqua);
+		color: var(--color-teal);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.lf-pill span {
+		display: grid;
+		place-items: center;
+		width: 1.25rem;
+		height: 1.25rem;
+		border-radius: 50%;
+		font-size: 1rem;
+		line-height: 1;
+	}
+
+	.lf-pill:hover {
+		color: var(--color-teal);
+	}
+
+	.lf-pill:hover span {
+		background: var(--color-teal);
+		color: #fff;
+	}
+
+	.lf-clear {
+		font-size: var(--text-sm);
+		font-weight: 600;
+	}
+</style>

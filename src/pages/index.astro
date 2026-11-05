@@ -1,5 +1,5 @@
 ---
-import { getEmDashCollection, getTaxonomyTermsWithCacheHint } from "emdash";
+import { getEmDashCollection } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
 import NewsletterCta from "../components/NewsletterCta.astro";
@@ -10,7 +10,7 @@ import RecipeTile from "../components/RecipeTile.astro";
 const FEATURED_RECIPE_COUNT = 4;
 const LATEST_POST_COUNT = 3;
 
-const [homeResult, featuredResult, postsResult, categoriesResult] = await Promise.all([
+const [homeResult, featuredResult, postsResult] = await Promise.all([
 	// One "Homepage" entry holds the editable text. If an extra one is ever
 	// created by accident, the most recently edited one wins.
 	getEmDashCollection("homepage", { limit: 1, orderBy: { updated_at: "desc" } }),
@@ -23,7 +23,6 @@ const [homeResult, featuredResult, postsResult, categoriesResult] = await Promis
 		orderBy: { published_at: "desc" },
 		limit: LATEST_POST_COUNT,
 	}),
-	getTaxonomyTermsWithCacheHint("category"),
 ]);
 
 // Fall back to the newest recipes when nothing is marked "Feature on homepage".
@@ -40,14 +39,12 @@ if (Astro.cache?.enabled) {
 	Astro.cache.set(featuredResult.cacheHint);
 	Astro.cache.set(recipesResult.cacheHint);
 	Astro.cache.set(postsResult.cacheHint);
-	Astro.cache.set(categoriesResult.cacheHint);
 }
 
 const home = homeResult.entries[0];
 const h = home?.data;
 const recipes = recipesResult.entries;
 const posts = postsResult.entries;
-const categories = categoriesResult.data.filter((t) => !t.parentId);
 
 const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 ---
@@ -60,8 +57,8 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 				<h1 {...home?.edit.welcome_heading}>{welcomeHeading}</h1>
 				{h?.welcome_text && <p class="hero-text" {...home?.edit.welcome_text}>{h.welcome_text}</p>}
 				<div class="hero-actions">
-					<a class="btn" href="/recipes">Browse recipes</a>
-					<a class="btn btn--outline" href="/posts">Read the blog</a>
+					<a class="btn" href="/posts">Read the blog</a>
+					<a class="btn btn--outline" href="/recipes">Browse recipes</a>
 				</div>
 			</div>
 			<div class="hero-media arch" {...home?.edit.welcome_image}>
@@ -80,54 +77,10 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 		</div>
 	</section>
 
-	<!-- Blog categories -->
-	{
-		categories.length > 0 && (
-			<nav class="pillars" aria-label="Explore the blog by topic">
-				<div class="container">
-					<ul class="pillar-list">
-						{categories.map((term) => (
-							<li>
-								<a class="pillar" href={`/posts?category=${term.slug}`}>
-									<span class="pillar-label">{term.label}</span>
-									{term.description && (
-										<span class="pillar-desc">{term.description}</span>
-									)}
-								</a>
-							</li>
-						))}
-					</ul>
-				</div>
-			</nav>
-		)
-	}
-
-	<!-- Featured recipes -->
-	{
-		recipes.length > 0 && (
-			<section class="section" aria-labelledby="recipes-heading">
-				<div class="container">
-					<div class="section-heading">
-						<div>
-							<span class="eyebrow">From the kitchen</span>
-							<h2 id="recipes-heading">Featured Recipes</h2>
-						</div>
-						<a href="/recipes">All recipes &rarr;</a>
-					</div>
-					<div class="card-grid card-grid--recipes">
-						{recipes.map((recipe) => (
-							<RecipeTile recipe={recipe} />
-						))}
-					</div>
-				</div>
-			</section>
-		)
-	}
-
 	<!-- Latest posts -->
 	{
 		posts.length > 0 && (
-			<section class="section section--alt" aria-labelledby="posts-heading">
+			<section class="section" aria-labelledby="posts-heading">
 				<div class="container">
 					<div class="section-heading">
 						<div>
@@ -139,6 +92,28 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 					<div class="card-grid card-grid--posts">
 						{posts.map((post) => (
 							<PostCard post={post} />
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Featured recipes -->
+	{
+		recipes.length > 0 && (
+			<section class="section section--alt" aria-labelledby="recipes-heading">
+				<div class="container">
+					<div class="section-heading">
+						<div>
+							<span class="eyebrow">From the kitchen</span>
+							<h2 id="recipes-heading">Featured Recipes</h2>
+						</div>
+						<a href="/recipes">All recipes &rarr;</a>
+					</div>
+					<div class="card-grid card-grid--recipes">
+						{recipes.map((recipe) => (
+							<RecipeTile recipe={recipe} />
 						))}
 					</div>
 				</div>
@@ -254,74 +229,6 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 			width: min(100%, 30rem);
 			justify-self: end;
 		}
-	}
-
-	/* ---------- Category strip ---------- */
-	.pillars {
-		background: var(--color-surface);
-		border-bottom: 1px solid var(--color-border);
-	}
-
-	.pillar-list {
-		display: grid;
-		grid-auto-flow: column;
-		grid-auto-columns: minmax(13rem, 1fr);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		overflow-x: auto;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-	}
-
-	.pillar-list::-webkit-scrollbar {
-		display: none;
-	}
-
-	.pillar-list li {
-		scroll-snap-align: start;
-	}
-
-	.pillar-list li + li {
-		border-left: 1px solid var(--color-border);
-	}
-
-	.pillar {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-		height: 100%;
-		padding: var(--space-md) var(--space-md) var(--space-md) var(--space-sm);
-		text-decoration: none;
-		color: inherit;
-		transition: background-color 0.15s ease;
-	}
-
-	.pillar-list li:first-child .pillar {
-		padding-left: 0;
-	}
-
-	.pillar:hover {
-		background: var(--color-cream);
-	}
-
-	.pillar-label {
-		font-family: var(--font-display);
-		font-size: var(--text-xl);
-		color: var(--color-olive);
-	}
-
-	.pillar:hover .pillar-label {
-		color: var(--color-moss);
-		text-decoration: underline;
-		text-decoration-thickness: 1px;
-		text-underline-offset: 0.18em;
-	}
-
-	.pillar-desc {
-		font-size: var(--text-sm);
-		line-height: 1.4;
-		color: var(--color-muted);
 	}
 
 	/* ---------- Sections ---------- */

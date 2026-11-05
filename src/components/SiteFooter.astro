@@ -10,13 +10,11 @@ interface LinkItem {
 interface Props {
 	siteTitle: string;
 	siteTagline?: string | null;
-	navItems: LinkItem[];
 	socialItems: LinkItem[];
 }
 
-const { siteTitle, siteTagline, navItems, socialItems } = Astro.props;
+const { siteTitle, siteTagline, socialItems } = Astro.props;
 const year = new Date().getFullYear();
-const footerNav = navItems.filter((item) => item.url !== "/");
 ---
 
 <footer class="site-footer">
@@ -54,19 +52,6 @@ const footerNav = navItems.filter((item) => item.url !== "/");
 			)
 		}
 
-		<nav class="footer-col" aria-label="Footer">
-			<h2 class="footer-heading">Explore</h2>
-			<ul class="footer-links">
-				{
-					footerNav.map((item) => (
-						<li>
-							<a href={item.url}>{item.label}</a>
-						</li>
-					))
-				}
-			</ul>
-		</nav>
-
 		<div class="footer-col footer-newsletter">
 			<h2 class="footer-heading">Join the Newsletter</h2>
 			<p>New recipes and stories from the nest, sent to your inbox.</p>
@@ -100,20 +85,22 @@ const footerNav = navItems.filter((item) => item.url !== "/");
 
 	.footer-grid {
 		display: grid;
-		gap: var(--space-xl) var(--space-lg);
-		padding-block: var(--space-2xl) var(--space-xl);
+		gap: var(--space-lg);
+		padding-block: var(--space-xl) var(--space-lg);
 		grid-template-columns: 1fr;
 	}
 
 	@media (min-width: 40rem) {
 		.footer-grid {
 			grid-template-columns: repeat(2, 1fr);
+			gap: var(--space-xl) var(--space-lg);
+			padding-block: var(--space-2xl) var(--space-xl);
 		}
 	}
 
 	@media (min-width: 64rem) {
 		.footer-grid {
-			grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+			grid-template-columns: 1.4fr 1fr 1.3fr;
 		}
 	}
 
@@ -122,8 +109,35 @@ const footerNav = navItems.filter((item) => item.url !== "/");
 		filter: brightness(0) invert(1);
 	}
 
+	/* Below desktop the blocks stack, so center them. On tablets the brand
+	   takes its own row and the other two sit side by side. */
+	@media (max-width: 63.9375rem) {
+		.footer-grid,
+		.footer-legal {
+			text-align: center;
+		}
+
+		.footer-brand {
+			grid-column: 1 / -1;
+		}
+
+		.footer-brand img {
+			margin-inline: auto;
+		}
+
+		.footer-blurb,
+		.footer-newsletter p {
+			margin-inline: auto;
+		}
+
+		.social-list,
+		.footer-bottom .footer-legal {
+			justify-content: center;
+		}
+	}
+
 	.footer-tagline {
-		margin: var(--space-2xs) 0 var(--space-sm);
+		margin: var(--space-2xs) 0 0;
 		font-size: 0.7rem;
 		font-weight: 600;
 		letter-spacing: 0.16em;
@@ -132,19 +146,34 @@ const footerNav = navItems.filter((item) => item.url !== "/");
 	}
 
 	.footer-blurb {
+		display: none;
 		max-width: 22rem;
 	}
 
+	@media (min-width: 40rem) {
+		.footer-tagline {
+			margin-bottom: var(--space-sm);
+		}
+
+		.footer-blurb {
+			display: block;
+		}
+
+		.footer-heading {
+			margin-bottom: var(--space-sm);
+			font-size: var(--text-xl);
+		}
+	}
+
 	.footer-heading {
-		margin-bottom: var(--space-sm);
+		margin-bottom: var(--space-xs);
 		font-family: var(--font-display);
-		font-size: var(--text-xl);
+		font-size: var(--text-lg);
 		font-weight: 400;
 		color: #fff;
 	}
 
-	.social-list,
-	.footer-links {
+	.social-list {
 		list-style: none;
 		margin: 0;
 		padding: 0;
@@ -173,17 +202,8 @@ const footerNav = navItems.filter((item) => item.url !== "/");
 		color: var(--color-olive);
 	}
 
-	.footer-links li + li {
-		margin-top: var(--space-2xs);
-	}
 
-	.footer-links a {
-		text-decoration: none;
-	}
 
-	.footer-links a:hover {
-		text-decoration: underline;
-	}
 
 	.footer-btn {
 		background: #fff;

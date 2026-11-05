@@ -1,0 +1,104 @@
+---
+/** Affiliate product card. Used in "Shop this post/recipe" and on the Shop page. */
+import { Image } from "emdash/ui";
+import type { ContentEntry } from "emdash";
+import type { Product } from "../../emdash-env";
+
+interface Props {
+	product: ContentEntry<Product>;
+	headingLevel?: "h2" | "h3" | "h4";
+}
+
+const { product, headingLevel = "h3" } = Astro.props;
+const d = product.data;
+const Heading = headingLevel;
+const store = d.store?.trim() || "the store";
+---
+
+<article class="product-card">
+	<a class="product-media" href={d.link} target="_blank" rel="sponsored noopener" tabindex="-1" aria-hidden="true">
+		{
+			d.image ? (
+				<Image image={d.image} alt="" sizes="(min-width: 48rem) 14rem, 45vw" />
+			) : (
+				<div class="photo-placeholder" />
+			)
+		}
+	</a>
+	<div class="product-body">
+		<Heading class="product-title">{d.title}</Heading>
+		{d.blurb && <p class="product-blurb">{d.blurb}</p>}
+		<a class="btn product-btn" href={d.link} target="_blank" rel="sponsored noopener">
+			Shop on {store}
+			<span class="visually-hidden">: {d.title} (opens in a new tab)</span>
+		</a>
+	</div>
+</article>
+
+<style>
+	.product-card {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+	}
+
+	.product-media {
+		display: block;
+		aspect-ratio: 1;
+		overflow: hidden;
+		background: #fff;
+	}
+
+	.product-media :global(img),
+	.product-media .photo-placeholder {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+
+	.product-media .photo-placeholder {
+		object-fit: cover;
+	}
+
+	.product-body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: var(--space-2xs);
+		padding: var(--space-sm);
+	}
+
+	.product-title {
+		margin: 0;
+		font-size: var(--text-lg);
+		line-height: var(--leading-snug);
+	}
+
+	.product-blurb {
+		margin: 0;
+		font-size: var(--text-sm);
+		color: var(--color-muted);
+	}
+
+	/* Full-width on narrow cards so "Shop on Amazon" never wraps. */
+	.product-btn {
+		margin-top: auto;
+		align-self: stretch;
+		min-height: 2.5rem;
+		padding: 0.4rem 0.6rem;
+		font-size: var(--text-xs);
+		white-space: nowrap;
+	}
+
+	@media (min-width: 48rem) {
+		.product-btn {
+			align-self: flex-start;
+			padding: 0.4rem 1.1rem;
+			font-size: var(--text-sm);
+		}
+	}
+</style>

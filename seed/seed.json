@@ -17,7 +17,10 @@
 			"labelSingular": "Homepage",
 			"description": "The text and photos on the homepage. There is only one entry here: edit it rather than adding a new one.",
 			"icon": "house",
-			"supports": ["drafts", "revisions"],
+			"supports": [
+				"drafts",
+				"revisions"
+			],
 			"routable": false,
 			"titleField": "title",
 			"fields": [
@@ -33,27 +36,41 @@
 					"label": "Welcome heading",
 					"type": "string",
 					"required": true,
-					"validation": { "maxLength": 80 }
+					"validation": {
+						"maxLength": 80
+					}
 				},
 				{
 					"slug": "welcome_text",
 					"label": "Welcome message",
 					"type": "text",
-					"options": { "rows": 5 },
-					"validation": { "maxLength": 600 }
+					"options": {
+						"rows": 5
+					},
+					"validation": {
+						"maxLength": 600
+					}
 				},
 				{
 					"slug": "welcome_image",
 					"label": "Welcome photo",
 					"type": "image",
-					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "about_heading",
 					"label": "About section heading",
 					"type": "string",
 					"defaultValue": "Meet Audra",
-					"validation": { "maxLength": 80 }
+					"validation": {
+						"maxLength": 80
+					}
 				},
 				{
 					"slug": "about_text",
@@ -64,7 +81,13 @@
 					"slug": "about_image",
 					"label": "About section photo",
 					"type": "image",
-					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "quotes",
@@ -73,8 +96,17 @@
 					"validation": {
 						"maxItems": 20,
 						"subFields": [
-							{ "slug": "quote", "label": "Quote", "type": "text", "required": true },
-							{ "slug": "author", "label": "Who said it", "type": "string" }
+							{
+								"slug": "quote",
+								"label": "Quote",
+								"type": "text",
+								"required": true
+							},
+							{
+								"slug": "author",
+								"label": "Who said it",
+								"type": "string"
+							}
 						]
 					}
 				}
@@ -83,10 +115,13 @@
 		{
 			"slug": "products",
 			"label": "Shop Products",
-			"labelSingular": "Product",
+			"labelSingular": "Shop Product",
 			"description": "Products you recommend. Pick them on a post or recipe and they appear on the Shop page.",
 			"icon": "shopping-bag",
-			"supports": ["drafts", "search"],
+			"supports": [
+				"drafts",
+				"search"
+			],
 			"routable": false,
 			"titleField": "title",
 			"fields": [
@@ -96,13 +131,22 @@
 					"type": "string",
 					"required": true,
 					"searchable": true,
-					"validation": { "minLength": 1, "maxLength": 120 }
+					"validation": {
+						"minLength": 1,
+						"maxLength": 120
+					}
 				},
 				{
 					"slug": "image",
 					"label": "Product photo",
 					"type": "image",
-					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "link",
@@ -115,15 +159,21 @@
 					"label": "Store name (e.g. Amazon)",
 					"type": "string",
 					"defaultValue": "Amazon",
-					"validation": { "maxLength": 60 }
+					"validation": {
+						"maxLength": 60
+					}
 				},
 				{
 					"slug": "blurb",
 					"label": "Why you love it (a sentence or two)",
 					"type": "text",
 					"searchable": true,
-					"options": { "rows": 3 },
-					"validation": { "maxLength": 300 }
+					"options": {
+						"rows": 3
+					},
+					"validation": {
+						"maxLength": 300
+					}
 				}
 			]
 		},
@@ -132,7 +182,14 @@
 			"label": "Blog Posts",
 			"labelSingular": "Blog Post",
 			"urlPattern": "/posts/{slug}",
-			"supports": ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"scheduling",
+				"search",
+				"seo"
+			],
 			"commentsEnabled": true,
 			"titleField": "title",
 			"fields": [
@@ -152,8 +209,12 @@
 					"slug": "excerpt",
 					"label": "Short description (shows on blog cards and in Google)",
 					"type": "text",
-					"options": { "rows": 3 },
-					"validation": { "maxLength": 300 }
+					"options": {
+						"rows": 3
+					},
+					"validation": {
+						"maxLength": 300
+					}
 				},
 				{
 					"slug": "content",
@@ -165,7 +226,10 @@
 					"slug": "featured_products",
 					"label": "Products in this post (also shown on the Shop page)",
 					"type": "reference",
-					"validation": { "targetCollection": "products", "multiple": true }
+					"validation": {
+						"targetCollection": "products",
+						"multiple": true
+					}
 				}
 			]
 		},
@@ -175,12 +239,23 @@
 			"labelSingular": "Recipe",
 			"description": "Recipes with a scalable, printable recipe card",
 			"icon": "cooking-pot",
-			"supports": ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"scheduling",
+				"search",
+				"seo"
+			],
 			"urlPattern": "/recipes/{slug}",
 			"commentsEnabled": true,
 			"titleField": "title",
 			"admin": {
-				"listColumns": ["servings", "difficulty", "featured"]
+				"listColumns": [
+					"servings",
+					"difficulty",
+					"featured"
+				]
 			},
 			"fields": [
 				{
@@ -189,28 +264,47 @@
 					"type": "string",
 					"required": true,
 					"searchable": true,
-					"validation": { "minLength": 1, "maxLength": 120 }
+					"validation": {
+						"minLength": 1,
+						"maxLength": 120
+					}
 				},
 				{
 					"slug": "summary",
 					"label": "Short description (shows on recipe cards and in Google)",
 					"type": "text",
 					"searchable": true,
-					"options": { "rows": 3 },
-					"validation": { "maxLength": 300 }
+					"options": {
+						"rows": 3
+					},
+					"validation": {
+						"maxLength": 300
+					}
 				},
 				{
 					"slug": "hero_image",
 					"label": "Main photo",
 					"type": "image",
 					"required": true,
-					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "pin_image",
 					"label": "Pinterest photo (tall, optional)",
 					"type": "image",
-					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "intro",
@@ -226,35 +320,49 @@
 					"defaultValue": 4,
 					"translatable": false,
 					"indexed": true,
-					"validation": { "min": 1, "max": 200 }
+					"validation": {
+						"min": 1,
+						"max": 200
+					}
 				},
 				{
 					"slug": "yield_unit",
 					"label": "Of what (servings, cookies, loaves...)",
 					"type": "string",
 					"defaultValue": "servings",
-					"validation": { "maxLength": 40 }
+					"validation": {
+						"maxLength": 40
+					}
 				},
 				{
 					"slug": "prep_minutes",
 					"label": "Prep time (minutes)",
 					"type": "integer",
 					"translatable": false,
-					"validation": { "min": 0, "max": 10000 }
+					"validation": {
+						"min": 0,
+						"max": 10000
+					}
 				},
 				{
 					"slug": "cook_minutes",
 					"label": "Cook time (minutes)",
 					"type": "integer",
 					"translatable": false,
-					"validation": { "min": 0, "max": 10000 }
+					"validation": {
+						"min": 0,
+						"max": 10000
+					}
 				},
 				{
 					"slug": "extra_minutes",
 					"label": "Extra time: resting, chilling, rising (minutes)",
 					"type": "integer",
 					"translatable": false,
-					"validation": { "min": 0, "max": 10000 }
+					"validation": {
+						"min": 0,
+						"max": 10000
+					}
 				},
 				{
 					"slug": "difficulty",
@@ -262,7 +370,13 @@
 					"type": "select",
 					"indexed": true,
 					"translatable": false,
-					"validation": { "options": ["Easy", "Medium", "Involved"] }
+					"validation": {
+						"options": [
+							"Easy",
+							"Medium",
+							"Involved"
+						]
+					}
 				},
 				{
 					"slug": "ingredients",
@@ -288,10 +402,28 @@
 								"label": "Unit",
 								"type": "select",
 								"options": [
-									"tsp", "tbsp", "cup", "fl oz", "pint", "quart",
-									"oz", "lb", "g", "kg", "ml", "l",
-									"pinch", "dash", "clove", "can", "jar", "package",
-									"stick", "slice", "sprig", "bunch"
+									"tsp",
+									"tbsp",
+									"cup",
+									"fl oz",
+									"pint",
+									"quart",
+									"oz",
+									"lb",
+									"g",
+									"kg",
+									"ml",
+									"l",
+									"pinch",
+									"dash",
+									"clove",
+									"can",
+									"jar",
+									"package",
+									"stick",
+									"slice",
+									"sprig",
+									"bunch"
 								]
 							},
 							{
@@ -345,7 +477,9 @@
 					"slug": "equipment",
 					"label": "Equipment (one per line, optional)",
 					"type": "text",
-					"options": { "rows": 4 }
+					"options": {
+						"rows": 4
+					}
 				},
 				{
 					"slug": "notes",
@@ -358,13 +492,18 @@
 					"label": "Calories per serving (optional)",
 					"type": "integer",
 					"translatable": false,
-					"validation": { "min": 0, "max": 10000 }
+					"validation": {
+						"min": 0,
+						"max": 10000
+					}
 				},
 				{
 					"slug": "credit",
 					"label": "Credit (e.g. Adapted from Grandma's recipe box)",
 					"type": "string",
-					"validation": { "maxLength": 160 }
+					"validation": {
+						"maxLength": 160
+					}
 				},
 				{
 					"slug": "video_url",
@@ -375,7 +514,10 @@
 					"slug": "featured_products",
 					"label": "Products used in this recipe (also shown on the Shop page)",
 					"type": "reference",
-					"validation": { "targetCollection": "products", "multiple": true }
+					"validation": {
+						"targetCollection": "products",
+						"multiple": true
+					}
 				},
 				{
 					"slug": "featured",
@@ -392,7 +534,13 @@
 			"label": "Pages",
 			"labelSingular": "Page",
 			"urlPattern": "/{slug}",
-			"supports": ["drafts", "revisions", "preview", "search", "seo"],
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"search",
+				"seo"
+			],
 			"titleField": "title",
 			"fields": [
 				{
@@ -401,6 +549,18 @@
 					"type": "string",
 					"required": true,
 					"searchable": true
+				},
+				{
+					"slug": "photo",
+					"label": "Page photo (optional, shown beside the title)",
+					"type": "image",
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
 				},
 				{
 					"slug": "content",
@@ -417,12 +577,34 @@
 			"label": "Blog Categories",
 			"labelSingular": "Blog Category",
 			"hierarchical": true,
-			"collections": ["posts"],
+			"collections": [
+				"posts"
+			],
 			"terms": [
-				{ "slug": "kitchen", "label": "In the Kitchen", "description": "Recipes and stories from a mostly scratch kitchen" },
-				{ "slug": "garden", "label": "In the Garden", "description": "Sowing seeds for health & wellness" },
-				{ "slug": "pasture", "label": "In the Pasture", "description": "Raising healthy animals sustainably on pasture" },
-				{ "slug": "studio", "label": "In the Studio", "description": "Sharing seasonal design ideas to decorate the Nest" }
+				{
+					"slug": "kitchen",
+					"label": "In the Kitchen",
+					"description": "Recipes and stories from a mostly scratch kitchen"
+				},
+				{
+					"slug": "garden",
+					"label": "In the Garden",
+					"description": "Sowing seeds for health & wellness"
+				},
+				{
+					"slug": "pasture",
+					"label": "In the Pasture",
+					"description": "Raising healthy animals sustainably on pasture"
+				},
+				{
+					"slug": "studio",
+					"label": "In the Studio",
+					"description": "Sharing seasonal design ideas to decorate the Nest"
+				},
+				{
+					"slug": "family",
+					"label": "Family"
+				}
 			]
 		},
 		{
@@ -430,24 +612,52 @@
 			"label": "Blog Tags",
 			"labelSingular": "Blog Tag",
 			"hierarchical": false,
-			"collections": ["posts"],
+			"collections": [
+				"posts"
+			],
 			"terms": []
 		},
 		{
 			"name": "course",
-			"label": "Courses",
-			"labelSingular": "Course",
+			"label": "Recipe Categories",
+			"labelSingular": "Recipe Category",
 			"hierarchical": false,
-			"collections": ["recipes"],
+			"collections": [
+				"recipes"
+			],
 			"terms": [
-				{ "slug": "breakfast", "label": "Breakfast" },
-				{ "slug": "main", "label": "Main Dish" },
-				{ "slug": "side", "label": "Side Dish" },
-				{ "slug": "soup-salad", "label": "Soups & Salads" },
-				{ "slug": "bread", "label": "Breads" },
-				{ "slug": "dessert", "label": "Desserts" },
-				{ "slug": "snack", "label": "Snacks & Appetizers" },
-				{ "slug": "drink", "label": "Drinks" }
+				{
+					"slug": "breakfast",
+					"label": "Breakfast"
+				},
+				{
+					"slug": "main",
+					"label": "Main Dish"
+				},
+				{
+					"slug": "side",
+					"label": "Side Dish"
+				},
+				{
+					"slug": "soup-salad",
+					"label": "Soups & Salads"
+				},
+				{
+					"slug": "bread",
+					"label": "Breads"
+				},
+				{
+					"slug": "dessert",
+					"label": "Desserts"
+				},
+				{
+					"slug": "snack",
+					"label": "Snacks & Appetizers"
+				},
+				{
+					"slug": "drink",
+					"label": "Drinks"
+				}
 			]
 		},
 		{
@@ -455,13 +665,61 @@
 			"label": "Recipe Tags",
 			"labelSingular": "Recipe Tag",
 			"hierarchical": false,
-			"collections": ["recipes"],
+			"collections": [
+				"recipes"
+			],
 			"terms": [
-				{ "slug": "quick", "label": "30 Minutes or Less" },
-				{ "slug": "make-ahead", "label": "Make Ahead" },
-				{ "slug": "holiday", "label": "Holiday" },
-				{ "slug": "vegetarian", "label": "Vegetarian" },
-				{ "slug": "gluten-free", "label": "Gluten Free" }
+				{
+					"slug": "quick",
+					"label": "30 Minutes or Less"
+				},
+				{
+					"slug": "make-ahead",
+					"label": "Make Ahead"
+				},
+				{
+					"slug": "holiday",
+					"label": "Holiday"
+				},
+				{
+					"slug": "vegetarian",
+					"label": "Vegetarian"
+				},
+				{
+					"slug": "gluten-free",
+					"label": "Gluten Free"
+				}
+			]
+		},
+		{
+			"name": "shop_category",
+			"label": "Shop Categories",
+			"labelSingular": "Shop Category",
+			"hierarchical": false,
+			"collections": [
+				"products"
+			],
+			"terms": [
+				{
+					"slug": "kitchen",
+					"label": "Kitchen"
+				},
+				{
+					"slug": "garden",
+					"label": "Garden"
+				},
+				{
+					"slug": "pasture-farm",
+					"label": "Pasture & Farm"
+				},
+				{
+					"slug": "home-decor",
+					"label": "Home & Decor"
+				},
+				{
+					"slug": "canning",
+					"label": "Canning & Preserving"
+				}
 			]
 		}
 	],
@@ -470,22 +728,62 @@
 			"name": "primary",
 			"label": "Main Navigation",
 			"items": [
-				{ "type": "custom", "label": "Home", "url": "/" },
-				{ "type": "custom", "label": "Blog", "url": "/posts" },
-				{ "type": "custom", "label": "Recipes", "url": "/recipes" },
-				{ "type": "custom", "label": "About", "url": "/about" },
-				{ "type": "custom", "label": "Shop", "url": "/shop" },
-				{ "type": "custom", "label": "Contact", "url": "/contact" }
+				{
+					"type": "custom",
+					"label": "Home",
+					"url": "/"
+				},
+				{
+					"type": "custom",
+					"label": "Blog",
+					"url": "/posts"
+				},
+				{
+					"type": "custom",
+					"label": "Recipes",
+					"url": "/recipes"
+				},
+				{
+					"type": "custom",
+					"label": "About",
+					"url": "/about"
+				},
+				{
+					"type": "custom",
+					"label": "Shop",
+					"url": "/shop"
+				},
+				{
+					"type": "custom",
+					"label": "Contact",
+					"url": "/contact"
+				}
 			]
 		},
 		{
 			"name": "social",
 			"label": "Social Links (footer)",
 			"items": [
-				{ "type": "custom", "label": "Facebook", "url": "https://www.facebook.com/lifeatthenest" },
-				{ "type": "custom", "label": "Instagram", "url": "https://www.instagram.com/life_at_the_nest/" },
-				{ "type": "custom", "label": "TikTok", "url": "https://www.tiktok.com/@life_at_the_nest" },
-				{ "type": "custom", "label": "YouTube", "url": "https://www.youtube.com/@LifeAtTheNest" }
+				{
+					"type": "custom",
+					"label": "Facebook",
+					"url": "https://www.facebook.com/lifeatthenest"
+				},
+				{
+					"type": "custom",
+					"label": "Instagram",
+					"url": "https://www.instagram.com/life_at_the_nest/"
+				},
+				{
+					"type": "custom",
+					"label": "TikTok",
+					"url": "https://www.tiktok.com/@life_at_the_nest"
+				},
+				{
+					"type": "custom",
+					"label": "YouTube",
+					"url": "https://www.youtube.com/@LifeAtTheNest"
+				}
 			]
 		}
 	],
@@ -539,34 +837,25 @@
 						}
 					],
 					"quotes": [
-						{ "quote": "What you leave behind is not what is engraved in stone monuments, but what is woven into the lives of others.", "author": "Pericles" },
-						{ "quote": "To plant a garden is to dream of tomorrow.", "author": "Audrey Hepburn" },
-						{ "quote": "Sometimes the most important thing in a whole day is the rest we take between two deep breaths.", "author": "Etty Hillesum" },
-						{ "quote": "The garden suggests there might be a place where we can meet nature halfway.", "author": "Michael Pollan" },
-						{ "quote": "In his garden, every man may be his own artist without apology or explanation.", "author": "Louise Beebe Wilder" }
-					]
-				}
-			}
-		],
-		"pages": [
-			{
-				"id": "about",
-				"slug": "about",
-				"status": "published",
-				"data": {
-					"title": "About",
-					"content": [
 						{
-							"_type": "block",
-							"_key": "k0",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"_key": "k1",
-									"text": "Placeholder About page. Replace this text in the admin."
-								}
-							]
+							"quote": "What you leave behind is not what is engraved in stone monuments, but what is woven into the lives of others.",
+							"author": "Pericles"
+						},
+						{
+							"quote": "To plant a garden is to dream of tomorrow.",
+							"author": "Audrey Hepburn"
+						},
+						{
+							"quote": "Sometimes the most important thing in a whole day is the rest we take between two deep breaths.",
+							"author": "Etty Hillesum"
+						},
+						{
+							"quote": "The garden suggests there might be a place where we can meet nature halfway.",
+							"author": "Michael Pollan"
+						},
+						{
+							"quote": "In his garden, every man may be his own artist without apology or explanation.",
+							"author": "Louise Beebe Wilder"
 						}
 					]
 				}
@@ -582,6 +871,364 @@
 					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
 					"store": "Amazon",
 					"blurb": "Placeholder product so the Shop page has something to show during development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"kitchen"
+					]
+				}
+			},
+			{
+				"id": "product-2",
+				"slug": "sample-canning-jars",
+				"status": "published",
+				"data": {
+					"title": "Sample Wide-Mouth Canning Jars",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"canning"
+					]
+				}
+			},
+			{
+				"id": "product-3",
+				"slug": "sample-garden-gloves",
+				"status": "published",
+				"data": {
+					"title": "Sample Garden Gloves",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "product-4",
+				"slug": "sample-chick-brooder-heat-plate",
+				"status": "published",
+				"data": {
+					"title": "Sample Chick Brooder Heat Plate",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"pasture-farm"
+					]
+				}
+			},
+			{
+				"id": "product-5",
+				"slug": "sample-linen-table-runner",
+				"status": "published",
+				"data": {
+					"title": "Sample Linen Table Runner",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"home-decor"
+					]
+				}
+			},
+			{
+				"id": "product-6",
+				"slug": "sample-water-bath-canner",
+				"status": "published",
+				"data": {
+					"title": "Sample Water Bath Canner",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"canning"
+					]
+				}
+			},
+			{
+				"id": "product-7",
+				"slug": "sample-seed-starting-trays",
+				"status": "published",
+				"data": {
+					"title": "Sample Seed Starting Trays",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "product-8",
+				"slug": "sample-cast-iron-skillet",
+				"status": "published",
+				"data": {
+					"title": "Sample Cast Iron Skillet",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product for development."
+				},
+				"taxonomies": {
+					"shop_category": [
+						"kitchen"
+					]
+				}
+			}
+		],
+		"pages": [
+			{
+				"id": "about",
+				"slug": "about",
+				"status": "published",
+				"data": {
+					"title": "About",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "ab1",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab1s",
+									"marks": [],
+									"text": "My story begins in rural Lancaster County, Pennsylvania, amidst the rich traditions of Pennsylvania Dutch farmers. I learned early on the value of self-sufficiency and the importance of cherishing family bonds. My childhood inspired my love for simple living and the joy of creating from scratch. Following in my grandmother’s footsteps, I later pursued a degree in education. While in college, I discovered my love for design in the family floral business, and happily balanced my passions: design, cooking, gardening and teaching."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab2",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab2s",
+									"marks": [],
+									"text": "Rooted in Tradition"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab3",
+							"style": "normal",
+							"markDefs": [
+								{
+									"_type": "link",
+									"_key": "ab3l",
+									"href": "/posts/woven-from-strong-women"
+								}
+							],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab3a",
+									"marks": [],
+									"text": "Guided by the wisdom of family and community, especially my beloved “Amish Mom” Fannie, I came to understand that true wealth lay not in possessions, but in the richness of family bonds and the bounty of the earth. Today, as the parent of five, I carry forward these cherished values, sowing the seeds of self-reliance and stewardship in our own children. To learn more, I invite you to explore the story about the remarkable women in my life, "
+								},
+								{
+									"_type": "span",
+									"_key": "ab3b",
+									"marks": [
+										"ab3l"
+									],
+									"text": "in this blog"
+								},
+								{
+									"_type": "span",
+									"_key": "ab3c",
+									"marks": [],
+									"text": "."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab4",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab4s",
+									"marks": [],
+									"text": "How Life at the Nest Began"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab5",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab5s",
+									"marks": [],
+									"text": "Later, motherhood brought an unexpected challenge when several of my children developed serious allergies. Determined to provide safe and delicious alternatives to the modern food system, I turned back to my roots for the answer. I embarked on a mission to create allergy-friendly recipes, and grew and canned much of our own food. The desire to merge my love of teaching with my hobbies laid the foundation for Life at the Nest."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab6",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab6s",
+									"marks": [],
+									"text": "As my children grew, my passion for teaching evolved into a different form: creating a classroom where I could share my expertise in canning, cooking, design, and gardening. In 2020, necessity transformed my physical classroom into a virtual one, where I continue to impart knowledge from my kitchen, garden, pasture, and studio."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab7",
+							"style": "h2",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab7s",
+									"marks": [],
+									"text": "Mission Statement"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab8",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab8s",
+									"marks": [],
+									"text": "Life at the Nest is dedicated to providing education where tradition meets innovation. Whether you’re seeking inspiration for DIY projects, gardening tips, delicious recipes, homesteading advice, or a heart-warming story, you’ll find a wealth of resources to explore and enjoy."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab9",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab9s",
+									"marks": [],
+									"text": "Rooted in my upbringing, Life at the Nest thrives today because of your support and engagement. Thank you for being a part of this journey!"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ab10",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ab10s",
+									"marks": [],
+									"text": "Warmly,\nAudra"
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"id": "page-blog",
+				"slug": "posts",
+				"status": "published",
+				"data": {
+					"title": "The Blog",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "page-blog0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "page-blog0s",
+									"text": "Stories from our kitchen, garden, pasture, studio, and family."
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"id": "page-recipes",
+				"slug": "recipes",
+				"status": "published",
+				"data": {
+					"title": "Recipes",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "page-recipes0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "page-recipes0s",
+									"text": "Tried-and-true, made-from-scratch recipes from our family's kitchen."
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"id": "page-shop",
+				"slug": "shop",
+				"status": "published",
+				"data": {
+					"title": "The Shop",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "page-shop0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "page-shop0s",
+									"text": "The tools, supplies, and favorites we actually use around the Nest, from the kitchen to the garden."
+								}
+							]
+						}
+					]
 				}
 			}
 		],
@@ -596,60 +1243,3197 @@
 					"content": [
 						{
 							"_type": "block",
-							"_key": "k0",
+							"_key": "p0",
 							"style": "normal",
 							"children": [
 								{
 									"_type": "span",
-									"_key": "k1",
-									"text": "Placeholder post content for development."
+									"_key": "p0s",
+									"text": "Placeholder post for development. This one exercises the different kinds of content a post can hold, so the layout can be checked."
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "h1",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "h1s",
+									"text": "Headings break up longer stories"
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "p1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "p1s",
+									"text": "Body text is set in Source Sans at a comfortable reading size, with plenty of line height. Paragraphs can be as long as they need to be; the column stays narrow enough to read easily on a phone or a wide monitor."
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "l1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "l1s",
+									"text": "Lists work for quick steps or supplies"
+								}
+							],
+							"markDefs": [],
+							"listItem": "bullet",
+							"level": 1
+						},
+						{
+							"_type": "block",
+							"_key": "l2",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "l2s",
+									"text": "Each item gets a sage bullet"
+								}
+							],
+							"markDefs": [],
+							"listItem": "bullet",
+							"level": 1
+						},
+						{
+							"_type": "block",
+							"_key": "l3",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "l3s",
+									"text": "Numbered lists work too"
+								}
+							],
+							"markDefs": [],
+							"listItem": "bullet",
+							"level": 1
+						},
+						{
+							"_type": "block",
+							"_key": "q1",
+							"style": "blockquote",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "q1s",
+									"text": "In our community, where thrift was a virtue, we found beauty in simplicity and purpose in every task."
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "h2",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "h2s",
+									"text": "Videos"
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "p2",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "p2s",
+									"text": "Paste a YouTube link on its own line and it becomes a video card:"
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "yt",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "yts",
+									"text": "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+								}
+							],
+							"markDefs": []
+						},
+						{
+							"_type": "block",
+							"_key": "p3",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "p3s",
+									"text": "That's it. Products picked in the \"Products in this post\" field show up below the article and on the Shop page."
+								}
+							],
+							"markDefs": []
+						}
+					],
+					"featured_products": [
+						"$ref:product-1",
+						"$ref:product-2"
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"kitchen"
+					]
+				}
+			},
+			{
+				"id": "wp-675",
+				"slug": "woven-from-strong-women",
+				"status": "published",
+				"data": {
+					"title": "Woven from the Wisdom of Strong Women: My Inspirational Heritage",
+					"excerpt": "My identity is a rich tapestry woven from the diverse influences of the remarkable women who have shaped my life. Each has contributed a unique thread to the fabric of my story, much like the handmade quilts prevalent in my community. I am a product of the care and attention of many individuals, but",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k0",
+									"text": "My identity is a rich tapestry woven from the diverse influences of the remarkable women who have shaped my life. Each has contributed a unique thread to the fabric of my story, much like the handmade quilts prevalent in my community. I am a product of the care and attention of many individuals, but five women, in particular, have had a profound impact on me."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2",
+									"text": "Mom-Mom"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4",
+									"text": "A brilliant and influential figure, my paternal grandmother was not only a dedicated teacher and community leader but was also remarkably educated as a young woman growing up in the depression. Her unwavering principles and strength of character left an indelible mark, instilling in me the values of integrity, manners, and the importance of education. Dining out with her meant adhering to her high standards—no hamburgers or grilled cheese allowed!  Instead, we were encouraged to elevate our choices and try new cuisine. We watched many hours of Julia Child together and found inspiration in her dishes and techniques, igniting my passion for cooking (and for le Creuset Dutch Ovens!)  Even after her passing, her legacy endured, with many in the community fondly remembering her as their 6th-grade English teacher, often describing her as tough, yet fair.  Her high standards seemed burdensome at times as a young girl, but taught me to value excellence.  She opened my eyes to the world beyond our small town, sharing her travel experiences and inspiring a sense of wanderlust within me.  She taught me the value of service in our community by dedicating herself wholeheartedly to our small town; her service to the library being among her most notable contributions.  No moment better exemplified her service than when she insisted on holding a town council meeting from her hospital bed, just days before her passing; a testament to her unwavering dedication to her community, until the very end."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6",
+									"text": "Aunt Patty"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kb",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8",
+									"text": "My Aunt epitomized success and independence as a brilliant lawyer, standing tall as a larger-than-life figure. She instilled in me the values of uncompromising determination, urging me to reach further and achieve more. An active leader in the modern feminist movement as the President of the Wilmington, DE chapter of the National Organization of Women, she relentlessly fostered my belief that I could do anything the boys could do!  Aunt Patty faced adversity in her young life when throat cancer surgery damaged her vocal cords, saving her life, but leaving her with an unfixable raspy voice. Undeterred by this setback, she prioritized her education and career, breaking a glass ceiling that many women became hindered by.  She proudly and successfully served her country as an attorney for the Navy and US Dept of Defense.  Boxes of commendations from leaders in offices both square and "
+								},
+								{
+									"_type": "span",
+									"_key": "k9",
+									"text": "Oval",
+									"marks": [
+										"em"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "ka",
+									"text": ", highlight her commitment to her practice and her service to the country.   She was unrelenting in her pursuit of her goals, inspiring me to think about the ways in which I will leave my thumbprint on the world.  Her voracious appetite for books encouraged me to become a writer, possibly inspiring this very blog.  "
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kd",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc",
+									"text": "Grammy"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kf",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ke",
+									"text": "The daughter of PA Dutch farmers, Grammy lived her entire life on a shoestring budget. She was a pragmatic, capable, and uncompromising force. She served our community as the head of the ladies auxiliary in our hometown fire company, setting an example for me about service.  Both taskmaster and support system to our family and small town, she could achieve remarkable feats with a fraction of the budget of others. Grammy’s focus on family was incomparable; she was the activity coordinator of my childhood!  With a very large family, this was no easy task. Planning camping trips, chartered bus tours, and family gatherings, our family dinners took on a life of their own. Thanksgiving dinner was an annual sit-down feast for 40 or more, requiring regular summer shopping trips to local flea markets for gravy boats and dishware.  Anyone who showed up was welcomed and fed.  I still marvel at her ability to have just the right amount of food at a moment’s notice!  As one of the oldest granddaughters, I was often recruited to help coordinate community ham suppers and holiday bazaars, setting the foundation for me to one day run my children’s school and scout programs with ease.  Her teaching style, often viewed as militaristic, may not have been my preferred method as a child.  But no doubt, many of my leadership and organizational skills developed in my years as her protege’.  "
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kh",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kg",
+									"text": "Mom"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kj",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ki",
+									"text": "Quiet, patient and kind are the words that come quickly to my mind when I think of my Mother.  Mom was a different kind of teacher for me.  Though she is always there to listen, I didn’t easily see her strengths when I was a young girl.  It took until I became a mother to see her true strength.  Surrounded by these larger than life personalities (described above) Mom was a different kind of influence for me.  Her ability to love people just as they are, and forgive so easily is the hallmark of her personality.  On the surface, she is not the commanding force or pillar of the community that my grandmothers were.  She didn’t pursue higher education or measure success with salary and accolades.  Instead, she was content as a mother and wife, teaching me that a life of quiet service is just as meaningful as one peppered with commendations.  Mom served as my Girl Scout leader and my brothers Den Mother, demonstrating through her actions that her children were a  high priority.  She juggled a job and motherhood with grace, somehow finding time to be present for hockey games and band performances.  She has all the skills and abilities of her mother, with the softer approach of her father. I marvel at her endless list of skills, from seamstress to canning expert, and gardener to hunter. Simply put, Mom can do anything she sets her mind to, and inspired me to explore new interests until I found my passion."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kl",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kk",
+									"text": "Fannie"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kn",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "km",
+									"text": "My next door neighbor, who I often refer to as my ‘Amish Mom’ had a profound effect on my life, yet she would likely be humbled to know she made this list.  The matriarch of her family, Fannie lives a life of farming and child-rearing; within, but detached from our modern community.  As a child of working parents, I spent much of my free time in her home, warmly being accepted as the bonus child to her already large family of 8 children. It might be assumed by an outsider that the men are in charge in the Amish community.  And while the men serve as elders in the church, it is clear that Amish Mommas run the home.  I would not be the woman I am today, and Life at the Nest would not exist, without Fannie. This caring, supportive second mother, who lived the simplest of all lives, served as a remarkable role model to me.  She taught me to find joy in the simplest moments; often singing and laughing while working.  Most of what I know about farming, gardening, canning and building a strong family came from what Fannie demonstrated to me. I gladly undertook countless chores on the farm, all the while learning the value of hard work. Inspired by the simplicity of the Amish way of life, I purposefully adopted many of these principles, passing them on to our children as the foundation of our family values. "
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kp",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ko",
+									"text": "As I reflect on the significant influence of these five remarkable, but very different, women in my life, I am filled with immense gratitude and a deep sense of reverence. Their wisdom, resilience, and unwavering commitment to family, community and leadership, have woven the fabric to create the person I am today."
 								}
 							]
 						}
 					]
 				},
 				"taxonomies": {
-					"category": ["kitchen"]
+					"category": [
+						"family"
+					]
 				}
 			},
 			{
-				"id": "post-2",
-				"slug": "sample-spring-garden-plan",
+				"id": "wp-452",
+				"slug": "raising-meat-chickens-from-brooder-to-pasture",
 				"status": "published",
 				"data": {
-					"title": "Sample: Planning the Spring Garden",
-					"excerpt": "Placeholder post for development. Seed starting, succession sowing, and what goes in the raised beds this year.",
+					"title": "Raising Meat Chickens: From Brooder to Pasture",
+					"excerpt": "Food is set up in an “all you can eat” tray, and water is refreshed twice daily. Our chicks are fed non-GMO broiler starter feed (22% protein) for the first 4weeks. In addition to providing warm shelter, a brooder needs to be secure from predators. Consider those that dig under, as well as critters ",
 					"content": [
 						{
 							"_type": "block",
-							"_key": "k0",
+							"_key": "kr",
 							"style": "normal",
-							"children": [{ "_type": "span", "_key": "k1", "text": "Placeholder post content for development." }]
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kq",
+									"text": "Today, we’re excited to take you behind the scenes as we embark on the journey of raising meat chickens, from the moment they arrive as baby chicks to their eventual transition to pasture. We’re sharing the ins and outs from brooder to pasture.\n\n\n"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kt",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ks",
+									"text": "Setting Up the Brooder"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kv",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ku",
+									"text": "Our primary goals for preparation are: bedding, food & water, security, and warmth for the chicks. Despite the daytime summer heat, we set up heat lamps to provide extra warmth during the cooler nights. New chicks require about 95F for the first week, decreasing that temperature by 5 degrees each week until week 4 or 5 when we find (in summer) they can generally regulate their own temperature without assistance."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kx",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kw",
+									"text": "It is also vital to create spaces within the brooder where the chicks can getaway from the heat if they want to cool down. These “cool zones” are the areas where we place their food and water. We watch their activity level to determine their well-being. When chicks are panting, they are too warm. If they are piled up, they are too cool and in danger of smothering each other."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kz",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ky",
+									"text": "We utilize a deep-litter method with wood shavings, and layer fresh chips in as manure builds up. That manure later goes to our compost bin when we move the chicks to pasture."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k11",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k10",
+									"text": "Food is set up in an “all you can eat” tray, and water is refreshed twice daily. Our chicks are fed non-GMO broiler starter feed (22% protein) for the first 4weeks."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k13",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k12",
+									"text": "In addition to providing warm shelter, a brooder needs to be secure from predators. Consider those that dig under, as well as critters who can climb fences. We also keep a locking door on the brooder to keep clever predators out."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k15",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k14",
+									"text": "Magic Water for Health"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k17",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k16",
+									"text": "To give our chicks a healthy start, we prepare “magic water,” a mix of garlic cloves, apple cider vinegar, honey, and water. This immune-boosting elixir helps hydrate the chicks and promotes overall wellness in their early days."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k19",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k18",
+									"text": "Constructing Chicken Tractors"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1b",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1a",
+									"text": "As the chicks grow, we planned their transition to pasture by constructing mobile chicken tractors, which provide ample space for the chickens to roam while protecting them from predators. The term chicken tractor stems from the idea that the mobile chicken run provides many functions of a real tractor as chickens also dig, cultivate and fertilize the pasture. Their presence on the pasture naturally improves the quality of the soil, while life on the pasture provides them with grass, sunshine, fresh air and an endless supply of insects to hunt for."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1c",
+									"text": "We designed our mobile tractors and custom-built dolly to accommodate 60 chickens per tractor, providing each chick with 2 square feet of fresh grass each morning and evening."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1f",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1e",
+									"text": "Other features we added to our design include a solar-powered electric line along the bottom, to prevent predators from digging under, and a hanging tray feeder that moves with the pen."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1h",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1g",
+									"text": "Transition to Pasture"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1j",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1i",
+									"text": "With the brooder days behind us, we eagerly move our chickens out to pasture. We chose Freedom Ranger chickens for their excellent foraging abilities and activity level. Witnessing them pecking away at the grass is a testament to the natural way chickens should behave."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1l",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1k",
+									"text": "Feeding Program"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1n",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1m",
+									"text": "We feed only non-GMO grain from a local feed mill. The transition to Grower Feed (20% protein) happens at 4 weeks, and they stay on that until 8 weeks, with Finisher (18-19% protein) for the final 2 weeks."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1p",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1o",
+									"text": "Conclusion"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1r",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1q",
+									"text": "Why choose hard work vs easy purchase? Raising meat chickens at Life at the Nest is not just a hobby; it’s a commitment to ethical and sustainable farming practices. From the careful setup of the brooder to the construction of mobile chicken tractors for the eventual transition to pasture, every step is undertaken with the well-being of our chickens in mind. Through our shared experiences, we hope to inspire others to embrace the rewarding path of small-scale chicken farming and to cultivate a deeper appreciation for the food on our plates."
+								}
+							]
 						}
 					]
 				},
 				"taxonomies": {
-					"category": ["garden"]
+					"category": [
+						"pasture"
+					]
 				}
 			},
 			{
-				"id": "post-3",
-				"slug": "sample-autumn-mantel",
+				"id": "wp-418",
+				"slug": "a-guide-to-hydrangea-care-tips-from-life-at-the-nest",
 				"status": "published",
 				"data": {
-					"title": "Sample: A Simple Autumn Mantel",
-					"excerpt": "Placeholder post for development. Dried hydrangeas, a few gourds from the garden, and thrifted brass.",
+					"title": "A Guide to Hydrangea Care: Tips from Life at the Nest",
+					"excerpt": "As the seasons change and Spring gardening tasks start piling up, one chore that often requires immediate attention is pruning back hydrangeas. With their stunning blooms and diverse varieties, hydrangeas are a beloved addition to many gardens. However, proper care and pruning techniques are essenti",
 					"content": [
 						{
 							"_type": "block",
-							"_key": "k0",
+							"_key": "k1t",
 							"style": "normal",
-							"children": [{ "_type": "span", "_key": "k1", "text": "Placeholder post content for development." }]
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1s",
+									"text": "As the seasons change and Spring gardening tasks start piling up, one chore that often requires immediate attention is pruning back hydrangeas. With their stunning blooms and diverse varieties, hydrangeas are a beloved addition to many gardens. However, proper care and pruning techniques are essential to ensure healthy growth and abundant blooms. In this guide, we’ll explore hydrangea care tips and pruning methods, offering valuable insights for both novice and experienced gardeners."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1v",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1u",
+									"text": "Understanding Hydrangea Varieties"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k1x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1w",
+									"text": "Each with its own unique characteristics and care requirements, hydrangea are divided into 5 categories:"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k20",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1y",
+									"text": "Hydrangea Macrophylla:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k1z",
+									"text": " Recognizable for their large, mophead blooms, Macrophylla are often called “Big Leaf Hydrangea.” They are native to Japan and thrive in moist, well-drained soil. Varieties like Endless Summer and Big Easy are popular choices, with bloom colors ranging from pink to blue depending on soil pH. Macrophylla include: Mophead (Hydrangea Macrophylla), Lacecap (Hydrangea Macrophylla Normalis)and Mountain (Hydrangea Macrophylla Serrata.)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k23",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k21",
+									"text": "Hydrangea Arborescens:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k22",
+									"text": " Also known as “Smooth Hydrangea” or “Wild Hydrangea,” these native varieties are heat-tolerant and bloom on new wood. Cultivars such as Annabelle and Incrediball are prized for their white or pink blossoms and adaptability to various climates."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k26",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k24",
+									"text": "Hydrangea Paniculata:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k25",
+									"text": " Featuring elongated, cone-shaped blooms, panicle hydrangeas like Limelight and Pinky Winky are hardy and quite versatile, thriving in different climates. They bloom on new wood and can be pruned more aggressively."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k29",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k27",
+									"text": "Hydrangea Quercifolia:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k28",
+									"text": " Native to the Southeastern United States, commonly called “Oakleaf Hydrangea” these boast large, upright blooms. With a leaf pattern that mimics the shape of an oak leaf, the panicle shaped blooms transition to a stunning mix of tan and pink in the Fall. Unlike other panicle hydrangeas, they bloom on old wood and require more conservative pruning."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2c",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2a",
+									"text": "Hydrangea Petiolaris:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2b",
+									"text": " These vigorous vines, commonly called “Climbing Hydrangea” produce lacy blooms and require trellising for vertical growth. While they take longer to establish, cultivars like Miranda and Flying Saucer add a captivating charm to garden landscapes."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2e",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2d",
+									"text": "Pruning Techniques for Healthy Hydrangeas"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2g",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2f",
+									"text": "Life at the Nest emphasizes the importance of timing and technique when pruning hydrangeas. Some basic pruning advice:"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2j",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2h",
+									"text": "Timing:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2i",
+									"text": " Pruning encourages new growth, so late winter or early spring (after the risk of a hard frost) is the ideal time for pruning, as it allows the plant to focus on new growth without risking frost damage."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2m",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2k",
+									"text": "Technique:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2l",
+									"text": " When pruning, focus on removing dead or spindly branches, clearing debris from the base, and eliminating crisscrossing stems. Work with a sharp and clean pair of pruners. For big leaf and oakleaf hydrangeas, selectively prune to preserve old wood while encouraging new growth. Smooth and panicle hydrangeas can be pruned more aggressively since they bloom on new wood."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2p",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2n",
+									"text": "Special Considerations:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2o",
+									"text": " Climbing hydrangeas require sturdy trellising support for optimal growth and should be allowed to flourish in their natural vine form rather than being pruned into shrubs."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2r",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2q",
+									"text": "Additional Care Tips"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2t",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2s",
+									"text": "In addition to pruning, here are some additional care tips to ensure vibrant, long-lasting blooms:"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2w",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2u",
+									"text": "Soil pH:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2v",
+									"text": " Monitor soil pH to control bloom color for big leaf hydrangeas. Acidify soil for blue blooms and alkalize for pink blooms."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k2z",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k2x",
+									"text": "Watering:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k2y",
+									"text": " Hydrangeas, especially big leaf varieties, require consistent watering to maintain soil moisture levels. Ensure they receive at least an inch of water per week at the roots, especially during hot, dry periods."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k32",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k30",
+									"text": "Fertilization:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k31",
+									"text": " Use a balanced fertilizer, preferably formulated for acid-loving plants, to promote healthy growth and blooms. Apply fertilizer in late winter, before new growth emerges; and again in spring and mid summer."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k35",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k33",
+									"text": "Location, Location, Location:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k34",
+									"text": " Take the time to familiarize yourself with the specific sun/shade and climate needs of the cultivar you wish to plant. Some thrive in full sun, while others will struggle."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k38",
+							"style": "normal",
+							"listItem": "bullet",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k36",
+									"text": "Fresh Flower Care:",
+									"marks": [
+										"strong"
+									]
+								},
+								{
+									"_type": "span",
+									"_key": "k37",
+									"text": " To extend the life of cut hydrangea blooms, dip freshly cut stems in alum powder before placing them in water. Refresh the water and trim stems every few days to maximize vase life."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3a",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k39",
+									"text": "Conclusion"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3c",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3b",
+									"text": "With their captivating blooms and diverse varieties, hydrangeas are a favorite among gardeners worldwide. By understanding the unique characteristics and care requirements of each hydrangea type, as well as implementing proper pruning techniques, gardeners can ensure healthy, vibrant blooms season after season. Whether you’re tending to big leaf, smooth, panicle, oakleaf, or climbing hydrangeas, the tips and insights shared by Life at the Nest on Instagram, Facebook, TikTok and You Tube, can provide valuable guidance for cultivating thriving hydrangea gardens."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3e",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3d",
+									"text": "So roll up your sleeves, grab your pruning shears, and get ready to enjoy the beauty of hydrangeas in your garden!"
+								}
+							]
 						}
 					]
 				},
 				"taxonomies": {
-					"category": ["studio"]
+					"category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "wp-400",
+				"slug": "seed-starting-what-to-sow-indoors",
+				"status": "published",
+				"data": {
+					"title": "Seed Starting: What to Sow Indoors",
+					"excerpt": "Broccoli (6-8 weeks) & Cauliflower (8-10 weeks) These cruciferous vegetables are both cool weather vegetables. Get a jumpstart indoors in winter/early spring. They are easy to transplant at approximately 2 weeks before last frost. Also consider starting indoors in mid summer for your fall garden. Ca",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k3g",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3f",
+									"text": "The anticipation of starting a garden is thrilling, but success requires careful planning; and February is a great time to start! Gardeners must decide which to start indoors and which to sow directly outside. Knowing which vegetables thrive best under which conditions is indispensable. Here are the vegetables I prioritize for indoor starts:\n\n\n"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3i",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3h",
+									"text": "# of weeks before last frost, to start indoors, in parentheses",
+									"marks": [
+										"strong",
+										"em"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3k",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3j",
+									"text": "Broccoli (6-8 weeks) & Cauliflower (8-10 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3m",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3l",
+									"text": "These cruciferous vegetables are both cool weather vegetables. Get a jumpstart indoors in winter/early spring. They are easy to transplant at approximately 2 weeks before last frost. Also consider starting indoors in mid summer for your fall garden."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3o",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3n",
+									"text": "Cabbage (6-8 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3q",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3p",
+									"text": "Due to a longer growing season, cabbage is best started indoors. Transplant cabbage 2-3 weeks before last frost. Also consider starting indoors in mid summer for your fall garden."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3s",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3r",
+									"text": "Brussels Sprouts (12 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3u",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3t",
+									"text": "Brussels are best as a fall crop. Start indoors 12-16 weeks before first expected Fall frost. Harden off and transplant approximately 8 weeks before first Fall frost."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3w",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3v",
+									"text": "Cucumbers (4-6 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k3y",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3x",
+									"text": "A warm weather crop with a long growing season, starting indoors helps give you a jump start on getting fruit to set early. They require a soil temp of 65-70F to germinate (for me, in zone 6,that doesn’t happen until mid May) so an early start indoors is ideal. Be careful not to disturb roots-consider starting in peat pots or paper pots and plant in the pot."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k40",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k3z",
+									"text": "Celery (6 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k42",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k41",
+									"text": "Celery prefers cooler growing temp (average 60F) and have a long growing period, up to 140 days. For early fall harvest, start indoors 6 weeks before last frost in spring. Transfer seedlings to individual peat or paper pots. Harden off and transplant when 6” tall. 80-140 days until harvest."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k44",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k43",
+									"text": "Herbs"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k46",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k45",
+									"text": "Basil, Comfrey, Cilantro, Dill, Marjoram, Mint, Oregano, Parsley, Rosemary, Sage, Savory, Tarragon & Thyme all need lots of time to develop. Waiting for the last frost to plant seeds will delay your harvest until late in the season. Consider starting indoors, or purchase seedlings from a local nursery to ensure harvest in the same season."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k48",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k47",
+									"text": "Lettuce"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4a",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k49",
+									"text": "Though I would not grow lettuce for transplant (its roots are easily disturbed and failure rate is high) I do give lettuce a jumpstart by warming the soil. Lettuce is a cool weather crop, but cannot be direct sown until the soil is workable. Consider making mini greenhouse tunnels with pvc hoops and greenhouse plastic. Allow the ground to warm up under the mini greenhouse and sow seeds when the soil is loosened up."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4c",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4b",
+									"text": "Eggplant, Peppers (6-8 Weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4e",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4d",
+									"text": "Both slow growers, with long growing seasons (60-80+ days to maturity) these warm weather crops should be started indoors 6-8 weeks before last frost. Keep inside until well past the danger of frost."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4g",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4f",
+									"text": "Melons (2-4 Weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4i",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4h",
+									"text": "Warmer climates with longer growing seasons can sow directly outdoors, but climates with shorter growing seasons need ahead start to give melons adequate time to bear fruit. Transfer well past the last frost date."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4k",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4j",
+									"text": "Pumpkins (3-4 Weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4m",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4l",
+									"text": "In cooler climates, starting seeds indoors will help ensure you have pumpkins ready before the first Fall frost. If your Halloween and Thanksgiving depend on home-grown pumpkins, sow indoors."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4o",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4n",
+									"text": "Tomatoes (6-8 Weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4q",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4p",
+									"text": "Tomatoes generally reach maturity in 100-140days from the day you sow them, so indoor start is almost essential if you want fruit before frost. Luckily, they are one of the easiest to sow from seed."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4s",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4r",
+									"text": "Winter Squash (3-4 weeks)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4v",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4t",
+									"text": "Hard skinned winter squash (Acorn, Butternut, Spaghetti, Hubbard) require 60-110 days to maturity. Start indoors to ensure fruit before Fall frost. Transplant 1-2 weeks after last frost date. Best to grow in peat or paper pots and plant in the pot to avoid transplant shock from root disturbance. "
+								},
+								{
+									"_type": "span",
+									"_key": "k4u",
+									"text": "**Note: Direct sow summer squash/ “soft-skinned” squash, ie zucchini, yellow squash, patty pan.",
+									"marks": [
+										"em"
+									]
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "wp-477",
+				"slug": "diy-paper-bag-pots-a-sustainable-solution-for-seedling-up-potting",
+				"status": "published",
+				"data": {
+					"title": "DIY Paper Bag Pots: A Sustainable Solution for Seedling Up-Potting",
+					"excerpt": "Are you gearing up to start your indoor seedlings this year? If you're like me and prefer to avoid excessive plastic use, you'll love this eco-friendly solution for potting up your seedlings: homemade paper bag pots! In this post, I'll guide you through the simple process of creating these biodegrad",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k4x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4w",
+									"text": "Are you gearing up to start your indoor seedlings this year? If you’re like me and prefer to avoid excessive plastic use, you’ll love this eco-friendly solution for potting up your seedlings: homemade paper bag pots! In this post, I’ll guide you through the simple process of creating these biodegradable pots using upcycled grocery bags, perfect for giving your seedlings the room they need to grow."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k4z",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k4y",
+									"text": "When it comes to starting seedlings indoors, eventually, those tiny starter packs just won’t cut it anymore. That’s where up-potting comes in. While plastic pots are a common choice for this task, I’ve found a more sustainable alternative that’s both eco-friendly and budget-friendly: paper bag pots."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k51",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k50",
+									"text": "Not only do paper bag pots reduce plastic waste, but they also offer several practical advantages. First and foremost, they’re incredibly easy to make and require just a few simple materials: brown paper bags and a wooden block for shaping. Plus, when it’s time to transplant your seedlings into the garden, these paper pots can be planted directly into the soil, minimizing transplant shock and encouraging healthy root growth."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k53",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k52",
+									"text": "Childhood Inspiration: Newspaper Pots"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k55",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k54",
+									"text": "Crafting paper bag pots is a nostalgic nod to my childhood-making newspaper pots for seedlings-our hands blackened with ink, a messy yet satisfying endeavor. It’s a delightful reminder of the enduring resourcefulness and creativity of my youth, repurposing materials instead of buying new."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k57",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k56",
+									"text": "How to Make Paper Bag Pots: Step-by-Step Guide\n\n\n"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k59",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k58",
+									"text": "Make a wooden block, 3”on all sides and 6” long"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5b",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5a",
+									"text": "Gather paper bags from friends and neighbors"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5c",
+									"text": "PREPARE THE BAGS:",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5f",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5e",
+									"text": "Start by carefully removing any handles, without tearing the bags."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5h",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5g",
+									"text": "Cut down one seam, and cut out the bottom, to create a large rectangle, approximately 16” x 38”."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5j",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5i",
+									"text": "Cut the large rectangle into 4 smaller rectangles, approximately 8” x 19”each."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5l",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5k",
+									"text": "FOLD AND SHAPE:",
+									"marks": [
+										"strong"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5n",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5m",
+									"text": "Fold a ¾” fold along the 19” length, and make a crease. Unfold."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5p",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5o",
+									"text": "Place the 3” end of the block along the 19” length of paper (on the creased edge) and begin rolling the bag around it, creasing as you go. Once rolled, fold in the bottom (like wrapping a gift) to form the pot shape."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5r",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5q",
+									"text": "Invert the pot and slide the block out. Fold down the top edge (along the pre-crease) to reinforce the rim of the pot."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5t",
+							"style": "normal",
+							"listItem": "number",
+							"level": 1,
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5s",
+									"text": "Lastly, pinch edges and corners to encourage the pot to take shape."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5v",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5u",
+									"text": "Planting and Care Tips"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5w",
+									"text": "Fill your paper bag pots with potting soil, plant your seedlings, and place in a 10×20 tray. Water as needed. These pots provide ample space for root growth and can be left in the tray until transplanting."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k5z",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k5y",
+									"text": "To transplant, simply cut away some of the paper on the bottom of the pot to allow roots to grow into the soil. The paper bag will naturally biodegrade over time."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k61",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k60",
+									"text": "Note: Paper pots left in a 10×20 tray can form mold. Take care not to over-water. Also consider using a vented tray so water can run out the bottom, and pots can get airflow.",
+									"marks": [
+										"em"
+									]
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k63",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k62",
+									"text": "Benefits of Paper Bag Pots:"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k66",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k64",
+									"text": "Sustainable"
+								},
+								{
+									"_type": "span",
+									"_key": "k65",
+									"text": ": Upcycle grocery bags into functional plant pots."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k69",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k67",
+									"text": "Biodegradable"
+								},
+								{
+									"_type": "span",
+									"_key": "k68",
+									"text": ": Breaks down naturally in the soil, enriching it with organic matter."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6c",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6a",
+									"text": "Customizable"
+								},
+								{
+									"_type": "span",
+									"_key": "k6b",
+									"text": ": Adjust the size to fit your seedlings. Make your paper bag pots into smaller pots by cutting 3 lengthwise strips instead of two, creating6 shallow pots. These pots are ideal for lettuce and other veg with shallow roots."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6f",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6d",
+									"text": "Space-Saving"
+								},
+								{
+									"_type": "span",
+									"_key": "k6e",
+									"text": ": Fits neatly into standard 10×20 trays for easy organization."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6h",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6g",
+									"text": "Final Thoughts"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6j",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6i",
+									"text": "By making your own paper bag pots, you not only reduce waste but also create a more sustainable gardening practice. Give this eco-friendly alternative a try and watch your seedlings thrive in their new homes. Happy gardening!"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "wp-439",
+				"slug": "the-economics-of-raising-meat-chickens",
+				"status": "published",
+				"data": {
+					"title": "The Economics of Raising Meat Chickens",
+					"excerpt": "In today's post, we're diving into the economics of raising meat chickens at home. Many of you have followed our journey through various stages of chicken rearing, from bringing chicks home, to the butchering process. Now, it's time to crunch the numbers and see if raising your own meat chickens is ",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k6l",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6k",
+									"text": "In today’s post, we’re diving into the economics of raising meat chickens at home. Many of you have followed our journey through various stages of chicken rearing, from bringing chicks home, to the butchering process. Now, it’s time to crunch the numbers and see if raising your own meat chickens is not only feasible, but also financially worthwhile."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6n",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6m",
+									"text": "Introduction"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6p",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6o",
+									"text": "Raising meat chickens is not just about fulfilling a homesteading dream; it also provides a level of quality control that is rarely seen in commercial meat facilities. Chickens raised in commercial facilities may be subjected to crowded and stressful environments, as well as diets supplemented with additives and antibiotics. We value quality and transparency in food production, and chose to raise chickens on our property to ensure full control over their diet, living conditions, and overall welfare. Success starts by understanding the costs involved, so in this post, I’ll break down the expenses and considerations for raising meat chickens, providing you with a comprehensive overview of the financial considerations."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6r",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6q",
+									"text": "Space Requirements"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6t",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6s",
+									"text": "First, a word about space requirements, in case this is a potential road block. A large pasture is not required to have room for raising your own meat birds. We keep our chicks in a brooder for the first 2 weeks, moving them to pasture at 14days, with supplemental heat if needed. Our two chicken tractors are 10’ x 12’each, requiring a total of 240 sq ft of space. Because we move them twice daily, we calculate our need for fresh grass to total 480 sq ft per day, for 56 days. That’s a total of 26,880 square feet of space, or .61 acres. However, with daily moving, we find the grass can fully recover in 2-3 weeks, allowing us the opportunity to use the same space at least twice. With proper land use management, we responsibly raise 120 birds on just ⅓ of an acre. That’s equivalent to 3-4 tennis courts worth of open space."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6v",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6u",
+									"text": "Procuring Chicks"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6w",
+									"text": "For us, the journey typically begins each season with a call to the Freedom Ranger Hatchery in nearby Lancaster County, PA, where we order our chicks. Most recommendations for square footage (on pasture, in a chicken tractor) recommend 1.5-3 sq ft per bird. We use 2sq ft as our guide, allowing 60 birds per 120 sq ft tractor. We purchase 120 chicks, for our two tractors, at $1.40 per chick. Smaller quantities cost more per bird, so factor that into your plan in advance."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k6z",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k6y",
+									"text": "Feed Costs"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k71",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k70",
+									"text": "Feed is one of the most significant ongoing expenses in raising meat chickens. We opt for high-quality, non-GMO feed from a local grain mill, which costs approximately $700 over 10 weeks for 120 birds, averaging$5.80 per bird. This would be noticeably higher if not for the twice daily chore of moving our birds to fresh grass, offering grass and insects to offset feed costs."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k73",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k72",
+									"text": "Consumables"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k75",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k74",
+									"text": "Additional supplies include wood shavings, lime, and diatomaceous earth for the brooder, totaling around $15 per round. We also calculate the cost of electricity in our brooder to be roughly $50 each run for the weeks we leave the heat lamps on."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k77",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k76",
+									"text": "Infrastructure Investment"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k79",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k78",
+									"text": "Setting up the infrastructure involves fixed costs such as construction of chicken tractors ($877), feeders and waterers ($217), electric fence, insulators, solar charger and grounding rod ($273), plus heat lamps and bulbs ($60). We estimated these costs will provide us with 5 years or more of use. With 2 runs per year, we conservatively estimate this investment of$1,427 to cost $142.70per run."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7b",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7a",
+									"text": "Butchering"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7c",
+									"text": "While you can save money by butchering chickens yourself, we opt for a butchering service, which costs approximately $350 for 120 chickens. Additional costs include supplies for butchering day, totaling around $100."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7f",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7e",
+									"text": "Total Cost Analysis"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7h",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7g",
+									"text": "When all expenses are considered (with infrastructure costs averaged out over a five-year period) the cost per bird comes to $12.32. Comparing this to store-bought organic chickens priced in excess of $20 each, the savings are evident."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7j",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7i",
+									"text": "Maximizing Returns"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7l",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7k",
+									"text": "By involving friends and family interested in sharing in the project, we further offset our costs by sharing some birds. This collaborative effort not only saves money but also fosters a sense of community and shared responsibility. If we keep half of what we raise annually and sell the other half, we quickly pay for our own chicken for the entire year, costing us just time and labor."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7n",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7m",
+									"text": "Conclusion"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7p",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7o",
+									"text": "Raising meat chickens can be a financially viable and rewarding endeavor, especially when considering the quality of the product and the sense of self-sufficiency it brings. By carefully planning and accounting for expenses, you can enjoy home-raised meat at a fraction of the cost of store-bought alternatives."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7r",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7q",
+									"text": "Get Started Today"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7t",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7s",
+									"text": "If you’re intrigued by the idea of raising your own meat chickens, Life at the Nest encourages you to explore the resources available on my social media accounts (TikTok, Facebook, Instagram and YouTube) to learn more and take the plunge. Whether you have a small backyard or access to open pasture, there’s a chicken-raising solution that fits your needs. Feel free to reach out with any questions or share your own experiences in the comments below. I encourage you to embark on a journey of self-sustainability and wholesome living through raising meat chickens."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"pasture"
+					]
+				}
+			},
+			{
+				"id": "wp-350",
+				"slug": "celebrating-the-youngest-child",
+				"status": "published",
+				"data": {
+					"title": "Celebrating the Youngest Child",
+					"excerpt": "If you've ever felt like being the youngest means being the target of older sibling teasing, chances are you're either the youngest yourself or the sympathetic parent of one. Yet, amidst the playful ribbing, it's worth recognizing that picking on the youngest is a common familial dynamic. As a proud",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k7v",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7u",
+									"text": "If you’ve ever felt like being the youngest means being the target of older sibling teasing, chances are you’re either the youngest yourself or the sympathetic parent of one. Yet, amidst the playful ribbing, it’s worth recognizing that picking on the youngest is a common familial dynamic. As a proud member of the youngest child club, I can attest that we may inadvertently seek attention. And while it’s not entirely our fault, as Mom and Dad often find themselves busy and exhausted from raising older siblings, the standards may relax a bit, allowing us to “get away” with things the eldest didn’t. However, what the oldest often overlook about the youngest is our unique blend of our older siblings’ best traits, coupled with our own resourcefulness and strength. We learn from their successes and mistakes, adopting their best qualities while steering clear of their missteps (or mastering the art of hiding them from public view). In many ways, the youngest often possess practical skills that surpass those of their older siblings. "
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7w",
+									"text": "In our family, our youngest arrived 12 years after her oldest sibling and nearly 8 years after her closest sibling, transforming our bustling household in unexpected ways. Born into a whirlwind of sports schedules, homework, and dance lessons, she quickly adapted to the chaos, mastering the art of sleeping anywhere–from auditoriums during concerts to bleachers during games. Her flexibility became her superpower, enabling her to thrive in the midst of our hectic lifestyle."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k7z",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k7y",
+									"text": "Recently, while home from school with a fever, her resourcefulness shone brightly. Though I braced myself for the inevitable 2 a.m. wake-up calls, I was surprised to sleep through the night and find her wideawake at 6 a.m., calmly updating her “Notes” on her iPod. There she sat updating meticulous details about her temperature, how she felt, what she drank, and when she woke up through the night. It was a moment that perfectly encapsulated her ingenuity and self-reliance."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k81",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k80",
+									"text": "Since then, I’ve witnessed countless other instances that underscore her resourcefulness, from managing our family’s schedule by adding school events to our calendar to confidently running the household in my absence. Despite receiving the occasional grumble from her adult siblings about her behavior, she continues to thrive as a confident, intelligent, and resourceful middle schooler, leaving no doubt that being the youngest comes with its own unique set of strengths."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"family"
+					]
+				}
+			},
+			{
+				"id": "wp-467",
+				"slug": "homemade-granola",
+				"status": "published",
+				"data": {
+					"title": "Mastering Granola: A Journey of Trial, Error, and Delicious Discoveries!",
+					"excerpt": "Are you on the hunt for the perfect granola recipe? Well, you've come to theright place! My journey to mastering granola was filled with trial and error,as I sought to strike the ideal balance of sweetness, saltiness, andcrunchiness. After experimentingwith various recipes, I found many to beeither ",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k83",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k82",
+									"text": "Are you on the hunt for the perfect granola recipe? Well, you’ve come to theright place! My journey to mastering granola was filled with trial and error,as I sought to strike the ideal balance of sweetness, saltiness, andcrunchiness. After experimentingwith various recipes, I found many to beeither too chewy or dangerously crunchy-nobody wants a broken tooth!Plus, with my children developing allergies, I needed an allergy-friendlyoption for breakfast. That’s when I discovered the magic of homemadegranola, tailored to meet their dietary needs. While I do add nuts to mine,fear not if allergies are a concern in your household; this recipe is just asdelicious without them!"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k85",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k84",
+									"text": "Coconut oil emerges as the unsung hero in toasting granola to perfection,imparting a delicate flavor and ideal crispness. A touch of vanilla adds asubtle hint of flavor without overpowering, while pecans steal the show asmy preferred nut, though almonds make a close second. Whenincorporating nuts, remember to break them into bite-sized pieces for easeof eating. Balancing sweetness with a hint of salt and the comforting aromaof cinnamon, this recipe uses unsweetened flake coconut to maintain theperfect level of sweetness alongside brown sugar and honey."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k87",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k86",
+									"text": "However, the magic doesn’t stop with the ingredients-the process isequally important. Ensure thorough mixing before adding the coconut oiland honey blend, and be vigilant in stirring to achieve even distribution.Opt for a large mixing bowl to avoid spillage and a deep-sidedbaking pan toachieve the perfect granola depth, about 1-2”. Adding raisins after bakingpreserves their plumpness and juiciness, while stirring intermittentlythroughout the baking process provides the perfect opportunity for a well-deserved tea break or a quick YouTube browse."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k89",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k88",
+									"text": "Despite the perceived time constraints, this recipe is surprisingly time-efficient, requiring only about an hour from start to finish with just 15-20minutes of active preparation. So, fear not; homemade granola is wellwithin reach!"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8b",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8a",
+									"text": "Warmest regards, Audra"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"kitchen"
+					]
+				}
+			},
+			{
+				"id": "wp-471",
+				"slug": "savoring-the-delights-of-thanksgiving-cauliflower-beyond-the-holiday-season",
+				"status": "published",
+				"data": {
+					"title": "Savoring the Delights of \"Thanksgiving Cauliflower\" Beyond the Holiday Season",
+					"excerpt": "In our family, there's a dish that holds a special place on our Thanksgiving table, earning the endearing title of \"Thanksgiving Cauliflower.\" Despite my yearly resolution to enjoy it beyond the holiday season, time seems to slip away, leaving me wondering why we don't indulge in its deliciousness m",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k8d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8c",
+									"text": "In our family, there’s a dish that holds a special place on our Thanksgiving table, earning the endearing title of “Thanksgiving Cauliflower.” Despite my yearly resolution to enjoy it beyond the holiday season, time seems to slip away, leaving me wondering why we don’t indulge in its deliciousness more often. It’s not a dish that demands hours in the kitchen, nor do its ingredients rely solely on the flavors of Fall. So, why hold off on enjoying it? Its irresistible flavors deserve to be celebrated beyond special occasions."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8f",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8e",
+									"text": "The Story Behind “Thanksgiving Cauliflower”"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8h",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8g",
+									"text": "“Thanksgiving Cauliflower” is more than just a side dish in our family; it’s a tradition. I simply can’t recall a Thanksgiving without this dish gracing our family table. From my grandmother’s kitchen to my mother’s, and now to mine, this dish has been a beloved fixture on our holiday table year after year. I envision my children embracing this tradition, serving it to their own families with the same love and nostalgia that I do."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8j",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8i",
+									"text": "A Taste of Comfort and Indulgence"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8l",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8k",
+									"text": "What sets “Thanksgiving Cauliflower” apart is its simple yet scrumptious combination of flavors. The creamy cheese sauce, made with a blend of Parmesan Reggiano, Pecorino Romano, and Gruyère, coats each tender floret of cauliflower, creating a dish that is both comforting and indulgent. With a hint of freshly grated nutmeg adding warmth and depth, every bite is a culinary delight."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8n",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8m",
+									"text": "Embracing the Joy of Simple Pleasures"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8p",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8o",
+									"text": "In today’s fast-paced world, quick dinners and fast food have taken the place of slow cooking. “Thanksgiving Cauliflower” is a reminder to slowdown, savor the moment, and indulge in the delights of good food and cherished traditions. So, whether it’s Thanksgiving or just an ordinary day, take the time to enjoy the simple pleasures that make life truly special. After all, every bite of “Thanksgiving Cauliflower” is a celebration of love, family, and the joy of good food."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"kitchen"
+					]
+				}
+			},
+			{
+				"id": "wp-433",
+				"slug": "garden-transitions",
+				"status": "published",
+				"data": {
+					"title": "Garden Transitions",
+					"excerpt": "As we step into the transitional period towards gardening season, I find myself caught between the tasks indoors—tending to seedlings—and the outdoor preparations for our garden. While it's still a few weeks away from transplanting, certain cool-weather crops like broccoli are eager to move into the",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k8r",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8q",
+									"text": "As we step into the transitional period towards gardening season, I find myself caught between the tasks indoors—tending to seedlings—and the outdoor preparations for our garden. While it’s still a few weeks away from transplanting, certain cool-weather crops like broccoli are eager to move into the garden sooner, rather than later."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8t",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8s",
+									"text": "Despite the calendar indicating March, our soil remains remarkably workable, a fortunate gift thanks to the mild winter we’ve experienced this year. This early advantage allowed me to prepare some beds weeks ago, and I’m continuing to enhance them as we approach planting time. In this blog, I aim to focus on the essential preparations required to ready your garden, ensuring optimal nutrition for your plants."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8v",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8u",
+									"text": "Before delving into the specifics of nutrient preparation, it’s crucial to address soil pH, which profoundly impacts nutrient availability. The pH scale ranges from 0 to 14, with acidic soils at the lower end and alkaline soils at the higher end. Most garden vegetables thrive in slightly acidic to neutral soil, ideally between pH 6 to 7. Therefore, it’s essential to test accordingly using a pH meter. pH adjustments should be made with lime, baking soda or wood ash to increase. Decreasing pH is a bit trickier, but can be accomplished with aluminum sulfate or sulfur from your local garden center."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8x",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8w",
+									"text": "Once pH levels are optimized, attention turns to nutrient supplementation, a vital aspect of maintaining healthy garden soil. Macronutrients, including nitrogen (N), phosphorus (P), and potassium (K), play a fundamental role in plant development. Nitrogen aids in leafy growth and photosynthesis, while phosphorus fosters strong roots, disease resistance, and improves flavor. Potassium contributes to overall plant hardiness and fruit development, completing the trio of essential macronutrients."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k8z",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k8y",
+									"text": "Additionally, plants require micronutrients, such as iron, zinc, and manganese, albeit in smaller quantities. These micronutrients are vital for various physiological functions, and their deficiencies can lead to stunted growth and other adverse effects. To ensure a balanced nutrient profile, soil amendments like compost, worm castings, and organic fertilizers are invaluable."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k91",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k90",
+									"text": "Compost, the cornerstone of organic gardening, not only enriches soil with essential nutrients but also improves its structure and water retention. Similarly, worm castings provide a potent source of organic matter and beneficial microorganisms, enhancing soil health and plant vitality. Supplementing with organic fertilizers like blood meal, bone meal, and kelp meal ensures a steady supply of macronutrients while promoting overall soil fertility."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k93",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k92",
+									"text": "While nutrient supplementation is quite valuable during the growing season, it’s essential to exercise caution and avoid overapplication, which can lead to nutrient imbalances and potential harm to plants."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k95",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k94",
+									"text": "I often rely on store-bought products like blood meal, bone meal, and kelp for my seedlings; however, scaling up to meet the needs of a larger garden can quickly become cost-prohibitive. That’s where homemade compost steps in, especially during the transitional period, to provide the essential nutrients my garden craves."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k97",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k96",
+									"text": "As we navigate the transition into gardening season, let’s embrace the opportunity to nourish our soil and cultivate bountiful harvests. Happy gardening!"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "wp-390",
+				"slug": "getting-started-in-gardening-tips-for-success",
+				"status": "published",
+				"data": {
+					"title": "Getting Started in Gardening: Tips for Success",
+					"excerpt": "As winter drags on, thoughts of vibrant gardens and fresh produce can provide a welcome escape from the cold and dreary weather. If you've ever toyed with the idea of starting your own garden but felt unprepared, now is the perfect time to take the plunge. The recent flooding in California serves as",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k99",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k98",
+									"text": "As winter drags on, thoughts of vibrant gardens and fresh produce can provide a welcome escape from the cold and dreary weather. If you’ve ever toyed with the idea of starting your own garden but felt unprepared, now is the perfect time to take the plunge. The recent flooding in California serves as a stark reminder of the dangers of relying on commercial food systems, making home gardening an increasingly valuable skill. With a few simple tips and some careful planning, you can embark on a rewarding journey of growing your own food."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9b",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9a",
+									"text": "Start Small"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9d",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9c",
+									"text": "For novice gardeners, it’s essential to begin with a manageable plot size.Starting small allows you to gain experience without feeling overwhelmedby the demands of a larger garden. Whether you opt for containers onapatio or a small raised bed in your backyard, starting modestly sets you upfor success."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9f",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9e",
+									"text": "Start Indoors"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9h",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9g",
+									"text": "Starting your garden indoors is a game-changer, especially if you’re facing ashort growing season like I do, here in Zone 6. Starting from seed indoors,provides a significant head start and a considerable cost-savings overbuying established plants. Not all plants can be started indoors however, sofocus on those that have a higher success rate of transfer."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9k",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9i",
+									"text": "**Click here for recommendations on vegetables best for indoor starts.",
+									"marks": [
+										"strong",
+										"em",
+										"key-14-4s7g8"
+									]
+								}
+							],
+							"markDefs": [
+								{
+									"_type": "link",
+									"_key": "k9j",
+									"href": "https://lifeatthenest.com/seed-starting-what-to-sow-indoors"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9m",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9l",
+									"text": "Root crops for example, generally do not transfer well. If you want to try,consider paper bag pots or peat pots that you can plant directly in the potwithout disturbing their roots."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9o",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9n",
+									"text": "Hardening Off"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9q",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9p",
+									"text": "Successful transfer relies on a period of “hardening off.” I often refer to thisas “plant daycare.” Take your seedlings outside for a few hours a day,gradually increasing their exposure to new conditions; ie: direct sun, coolertemps, wind, and light rain, which will help “harden” your plants off andallow them to grow stronger. Additionally, some plants thrive in a “coldframe” or unheated greenhouse for their transfer."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9s",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9r",
+									"text": "Consider Seedlings"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9u",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9t",
+									"text": "While starting from seeds can be cost-effective, it also requires careful attention to nurturing seedlings until they’re ready for transplantation. For beginners, investing in some seedlings from a garden center can provide an easier and more reliable starting point. Consider seedlings for anything you want just 1 or 2 of. Look for established plants that are already hardened off and ready for outdoor planting."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9w",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9v",
+									"text": "Collaborate with Others"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "k9y",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9x",
+									"text": "Gardening is often more enjoyable and efficient when shared with friendsor neighbors. Consider coordinating purchases of seedlings or seeds withothers in your community to save money and maximize variety. Seed swapsand plant exchanges can further enhance the experience while fostering asense of camaraderie among fellow enthusiasts."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ka0",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k9z",
+									"text": "Prioritize Nutrient-Dense Foods"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ka2",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ka1",
+									"text": "When planning your garden, focus on crops that offer high nutritional valueand are relatively easy to grow. Vegetables like leafy greens, peppers, beansand sweet potatoes are nutritious and fairly easy to grow. By prioritizingthese nutrient-dense foods,you can maximize the yield and health benefitsof your efforts."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ka4",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ka3",
+									"text": "Plan and Prepare"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ka6",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ka5",
+									"text": "Effective garden planning begins well before the planting season arrives. Use the winter months to assess your space, make a list of desired crops, and organize your seeds accordingly. Take note of your garden’s sunlightexposure and growth patterns to optimize plant placement and successionplanting."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "ka8",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ka7",
+									"text": "Embrace the Learning Curve"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kaa",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ka9",
+									"text": "Gardening is as much about trial and error as it is about nurturing plants to maturity. Be prepared to learn from your experiences, whether it’s adjusting watering schedules, managing pests, or refining your planting techniques. Each season presents new opportunities for growth and improvement."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kac",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kab",
+									"text": "Enjoy the Process"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kae",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kad",
+									"text": "Above all, remember to savor the journey of gardening. Whether you’re tending to seedlings indoors, transplanting young plants, or harvesting produce, take time to appreciate the beauty and tranquility of the garden. Gardening offers not only a source of fresh, healthy food but also a connection to nature, some physical activity and a sense of accomplishment."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kag",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kaf",
+									"text": "As you embark on your gardening adventure, know that you’re joining a community of enthusiasts who share your passion for cultivating the earth. By starting small, collaborating with others, and prioritizing nutrient-dense crops, you can create a thriving garden that nourishes both body and soul. So roll up your sleeves, dig in the dirt, and let the magic of gardening unfold. Your journey awaits, and the rewards are bountiful"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"garden"
+					]
+				}
+			},
+			{
+				"id": "wp-369",
+				"slug": "elevate-your-fall-decor-with-fresh-floral-arrangements",
+				"status": "published",
+				"data": {
+					"title": "Elevate Your Fall Decor with Fresh Floral Arrangements",
+					"excerpt": "But I wanted to take it up a notch. The idea struck me: why not design my arrangement inside a pumpkin? With a vision in mind, I carefully selected a pumpkin capable of holding the quart-sized mason jar I planned to put inside. Back at home, I set to work carving out my pumpkin from [&hellip;]",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "kai",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kah",
+									"text": "As the seasons change, so do our homes. There’s something magical about transforming living spaces to reflect the colors and moods of each season. One of my favorite ways to add a touch of seasonal flair is by incorporating fresh flowers into my decor. But why stick to conventional vases when you can get creative? \n\n\n"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kak",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kaj",
+									"text": "Today, I was inspired by the bounty of autumn and the charming allure of pumpkins. Instead of simply arranging flowers in a traditional vase, I decided to think outside the box—well, outside the pumpkin, to be precise."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kam",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kal",
+									"text": "At a local market, I stumbled upon a delightful bouquet of flowers bursting with color: sunflowers, asters, marigolds, and coxcomb. With my flower garden winding down for the season, this vibrant assortment was just what I needed to inject some seasonal color into my home."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kao",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kan",
+									"text": "But I wanted to take it up a notch. The idea struck me: why not design my arrangement inside a pumpkin? With a vision in mind, I carefully selected a pumpkin capable of holding the quart-sized mason jar I planned to put inside. Back at home, I set to work carving out my pumpkin from the top, creating a space large enough to accommodate my jar, while ensuring a snug fit so it wouldn’t wobble. I was ready to design."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kaq",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kap",
+									"text": "The key to keeping flowers fresh and vibrant lies in a simple recipe: a pinch of sugar, a squeeze of lemon juice, and a splash of bleach. With the jar filled with water enhanced by my homemade floral preservative, I began arranging the flowers, starting with a sturdy base of limelight hydrangea(free, thanks to my landscaping) and coxcomb from the bouquet, to provide structure and support."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kas",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kar",
+									"text": "Next came the line flowers—tall, elegant stems of green and red amaranth and that would define the shape and form of the arrangement. I then added some long pieces of ornamental grass snipped from my landscaping to fill in the shape."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kau",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kat",
+									"text": "Then it was time for the feature flowers—the stars of the show! Bold sunflowers took center stage, their cheery hues of yellow adding a bright burst of color. Paired with hot pink asters and cheerful marigolds, they formed a trio of bright colors to complement the orange pumpkin."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kaw",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kav",
+									"text": "It is vital to keep a keen eye on balance and symmetry, ensuring that no flower feels out of place. To add a final flourish, I tucked wisps of grasses and foliage around the edges, softening the lines and adding a touch of whimsy. The result? A stunning burst of color and texture—a veritable cornucopia of autumnal delights!"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kay",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kax",
+									"text": "With the arrangement complete, it adorned my entryway table where it would greet visitors with a warm sunny embrace. As the seasons change and the days grow shorter, why not take a cue from nature and bring a touch of the outdoors into your home?"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"studio"
+					]
+				}
+			},
+			{
+				"id": "wp-463",
+				"slug": "culinary-staples-chicken-broth-vs-stock-vs-bone-broth",
+				"status": "published",
+				"data": {
+					"title": "Culinary Staples: Chicken…Broth vs Stock vs Bone Broth",
+					"excerpt": "Let's demystify the differences between chicken stock, broth, and bone broth. With a surplus of chicken carcasses from our recent butchering day, we're determined not to let anything go to waste. As we gather our ingredients—mirepoix, herbs, chicken bones and feet—let's explore the nuanced flavors a",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "kb0",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kaz",
+									"text": "Let’s demystify the differences between chicken stock, broth, and bone broth. With a surplus of chicken carcasses from our recent butchering day, we’re determined not to let anything go to waste. As we gather our ingredients—mirepoix, herbs, chicken bones and feet—let’s explore the nuanced flavors and health benefits that each component brings to the table."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kb2",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kb1",
+									"text": "Broth: A Lighter Addition To The Culinary Experience"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kb4",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kb3",
+									"text": "Broth, the result of gently simmering meat and vegetables for at least one hour, delivers a nuanced medley of flavors. The process extracts a delicate taste that’s both comforting and versatile. Though fully seasoned, this culinary cornerstone is often lighter in profile compared to its stock counterpart. It often serves as a canvas for creativity in the kitchen. From infusing rice and making sauces, to enriching dishes, broth elevates a recipe with its gentle, yet distinct presence."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kb6",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kb5",
+									"text": "Stock: The Backbone Of Many Culinary Creations"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kb8",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kb7",
+									"text": "Crafted by simmering bones, carcasses, and perhaps even necks or feet with mirepoix and aromatic herbs, stock offers an extra boost of flavor and nutrition. Simmered over a prolonged period, typically ranging from 2 to 8 hours, stock undergoes a transformative process, extracting rich flavor and gelatinous goodness from its ingredients. Unlike broth, which is seasoned with salt, stock is often prepared without salt, allowing for greater flexibility in seasoning according to the recipe’s requirements. The extended cooking time results in a deeply developed flavor profile, robust and bold, perfect for enhancing dishes with its hearty presence. Stock is the perfect start to gravy, soups, stews, and sauces."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kba",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kb9",
+									"text": "Bone Broth: A Culinary Marvel, Well Worth The Wait"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbc",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbb",
+									"text": "Bone broth often starts with roasted bones and is then simmered to perfection for up to 24 hours or longer, extracting maximum collagen and minerals for unparalleled health benefits. Though not for the faint of heart, bone broth’s potent flavor and texture make it a powerhouse for healing and nourishment. Touted by dieticians and healthcare providers for its gut health benefits, bone broth offers additional nutrients to many. The collagen extracted from the bones is highly sought after by athletes, patients with GI concerns, and those seeking extra collagen for their beauty regime."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbe",
+							"style": "h2",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbd",
+									"text": "Making The Case For Making Your Own"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbg",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbf",
+									"text": "Crafting homemade broth and stock with carefully chosen ingredients offers numerous benefits over store-bought options. Our pasture-raised chickens, fed a diet of bugs, natural grasses, and non-GMO grain, offer a chemical free, healthy base for many of our meals. Additionally, by controlling the seasoning, we ensure lower sodium content without sacrificing taste."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbi",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbh",
+									"text": "Moreover, utilizing all parts of the chicken minimizes waste, aligning with our ethos of practicality and sustainability. Making your own broth and stock isn’t just about flavor—it’s a commitment to quality, conscious consumption, and traditional culinary practices."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"kitchen"
+					]
+				}
+			},
+			{
+				"id": "wp-360",
+				"slug": "good-bye-minka",
+				"status": "published",
+				"data": {
+					"title": "Good-Bye Minka",
+					"excerpt": "In response to the question \"What do you think you’re best at?\" I've always answered simply: \"Being honest.\" So, in the spirit of honesty, let me share a heartfelt confession. A few months back, my family bid farewell to our cherished German Shepherd, Minka. Her entry in to our lives coincided with ",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "kbk",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbj",
+									"text": "In response to the question “What do you think you’re best at?” I’ve always answered simply: “Being honest.” So, in the spirit of honesty, let me share a heartfelt confession. A few months back, my family bid farewell to our cherished German Shepherd, Minka. Her entry in to our lives coincided with a tumultuous period: a new home addition, my mother-in-law moving in, the loss of our 12-year-old dog Bailey, health struggles with our eldest son, an unexpected pregnancy with Baby #4, and my husband’s job loss amidst a new business venture. And then, amid the chaos, there was Minka–a puppy I hadn’t planned or prepared for, appearing in our lives at the most unexpected moment."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbm",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbl",
+									"text": "Navigating the journey of raising a puppy alongside a newborn is a feat of its own. Their needs, it seems, never align conveniently; with puppy potty breaks and 3 a.m. baby feedings battling for my attention. And any promises of help from family members often fall short of reality, leaving the primary caregiver–in this case, me(pregnant and overwhelmed)–to bear the brunt of the responsibility. As my mother-in-law humorously puts it, each child robs a bit of a mother’s sanity, and by Baby #4, well, let’s just say things were getting interesting."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbo",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbn",
+									"text": "Let’s be real–choosing a German Shepherd based solely on how adorable the puppies are is a rookie mistake. But my husband grew up with a GSD and his heart said he needed another, for his children. As the proud owner of a shedding machine, I learned of their unique needs the hard way. Visiting the breeder’s home, I mistook the blanket of fur on her floors for mere housekeeping oversight, only to realize later that it was a forewarning of what awaited us. Additionally, Minka needed far more time and attention than this busy family could provide, and some anxiety developed as she worked to find her purpose! Yet, despite the challenges and debates over vacuuming frequency, a love story unfolded. Minka, with her shedding and quirks, became an indispensable part of our family."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbq",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbp",
+									"text": "She guarded our home like Ft. Knox, and loved our people more than you could believe possible. She was so clear about her role to protect her children that she destroyed every “threatening” ball kicked their way and pulled children off of “dangerous” swings, sliding boards and bicycles. She faithfully barked at every “intruder” who crossed our property line. She even welcomed another puppy and two kittens in to our home, and protected our flock of chickens from threats. (Ok, yes she ate a few, but mostly she took her role as guardian very seriously.)"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbs",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbr",
+									"text": "She selected our eldest son as her chosen person. While she loved all of us, she slept by him and seemed most content when he was home. She left his side only to remain close to whomever was sick; most notably guarding Grandma in her final days. Minka stayed by her side until her life faded away from her body, then returned to her post at the front door to protect the rest of us from UPS trucks and sporting goods."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kbu",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbt",
+									"text": "Beyond her shedding, Minka’s unwavering loyalty and love enriched our lives in ways we never anticipated. She guarded our home with unmatched dedication, her protective instincts extending to every member of our family. She nurtured relationships, particularly with our eldest son, serving as his steadfast companion through thick and thin. Until one day recently, when we had to make the difficult decision to say good-bye to our beloved Minka. The void she left behind is palpable, a testament to the indelible mark she made on our lives. While we may never recover the lost soccer balls or forgotten t-shirts, Minka’s legacy of love and loyalty will forever endure. In her, we found lessons in pure love and unwavering devotion, for which we are eternally grateful. Farewell, dear friend–you are deeply missed."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"family"
+					]
+				}
+			},
+			{
+				"id": "wp-364",
+				"slug": "the-strength-of-a-mother",
+				"status": "published",
+				"data": {
+					"title": "The Strength of a Mother",
+					"excerpt": "Barbara Kingsolver once said, \"Sometimes the strength of motherhood is greater than natural laws.\" This sentiment rings profoundly true for all mothers, though particularly poignant for mothers navigating the distressing journey of caring for a chronically-ill child. In the early days of motherhood,",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "kbw",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbv",
+									"text": "Barbara Kingsolver once said, “Sometimes the strength of motherhood is greater than natural laws.” This sentiment rings profoundly true for all mothers, though particularly poignant for mothers navigating the distressing journey of caring for a chronically-ill child. In the early days of motherhood, I braced myself for the expected challenges–ear infections, strep throat, and the occasional trip to the ER for stitches. Little did I know, those were mere dress rehearsals for the reality I would face when my child was diagnosed with a rare chronic disease."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kby",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbx",
+									"text": "The journey began with a diagnosis that felt like a foreign language–uncertain and daunting. I couldn’t even pronounce “Eosinophilia” when I returned home to share the news with the family. Years of searching for answers, countless doctors’ appointments, and endless nights of pouring over medical journals became our new normal. Each day was a battle, a quest to make sense of a disease that defied understanding and offered few treatment options. But amid the uncertainty, I found solace and support in unexpected places."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc0",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kbz",
+									"text": "Enter “my people”–a group of parents on Facebook, united by a shared journey of navigating the complexities of this rare disease. Here, in this virtual community, I found understanding and empathy where others fell short. Well-intentioned but ill-informed comments about our child’s condition only served to isolate us from our school, our community and some of our family. School and scouting became increasingly challenging as he encountered a glaring absence of understanding and compassion for his struggle. But among “my people,” there was no need for explanations or justifications–we understood each other’s struggles implicitly."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc2",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc1",
+									"text": "As we journeyed through the maze of medical treatments and specialists, I became an unwitting expert, earning my M.O.M. degrees in Gastroenterology, Hematology, and Immunology. Every setback, every failed treatment, only fueled my determination to advocate fiercely for my son’s well-being. We parted ways with doctors who failed to see beyond the surface of our son’s illness, or who refused to include him in the conversation. Instead, seeking out compassionate caregivers who treated us not just as patients, but as partners in his care."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc4",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc3",
+									"text": "Our medical team became our lifeline, guiding us with compassion and expertise through the darkest moments of our journey. From the pediatric practice that went above and beyond to comfort us, to the GI doctor who became our guardian angel, their unwavering support sustained us through the most challenging times. Their belief in us and our son gave us the strength to keep fighting, even when hope felt scarce."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc6",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc5",
+									"text": "And now, as we look forward to a new chapter in our journey–a clinical trial offering a glimmer of hope for a brighter future–I am filled with a sense of cautious optimism. The years of struggle and uncertainty have led us here, to this moment of possibility. And though the road ahead may be fraught with challenges, we face it with a newfound sense of hope and determination."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kc8",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc7",
+									"text": "In the face of adversity, the strength of motherhood knows no bounds. It is a force that defies logic and transcends natural laws, propelling us forward even when the path forward seems impossible. And thanks to Eosinophilic Gastroenteritis, I’ve gained a sense of inner strength where fevers, ear infections, and stitches no longer evoke fear within."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"family"
+					]
+				}
+			},
+			{
+				"id": "wp-375",
+				"slug": "making-the-case-for-making-your-own-compost",
+				"status": "published",
+				"data": {
+					"title": "Making the Case For Making Your Own Compost",
+					"excerpt": "A rare February gift, two consecutive days of 60+ degree weather, granted by nature, is nothing short of a gardener's delight! Seizing the opportunity, I dedicated last weekend to an array of tasks, from tending to neglected vegetable beds from the previous Fall, to tidying up the yard by clearing f",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "kca",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kc9",
+									"text": "A rare February gift, two consecutive days of 60+ degree weather, granted by nature, is nothing short of a gardener’s delight! Seizing the opportunity, I dedicated last weekend to an array of tasks, from tending to neglected vegetable beds from the previous Fall, to tidying up the yard by clearing fallen sticks, and refreshing the chicken coop. But it’s during the coop cleanout that my thoughts inevitably turn to compost. Venturing over to add some manure from the coop cleanout, I marveled once again at the transformation unfolding before me. Our compost bins, thanks to regular chicken manure enrichments, are a treasure trove waiting to be unearthed. A simple blend of banana peels, leaves, grass clippings, veggie scraps, sunshine, and rain combine to create a bounty of nutrients and minerals that nourish our soil, producing what I affectionately refer to as black gold! It’s a blend so potent, so rich, that I consider our vegetables fortunate to call it home!"
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kcc",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kcb",
+									"text": "Witnessing the miracle of waste and manure evolving into compost in a matter of months never ceases to astonish me, even after decades of annual compost-making rituals. My role in this magical endeavor is minuscule, yet the rewards are boundless. It begs the question, why isn’t everyone doing this? If you haven’t delved into the world of composting yet, I urge you to take the leap. Over the years, I’ve experimented with various compost bins and designs, but none have thrilled me quite like pallets. Repurposed from neighboring businesses, these pallets fashion our compost bins into a free system that yields premium compost."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kce",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kcd",
+									"text": "Located within our chicken pasture, the compost bins double as a source of joy for our hens, who eagerly await their daily feast of discarded scraps. As they gleefully peck and scratch, they unwittingly contribute to the process, tilling the pile and enriching it with more manure. Garden waste, lawn clippings, leaves, and straw from the coop merge in harmony, filling a bin in mere months. When one bin reaches capacity, we rotate to the next, allowing nature to work its magic once again."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "kcg",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "kcf",
+									"text": "This past weekend, as I unearthed a bin overflowing with black gold, I couldn’t help but grin with delight. My five-year-old, curious as ever, inquired about my joy. With a twinkle in my eye, I replied, “Watch!” Together, we screened the soil, separating sticks and the occasional peach pit to reveal a mound of nutrient-rich, loamy, aromatic compost, fit for the king’s garden! We wasted no time in putting it to good use, sowing it into a bed we planned to plant soon. Watching my little garden buddy marvel at the transformation, exclaiming, “Wow Mom, we made this!” was a victory in itself. It’s moments like these that reaffirm the power of turning trash into treasure and cultivating our own sustenance. Here at The Nest, we call it a “good day!”"
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": [
+						"garden"
+					]
 				}
 			}
 		],
@@ -668,23 +4452,63 @@
 					"difficulty": "Easy",
 					"featured": true,
 					"ingredients": [
-						{ "amount": "2 1/2", "unit": "cup", "item": "all-purpose flour" },
-						{ "amount": "1", "unit": "tbsp", "item": "baking powder" },
-						{ "amount": "1/2", "unit": "tsp", "item": "baking soda" },
-						{ "amount": "1", "unit": "tsp", "item": "salt", "fixed": true },
-						{ "amount": "1/2", "unit": "cup", "item": "butter", "note": "very cold, cubed" },
-						{ "amount": "1 1/4", "unit": "cup", "item": "buttermilk", "note": "cold" }
+						{
+							"amount": "2 1/2",
+							"unit": "cup",
+							"item": "all-purpose flour"
+						},
+						{
+							"amount": "1",
+							"unit": "tbsp",
+							"item": "baking powder"
+						},
+						{
+							"amount": "1/2",
+							"unit": "tsp",
+							"item": "baking soda"
+						},
+						{
+							"amount": "1",
+							"unit": "tsp",
+							"item": "salt",
+							"fixed": true
+						},
+						{
+							"amount": "1/2",
+							"unit": "cup",
+							"item": "butter",
+							"note": "very cold, cubed"
+						},
+						{
+							"amount": "1 1/4",
+							"unit": "cup",
+							"item": "buttermilk",
+							"note": "cold"
+						}
 					],
 					"steps": [
-						{ "instruction": "Heat the oven to 450°F and line a baking sheet with parchment." },
-						{ "instruction": "Whisk the flour, baking powder, baking soda, and salt. Cut in the butter until the pieces are the size of peas." },
-						{ "instruction": "Stir in the buttermilk just until a shaggy dough forms. Pat out, fold in thirds twice, and cut into rounds." },
-						{ "instruction": "Bake 12 to 14 minutes until tall and golden." }
+						{
+							"instruction": "Heat the oven to 450°F and line a baking sheet with parchment."
+						},
+						{
+							"instruction": "Whisk the flour, baking powder, baking soda, and salt. Cut in the butter until the pieces are the size of peas."
+						},
+						{
+							"instruction": "Stir in the buttermilk just until a shaggy dough forms. Pat out, fold in thirds twice, and cut into rounds."
+						},
+						{
+							"instruction": "Bake 12 to 14 minutes until tall and golden."
+						}
 					]
 				},
 				"taxonomies": {
-					"course": ["bread", "breakfast"],
-					"recipe_tag": ["quick"]
+					"course": [
+						"bread",
+						"breakfast"
+					],
+					"recipe_tag": [
+						"quick"
+					]
 				}
 			},
 			{
@@ -701,21 +4525,63 @@
 					"difficulty": "Medium",
 					"featured": true,
 					"ingredients": [
-						{ "group": "For the soup", "amount": "3", "unit": "lb", "item": "chicken thighs" },
-						{ "group": "For the soup", "amount": "3", "unit": "quart", "item": "water" },
-						{ "group": "For the soup", "amount": "4", "unit": "cup", "item": "sweet corn" },
-						{ "group": "For the soup", "amount": "1/4", "unit": "tsp", "item": "saffron", "note": "optional" },
-						{ "group": "For the rivels", "amount": "1", "unit": "cup", "item": "flour" },
-						{ "group": "For the rivels", "amount": "1", "item": "egg" }
+						{
+							"group": "For the soup",
+							"amount": "3",
+							"unit": "lb",
+							"item": "chicken thighs"
+						},
+						{
+							"group": "For the soup",
+							"amount": "3",
+							"unit": "quart",
+							"item": "water"
+						},
+						{
+							"group": "For the soup",
+							"amount": "4",
+							"unit": "cup",
+							"item": "sweet corn"
+						},
+						{
+							"group": "For the soup",
+							"amount": "1/4",
+							"unit": "tsp",
+							"item": "saffron",
+							"note": "optional"
+						},
+						{
+							"group": "For the rivels",
+							"amount": "1",
+							"unit": "cup",
+							"item": "flour"
+						},
+						{
+							"group": "For the rivels",
+							"amount": "1",
+							"item": "egg"
+						}
 					],
 					"steps": [
-						{ "group": "Make the soup", "instruction": "Simmer the chicken in the water for 45 minutes. Remove, shred, and return to the pot." },
-						{ "group": "Make the soup", "instruction": "Add the corn and saffron and simmer 10 minutes." },
-						{ "group": "Add the rivels", "instruction": "Rub the egg into the flour until crumbly. Drop into the simmering soup and cook 5 minutes." }
+						{
+							"group": "Make the soup",
+							"instruction": "Simmer the chicken in the water for 45 minutes. Remove, shred, and return to the pot."
+						},
+						{
+							"group": "Make the soup",
+							"instruction": "Add the corn and saffron and simmer 10 minutes."
+						},
+						{
+							"group": "Add the rivels",
+							"instruction": "Rub the egg into the flour until crumbly. Drop into the simmering soup and cook 5 minutes."
+						}
 					]
 				},
 				"taxonomies": {
-					"course": ["soup-salad", "main"]
+					"course": [
+						"soup-salad",
+						"main"
+					]
 				}
 			},
 			{
@@ -733,21 +4599,51 @@
 					"difficulty": "Medium",
 					"featured": true,
 					"ingredients": [
-						{ "amount": "1", "item": "unbaked pie crust" },
-						{ "amount": "1", "unit": "cup", "item": "molasses" },
-						{ "amount": "3/4", "unit": "cup", "item": "boiling water" },
-						{ "amount": "1 1/2", "unit": "cup", "item": "flour" },
-						{ "amount": "1/2", "unit": "cup", "item": "brown sugar" }
+						{
+							"amount": "1",
+							"item": "unbaked pie crust"
+						},
+						{
+							"amount": "1",
+							"unit": "cup",
+							"item": "molasses"
+						},
+						{
+							"amount": "3/4",
+							"unit": "cup",
+							"item": "boiling water"
+						},
+						{
+							"amount": "1 1/2",
+							"unit": "cup",
+							"item": "flour"
+						},
+						{
+							"amount": "1/2",
+							"unit": "cup",
+							"item": "brown sugar"
+						}
 					],
 					"steps": [
-						{ "instruction": "Mix the molasses and boiling water and pour into the crust." },
-						{ "instruction": "Rub the flour, sugar, and butter into crumbs and scatter over the top." },
-						{ "instruction": "Bake at 375°F for 50 minutes. Cool at least 2 hours before slicing." }
+						{
+							"instruction": "Mix the molasses and boiling water and pour into the crust."
+						},
+						{
+							"instruction": "Rub the flour, sugar, and butter into crumbs and scatter over the top."
+						},
+						{
+							"instruction": "Bake at 375°F for 50 minutes. Cool at least 2 hours before slicing."
+						}
 					]
 				},
 				"taxonomies": {
-					"course": ["dessert"],
-					"recipe_tag": ["holiday", "make-ahead"]
+					"course": [
+						"dessert"
+					],
+					"recipe_tag": [
+						"holiday",
+						"make-ahead"
+					]
 				}
 			}
 		]

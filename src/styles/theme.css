@@ -364,6 +364,37 @@ hr {
 	grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.5rem), 1fr));
 }
 
+/* Listing pages (blog, recipes, shop) */
+.listing-header {
+	max-width: 40rem;
+	margin-bottom: var(--space-lg);
+}
+
+.listing-header h1 {
+	margin-bottom: var(--space-2xs);
+}
+
+.listing-intro {
+	font-size: var(--text-lg);
+	color: var(--color-muted);
+}
+
+.listing-empty {
+	padding: var(--space-2xl) 0;
+	text-align: center;
+}
+
+.listing-empty p,
+.listing-note {
+	color: var(--color-muted);
+}
+
+.listing-note {
+	margin-top: var(--space-lg);
+	text-align: center;
+	font-size: var(--text-sm);
+}
+
 .visually-hidden {
 	position: absolute !important;
 	width: 1px;
@@ -404,6 +435,90 @@ hr {
 	}
 }
 
+/* ---------- Comments (EmDash <Comments> / <CommentForm>) ----------
+   Wrap them in .comments-section; the extra class outranks EmDash's
+   scoped defaults. */
+
+.comments-section .ec-comments-heading {
+	font-size: var(--text-2xl);
+	margin-bottom: var(--space-md);
+}
+
+.comments-section .ec-comments-list {
+	--ec-comment-border: 1px solid var(--color-border);
+}
+
+.comments-section .ec-comment .ec-comment-author {
+	font-family: var(--font-display);
+	font-size: var(--text-lg);
+	color: var(--color-olive);
+}
+
+.comments-section .ec-comment .ec-comment-date {
+	font-size: var(--text-xs);
+	color: var(--color-muted);
+}
+
+.comments-section .ec-comment .ec-comment-body {
+	line-height: var(--leading-body);
+}
+
+.comments-section .ec-comment .ec-comment-replies {
+	border-left: 2px solid var(--color-aqua);
+}
+
+.comments-section .ec-comment-form .ec-comment-form-field {
+	font-size: var(--text-sm);
+	font-weight: 600;
+	color: var(--color-olive);
+}
+
+.comments-section .ec-comment-form .ec-comment-form-field input,
+.comments-section .ec-comment-form .ec-comment-form-field textarea {
+	min-height: 2.75rem;
+	padding: 0.6rem 0.9rem;
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-md);
+	background: var(--color-surface);
+	font-weight: 400;
+	font-size: var(--text-base);
+	color: var(--color-text);
+}
+
+.comments-section .ec-comment-form .ec-comment-form-field textarea {
+	min-height: 8rem;
+	resize: vertical;
+}
+
+.comments-section .ec-comment-form .ec-comment-form-field input:focus,
+.comments-section .ec-comment-form .ec-comment-form-field textarea:focus {
+	outline: 2px solid var(--color-focus);
+	outline-offset: 1px;
+	border-color: transparent;
+}
+
+.comments-section .ec-comment-form .ec-comment-form-submit {
+	min-height: 2.75rem;
+	padding: 0.6rem 1.5rem;
+	border: 0;
+	border-radius: var(--radius-pill);
+	background: var(--color-olive);
+	color: #fff;
+	font-weight: 600;
+	font-size: var(--text-sm);
+	letter-spacing: 0.02em;
+	cursor: pointer;
+}
+
+.comments-section .ec-comment-form .ec-comment-form-submit:hover {
+	background: var(--color-moss);
+}
+
+.comments-section .ec-comment-form .ec-comment-form-status {
+	margin-top: var(--space-sm);
+	font-size: var(--text-sm);
+}
+
 /* ---------- Print ---------- */
 
 @media print {
@@ -411,9 +526,27 @@ hr {
 		--color-bg: #fff;
 	}
 
+	/*
+	 * On screen the body is at least one window tall (sticky footer). In
+	 * print that minimum can exceed a sheet of paper and push a blank second
+	 * page, so size everything to its content.
+	 */
+	html,
 	body {
+		min-height: 0 !important;
+		height: auto !important;
+	}
+
+	body {
+		display: block;
 		font-size: 11pt;
 		color: #000;
+	}
+
+	.site-main {
+		flex: none !important;
+		min-height: 0 !important;
+		padding: 0 !important;
 	}
 
 	.no-print,

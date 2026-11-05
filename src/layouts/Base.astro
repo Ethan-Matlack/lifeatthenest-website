@@ -18,10 +18,22 @@ interface Props {
 	content?: { collection: string; id: string; slug?: string | null };
 	/** Skip the default centered container so the page can lay out full-bleed sections */
 	fullBleed?: boolean;
+	/** "article" for posts/recipes (enables BlogPosting JSON-LD and og:type article) */
+	pageType?: "website" | "article";
+	articleMeta?: { publishedTime?: string | null; modifiedTime?: string | null; author?: string | null };
 }
 
-const { title, pageTitle, description, image, canonical, content, fullBleed = false } =
-	Astro.props;
+const {
+	title,
+	pageTitle,
+	description,
+	image,
+	canonical,
+	content,
+	fullBleed = false,
+	pageType = "website",
+	articleMeta,
+} = Astro.props;
 const [settingsResult, menuResult, socialResult] = await Promise.all([
 	getSiteSettingsWithCacheHint(),
 	getMenuWithCacheHint("primary"),
@@ -48,7 +60,8 @@ const socialItems = socialResult.data?.items ?? [];
 const pageCtx = createPublicPageContext({
 	Astro,
 	kind: content ? "content" : "custom",
-	pageType: "website",
+	pageType,
+	articleMeta,
 	title: fullTitle,
 	pageTitle: pageTitle ?? title,
 	description: pageDescription,
@@ -88,7 +101,6 @@ const pageCtx = createPublicPageContext({
 		<SiteFooter
 			siteTitle={siteTitle}
 			siteTagline={siteTagline}
-			navItems={navItems}
 			socialItems={socialItems}
 		/>
 

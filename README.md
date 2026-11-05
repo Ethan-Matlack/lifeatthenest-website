@@ -48,6 +48,12 @@ npm run deploy
 
 The first deployment provisions the named D1 database and R2 bucket from `wrangler.jsonc`. See [Deploy to Cloudflare](https://docs.emdashcms.com/deployment/cloudflare/) for production setup, or use the deploy button above.
 
+## Upstream Requests (EmDash)
+
+Things to file with [EmDash](https://github.com/emdash-cms/emdash/issues) rather than work around locally.
+
+- [ ] **Tag icon for any flat taxonomy in the admin sidebar.** The admin picks a taxonomy's nav icon by name only: `getTaxonomyNavIcon(name)` returns the tag icon when `name === "tag"` and the generic taxonomy icon otherwise (`@emdash-cms/admin`). Our "Recipe Tags" (`recipe_tag`) is a tag list but shows the generic icon, while "Blog Tags" (`tag`) gets the tag icon. Request either an `icon` option on taxonomy definitions (seed + Content Types UI), or defaulting non-hierarchical taxonomies to the tag icon. Cosmetic only; ignore until fixed upstream.
+
 ## See Also
 
 - [Node.js variant](../starter) -- same template using SQLite and local file storage

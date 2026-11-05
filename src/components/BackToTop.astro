@@ -1,0 +1,169 @@
+---
+/**
+ * Floating "back to top" button, bottom-right.
+ *
+ * Appears once the site header has scrolled out of view, and parks just
+ * above the footer instead of sliding over it. Drop <BackToTop /> into any
+ * page that gets long (blog, recipes, ...). Hidden without JS and in print.
+ */
+interface Props {
+	/** CSS selector for the element whose disappearance reveals the button */
+	watch?: string;
+	/** CSS selector for the element the button should stop above */
+	stopAt?: string;
+}
+
+const { watch = ".site-header", stopAt = ".site-footer" } = Astro.props;
+---
+
+<button class="back-to-top no-print" type="button" data-watch={watch} data-stop-at={stopAt} hidden>
+	<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+		<path d="M12 19V5M5 12l7-7 7 7" />
+	</svg>
+	<span class="back-to-top-label">Back to top</span>
+</button>
+
+<script>
+	for (const button of document.querySelectorAll(".back-to-top")) {
+		if (!(button instanceof HTMLButtonElement)) continue;
+		const target = document.querySelector(button.dataset.watch || ".site-header");
+		if (!target || !("IntersectionObserver" in window)) continue;
+
+		button.hidden = false;
+
+		const observer = new IntersectionObserver(([entry]) => {
+			button.classList.toggle("is-visible", !entry.isIntersecting);
+		});
+		observer.observe(target);
+
+		// Lift the button by however much of the footer is on screen, so it
+		// rests just above the footer rather than on top of it.
+		const footer = document.querySelector(button.dataset.stopAt || ".site-footer");
+		if (footer) {
+			let frame = 0;
+			const update = () => {
+				frame = 0;
+				const overlap = window.innerHeight - footer.getBoundingClientRect().top;
+				button.style.setProperty("--btt-lift", `${Math.max(0, overlap)}px`);
+			};
+			const schedule = () => {
+				if (!frame) frame = requestAnimationFrame(update);
+			};
+			// Only track scrolling while the footer is actually in view.
+			new IntersectionObserver(([entry]) => {
+				if (entry.isIntersecting) {
+					window.addEventListener("scroll", schedule, { passive: true });
+					window.addEventListener("resize", schedule);
+				} else {
+					window.removeEventListener("scroll", schedule);
+					window.removeEventListener("resize", schedule);
+				}
+				update();
+			}).observe(footer);
+		}
+
+		button.addEventListener("click", () => {
+			const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+			window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+			// Send keyboard focus back to the top of the page too.
+			const main = document.getElementById("main");
+			if (main) {
+				main.setAttribute("tabindex", "-1");
+				main.focus({ preventScroll: true });
+			}
+		});
+	}
+</script>
+
+<style>
+	.back-to-top {
+		position: fixed;
+		right: max(var(--space-sm), env(safe-area-inset-right));
+		bottom: max(var(--space-sm), env(safe-area-inset-bottom));
+		z-index: 30;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2xs);
+		min-width: 3rem;
+		height: 3rem;
+		padding: 0 0.9rem;
+		border: 0;
+		border-radius: var(--radius-pill);
+		background: var(--color-olive);
+		color: #fff;
+		box-shadow: var(--shadow-md);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		cursor: pointer;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateY(0.75rem);
+		/* Footer lift: separate from transform so it isn't animated and
+		   tracks the scroll position exactly. */
+		translate: 0 calc(-1 * var(--btt-lift, 0px));
+		transition:
+			opacity 0.2s ease,
+			transform 0.2s ease,
+			visibility 0.2s,
+			background-color 0.15s ease;
+	}
+
+	.back-to-top[hidden] {
+		display: none;
+	}
+
+	.back-to-top.is-visible {
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+	}
+
+	.back-to-top:hover {
+		background: var(--color-moss);
+	}
+
+	.back-to-top:focus-visible {
+		outline: 2px solid var(--color-olive);
+		outline-offset: 3px;
+	}
+
+	.back-to-top svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	/* Icon-only circle on phones; label visible on larger screens. */
+	.back-to-top-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	@media (min-width: 48rem) {
+		.back-to-top {
+			right: var(--space-lg);
+			bottom: var(--space-lg);
+		}
+
+		.back-to-top-label {
+			position: static;
+			width: auto;
+			height: auto;
+			overflow: visible;
+			clip: auto;
+		}
+	}
+
+	@media print {
+		.back-to-top {
+			display: none !important;
+		}
+	}
+</style>
