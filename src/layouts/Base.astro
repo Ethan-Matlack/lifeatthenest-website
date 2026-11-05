@@ -2,8 +2,11 @@
 import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash";
 import { EmDashHead, EmDashBodyStart, EmDashBodyEnd } from "emdash/ui";
 import { createPublicPageContext } from "emdash/page";
-import LiveSearch from "emdash/ui/search";
+import { Font } from "astro:assets";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 import { resolveStarterSiteIdentity } from "../utils/site-identity";
+import "../styles/theme.css";
 
 interface Props {
 	title: string;
@@ -13,17 +16,21 @@ interface Props {
 	canonical?: string | null;
 	/** Pass content reference for plugin page contributions on content pages */
 	content?: { collection: string; id: string; slug?: string | null };
+	/** Skip the default centered container so the page can lay out full-bleed sections */
+	fullBleed?: boolean;
 }
 
-const { title, pageTitle, description, image, canonical, content } =
+const { title, pageTitle, description, image, canonical, content, fullBleed = false } =
 	Astro.props;
-const [settingsResult, menuResult] = await Promise.all([
+const [settingsResult, menuResult, socialResult] = await Promise.all([
 	getSiteSettingsWithCacheHint(),
 	getMenuWithCacheHint("primary"),
+	getMenuWithCacheHint("social"),
 ]);
 if (Astro.cache?.enabled) {
 	Astro.cache.set(settingsResult.cacheHint);
 	Astro.cache.set(menuResult.cacheHint);
+	Astro.cache.set(socialResult.cacheHint);
 }
 
 const { siteTitle, siteTagline, siteLogo } = resolveStarterSiteIdentity(
@@ -35,7 +42,8 @@ const titleIncludesSiteName =
 	title.endsWith(` — ${siteTitle}`);
 const fullTitle = titleIncludesSiteName ? title : `${title} — ${siteTitle}`;
 const pageDescription = description ?? siteTagline;
-const menu = menuResult.data;
+const navItems = menuResult.data?.items ?? [];
+const socialItems = socialResult.data?.items ?? [];
 
 const pageCtx = createPublicPageContext({
 	Astro,
@@ -56,46 +64,45 @@ const pageCtx = createPublicPageContext({
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#fdfbf8" />
 		<title>{fullTitle}</title>
+		<Font cssVariable="--font-display" preload />
+		<Font cssVariable="--font-body" preload />
 		<EmDashHead page={pageCtx} />
 	</head>
 	<body>
 		<EmDashBodyStart page={pageCtx} />
+		<a class="skip-link" href="#main">Skip to content</a>
 
-		<header>
-			<nav>
-				<a href="/">
-					{
-						siteLogo ? (
-							<img
-								src={siteLogo.url}
-								alt={siteLogo.alt || siteTitle}
-								style="height:48px;width:auto;margin:-8px 0;display:block;"
-							/>
-						) : (
-							siteTitle
-						)
-					}
-				</a>
-				{
-					menu?.items.map((item) => (
-						<a
-							href={item.url}
-							target={item.target}
-							rel={item.target === "_blank" ? "noopener noreferrer" : undefined}
-						>
-							{item.label}
-						</a>
-					))
-				}
-				<LiveSearch placeholder="Search..." collections={["posts", "pages"]} />
-			</nav>
-		</header>
+		<SiteHeader
+			siteTitle={siteTitle}
+			siteTagline={siteTagline}
+			logo={siteLogo}
+			items={navItems}
+		/>
 
-		<main>
+		<main id="main" class:list={["site-main", { container: !fullBleed }]}>
 			<slot />
 		</main>
+
+		<SiteFooter
+			siteTitle={siteTitle}
+			siteTagline={siteTagline}
+			navItems={navItems}
+			socialItems={socialItems}
+		/>
 
 		<EmDashBodyEnd page={pageCtx} />
 	</body>
 </html>
+
+<style>
+	.site-main {
+		flex: 1 0 auto;
+		width: 100%;
+	}
+
+	.site-main.container {
+		padding-block: var(--space-xl) var(--space-2xl);
+	}
+</style>

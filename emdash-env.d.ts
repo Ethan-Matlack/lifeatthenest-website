@@ -3,7 +3,27 @@
 
 /// <reference types="emdash/locals" />
 
-import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock } from "emdash";
+import type { BylineSummary, ContentBylineCredit, TaxonomyTerm, PortableTextBlock, ReferencePage } from "emdash";
+
+export interface Homepage {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  welcome_heading: string;
+  welcome_text?: string;
+  welcome_image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  about_heading?: string;
+  about_text?: PortableTextBlock[];
+  about_image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  quotes?: { "quote": string; "author"?: string | null }[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
 
 export interface Page {
   id: string;
@@ -35,9 +55,72 @@ export interface Post {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Product {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  link: string;
+  store?: string;
+  blurb?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface Recipe {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  summary?: string;
+  hero_image: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  pin_image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  intro?: PortableTextBlock[];
+  servings: number;
+  yield_unit?: string;
+  prep_minutes?: number;
+  cook_minutes?: number;
+  extra_minutes?: number;
+  difficulty?: "Easy" | "Medium" | "Involved";
+  ingredients: { "group"?: string | null; "amount"?: string | null; "unit"?: "tsp" | "tbsp" | "cup" | "fl oz" | "pint" | "quart" | "oz" | "lb" | "g" | "kg" | "ml" | "l" | "pinch" | "dash" | "clove" | "can" | "jar" | "package" | "stick" | "slice" | "sprig" | "bunch" | null; "item": string; "note"?: string | null; "fixed"?: boolean | null }[];
+  steps: { "group"?: string | null; "instruction": string; "image"?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } } | null }[];
+  equipment?: string;
+  notes?: PortableTextBlock[];
+  calories?: number;
+  credit?: string;
+  video_url?: string;
+  featured?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
+export interface PostReferences {
+  featured_products: ReferencePage<Product>;
+}
+
+export interface RecipeReferences {
+  featured_products: ReferencePage<Product>;
+}
+
 declare module "emdash" {
   interface EmDashCollections {
+    homepage: Homepage;
     pages: Page;
     posts: Post;
+    products: Product;
+    recipes: Recipe;
+  }
+  interface EmDashCollectionReferences {
+    posts: PostReferences;
+    recipes: RecipeReferences;
   }
 }

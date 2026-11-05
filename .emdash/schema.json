@@ -1,6 +1,120 @@
 {
   "collections": [
     {
+      "slug": "homepage",
+      "label": "Homepage",
+      "labelSingular": "Homepage",
+      "description": "The text and photos on the homepage. There is only one entry here: edit it rather than adding a new one.",
+      "icon": "house",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Name (only shown in the admin)",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "defaultValue": "Homepage"
+        },
+        {
+          "slug": "welcome_heading",
+          "label": "Welcome heading",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "maxLength": 80
+          }
+        },
+        {
+          "slug": "welcome_text",
+          "label": "Welcome message",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 600
+          },
+          "options": {
+            "rows": 5
+          }
+        },
+        {
+          "slug": "welcome_image",
+          "label": "Welcome photo",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "about_heading",
+          "label": "About section heading",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "defaultValue": "Meet Audra",
+          "validation": {
+            "maxLength": 80
+          }
+        },
+        {
+          "slug": "about_text",
+          "label": "About section text",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "about_image",
+          "label": "About section photo",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "quotes",
+          "label": "Quotes (rotate at the bottom of the homepage)",
+          "type": "repeater",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxItems": 20,
+            "subFields": [
+              {
+                "slug": "quote",
+                "label": "Quote",
+                "type": "text",
+                "required": true
+              },
+              {
+                "slug": "author",
+                "label": "Who said it",
+                "type": "string"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
       "slug": "pages",
       "label": "Pages",
       "labelSingular": "Page",
@@ -473,5 +587,5 @@
       ]
     }
   ],
-  "version": "92cd3030a445d8c4"
+  "version": "50e663c82b9775e2"
 }

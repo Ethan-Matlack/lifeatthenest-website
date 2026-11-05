@@ -1,0 +1,220 @@
+---
+import SocialIcon from "./SocialIcon.astro";
+
+interface LinkItem {
+	label: string;
+	url: string;
+	target?: string | null;
+}
+
+interface Props {
+	siteTitle: string;
+	siteTagline?: string | null;
+	navItems: LinkItem[];
+	socialItems: LinkItem[];
+}
+
+const { siteTitle, siteTagline, navItems, socialItems } = Astro.props;
+const year = new Date().getFullYear();
+const footerNav = navItems.filter((item) => item.url !== "/");
+---
+
+<footer class="site-footer">
+	<div class="container footer-grid">
+		<div class="footer-brand">
+			<a href="/" aria-label={`${siteTitle} home`}>
+				<img src="/images/logo.svg" alt="" width="341" height="90" loading="lazy" />
+			</a>
+			{siteTagline && <p class="footer-tagline">{siteTagline}</p>}
+			<p class="footer-blurb">
+				Make-it-from-scratch living from our kitchen, garden, pasture, and studio.
+			</p>
+		</div>
+
+		{
+			socialItems.length > 0 && (
+				<div class="footer-col">
+					<h2 class="footer-heading">Let's Connect</h2>
+					<ul class="social-list">
+						{socialItems.map((item) => (
+							<li>
+								<a
+									href={item.url}
+									target="_blank"
+									rel="noopener noreferrer me"
+									aria-label={item.label}
+									title={item.label}
+								>
+									<SocialIcon url={item.url} />
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			)
+		}
+
+		<nav class="footer-col" aria-label="Footer">
+			<h2 class="footer-heading">Explore</h2>
+			<ul class="footer-links">
+				{
+					footerNav.map((item) => (
+						<li>
+							<a href={item.url}>{item.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+
+		<div class="footer-col footer-newsletter">
+			<h2 class="footer-heading">Join the Newsletter</h2>
+			<p>New recipes and stories from the nest, sent to your inbox.</p>
+			<a class="btn footer-btn" href="/contact">Sign up</a>
+		</div>
+	</div>
+
+	<div class="footer-bottom">
+		<div class="container footer-legal">
+			<p>&copy; {year} Audra Chalfant Matlack. All rights reserved.</p>
+			<p>As an Amazon Associate, I earn from qualifying purchases.</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.site-footer {
+		margin-top: auto;
+		background: var(--color-olive);
+		color: #e9ede6;
+		font-size: var(--text-sm);
+	}
+
+	.site-footer a {
+		color: #fff;
+	}
+
+	.site-footer a:hover {
+		color: var(--color-aqua);
+	}
+
+	.footer-grid {
+		display: grid;
+		gap: var(--space-xl) var(--space-lg);
+		padding-block: var(--space-2xl) var(--space-xl);
+		grid-template-columns: 1fr;
+	}
+
+	@media (min-width: 40rem) {
+		.footer-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (min-width: 64rem) {
+		.footer-grid {
+			grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+		}
+	}
+
+	.footer-brand img {
+		width: 210px;
+		filter: brightness(0) invert(1);
+	}
+
+	.footer-tagline {
+		margin: var(--space-2xs) 0 var(--space-sm);
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-aqua);
+	}
+
+	.footer-blurb {
+		max-width: 22rem;
+	}
+
+	.footer-heading {
+		margin-bottom: var(--space-sm);
+		font-family: var(--font-display);
+		font-size: var(--text-xl);
+		font-weight: 400;
+		color: #fff;
+	}
+
+	.social-list,
+	.footer-links {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.social-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2xs);
+	}
+
+	.social-list a {
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border: 1px solid rgb(255 255 255 / 0.35);
+		border-radius: 50%;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+	}
+
+	.social-list a:hover {
+		background: #fff;
+		color: var(--color-olive);
+	}
+
+	.footer-links li + li {
+		margin-top: var(--space-2xs);
+	}
+
+	.footer-links a {
+		text-decoration: none;
+	}
+
+	.footer-links a:hover {
+		text-decoration: underline;
+	}
+
+	.footer-btn {
+		background: #fff;
+		border-color: #fff;
+		color: var(--color-olive) !important;
+	}
+
+	.footer-btn:hover {
+		background: var(--color-aqua);
+		border-color: var(--color-aqua);
+	}
+
+	.footer-legal {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: var(--space-2xs) var(--space-lg);
+		padding-block: var(--space-md);
+		font-size: var(--text-xs);
+		color: #cfd8cb;
+	}
+
+	.footer-bottom {
+		border-top: 1px solid rgb(255 255 255 / 0.18);
+	}
+
+	.footer-legal p {
+		margin: 0;
+	}
+
+	.site-footer :focus-visible {
+		outline-color: #fff;
+	}
+</style>

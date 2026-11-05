@@ -12,12 +12,82 @@
 	},
 	"collections": [
 		{
+			"slug": "homepage",
+			"label": "Homepage",
+			"labelSingular": "Homepage",
+			"description": "The text and photos on the homepage. There is only one entry here: edit it rather than adding a new one.",
+			"icon": "house",
+			"supports": ["drafts", "revisions"],
+			"routable": false,
+			"titleField": "title",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Name (only shown in the admin)",
+					"type": "string",
+					"required": true,
+					"defaultValue": "Homepage"
+				},
+				{
+					"slug": "welcome_heading",
+					"label": "Welcome heading",
+					"type": "string",
+					"required": true,
+					"validation": { "maxLength": 80 }
+				},
+				{
+					"slug": "welcome_text",
+					"label": "Welcome message",
+					"type": "text",
+					"options": { "rows": 5 },
+					"validation": { "maxLength": 600 }
+				},
+				{
+					"slug": "welcome_image",
+					"label": "Welcome photo",
+					"type": "image",
+					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+				},
+				{
+					"slug": "about_heading",
+					"label": "About section heading",
+					"type": "string",
+					"defaultValue": "Meet Audra",
+					"validation": { "maxLength": 80 }
+				},
+				{
+					"slug": "about_text",
+					"label": "About section text",
+					"type": "portableText"
+				},
+				{
+					"slug": "about_image",
+					"label": "About section photo",
+					"type": "image",
+					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+				},
+				{
+					"slug": "quotes",
+					"label": "Quotes (rotate at the bottom of the homepage)",
+					"type": "repeater",
+					"validation": {
+						"maxItems": 20,
+						"subFields": [
+							{ "slug": "quote", "label": "Quote", "type": "text", "required": true },
+							{ "slug": "author", "label": "Who said it", "type": "string" }
+						]
+					}
+				}
+			]
+		},
+		{
 			"slug": "products",
 			"label": "Shop Products",
 			"labelSingular": "Product",
 			"description": "Products you recommend. Pick them on a post or recipe and they appear on the Shop page.",
 			"icon": "shopping-bag",
 			"supports": ["drafts", "search"],
+			"routable": false,
 			"titleField": "title",
 			"fields": [
 				{
@@ -349,10 +419,10 @@
 			"hierarchical": true,
 			"collections": ["posts"],
 			"terms": [
-				{ "slug": "kitchen", "label": "In the Kitchen" },
-				{ "slug": "garden", "label": "In the Garden" },
-				{ "slug": "pasture", "label": "In the Pasture" },
-				{ "slug": "studio", "label": "In the Studio" }
+				{ "slug": "kitchen", "label": "In the Kitchen", "description": "Recipes and stories from a mostly scratch kitchen" },
+				{ "slug": "garden", "label": "In the Garden", "description": "Sowing seeds for health & wellness" },
+				{ "slug": "pasture", "label": "In the Pasture", "description": "Raising healthy animals sustainably on pasture" },
+				{ "slug": "studio", "label": "In the Studio", "description": "Sharing seasonal design ideas to decorate the Nest" }
 			]
 		},
 		{
@@ -420,6 +490,64 @@
 		}
 	],
 	"content": {
+		"homepage": [
+			{
+				"id": "homepage",
+				"slug": "homepage",
+				"status": "published",
+				"data": {
+					"title": "Homepage",
+					"welcome_heading": "Welcome to Life at the Nest",
+					"welcome_text": "Whether in the kitchen, garden, pasture, or design studio, I'm dedicated to upholding the cherished traditions of the \"make it from scratch\" philosophy. This legacy, passed down for generations, holds a special place in my heart, and I am thrilled to share it with you. Join me as we celebrate the art of craftsmanship together!",
+					"about_heading": "Meet Audra",
+					"about_text": [
+						{
+							"_type": "block",
+							"_key": "a0",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "a0s",
+									"text": "I inherited a unique perspective about self-sufficiency and resourcefulness as a child in rural Lancaster County, PA. Rooted in the traditions of my Pennsylvania Dutch great-grandparents, I learned from an early age the deep satisfaction of nurturing life from seed to harvest. In our community, where thrift was a virtue, we found beauty in simplicity and purpose in every task."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "a1",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "a1s",
+									"text": "Guided by the wisdom of family and community, especially my beloved \"Amish Mom\" Fannie, I came to understand that true wealth lay not in possessions, but in the richness of family bonds and the bounty of the earth. Today, as the parent of five, I carry forward these cherished values, sowing the seeds of self-reliance and stewardship in our own children."
+								}
+							]
+						},
+						{
+							"_type": "block",
+							"_key": "a2",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "a2s",
+									"text": "Warmly, Audra"
+								}
+							]
+						}
+					],
+					"quotes": [
+						{ "quote": "What you leave behind is not what is engraved in stone monuments, but what is woven into the lives of others.", "author": "Pericles" },
+						{ "quote": "To plant a garden is to dream of tomorrow.", "author": "Audrey Hepburn" },
+						{ "quote": "Sometimes the most important thing in a whole day is the rest we take between two deep breaths.", "author": "Etty Hillesum" },
+						{ "quote": "The garden suggests there might be a place where we can meet nature halfway.", "author": "Michael Pollan" },
+						{ "quote": "In his garden, every man may be his own artist without apology or explanation.", "author": "Louise Beebe Wilder" }
+					]
+				}
+			}
+		],
 		"pages": [
 			{
 				"id": "about",
@@ -482,6 +610,144 @@
 				},
 				"taxonomies": {
 					"category": ["kitchen"]
+				}
+			},
+			{
+				"id": "post-2",
+				"slug": "sample-spring-garden-plan",
+				"status": "published",
+				"data": {
+					"title": "Sample: Planning the Spring Garden",
+					"excerpt": "Placeholder post for development. Seed starting, succession sowing, and what goes in the raised beds this year.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k0",
+							"style": "normal",
+							"children": [{ "_type": "span", "_key": "k1", "text": "Placeholder post content for development." }]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": ["garden"]
+				}
+			},
+			{
+				"id": "post-3",
+				"slug": "sample-autumn-mantel",
+				"status": "published",
+				"data": {
+					"title": "Sample: A Simple Autumn Mantel",
+					"excerpt": "Placeholder post for development. Dried hydrangeas, a few gourds from the garden, and thrifted brass.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k0",
+							"style": "normal",
+							"children": [{ "_type": "span", "_key": "k1", "text": "Placeholder post content for development." }]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": ["studio"]
+				}
+			}
+		],
+		"recipes": [
+			{
+				"id": "recipe-1",
+				"slug": "sample-buttermilk-biscuits",
+				"status": "published",
+				"data": {
+					"title": "Sample: Buttermilk Biscuits",
+					"summary": "Placeholder recipe for development. Tall, flaky biscuits with cold butter and buttermilk.",
+					"servings": 8,
+					"yield_unit": "biscuits",
+					"prep_minutes": 15,
+					"cook_minutes": 14,
+					"difficulty": "Easy",
+					"featured": true,
+					"ingredients": [
+						{ "amount": "2 1/2", "unit": "cup", "item": "all-purpose flour" },
+						{ "amount": "1", "unit": "tbsp", "item": "baking powder" },
+						{ "amount": "1/2", "unit": "tsp", "item": "baking soda" },
+						{ "amount": "1", "unit": "tsp", "item": "salt", "fixed": true },
+						{ "amount": "1/2", "unit": "cup", "item": "butter", "note": "very cold, cubed" },
+						{ "amount": "1 1/4", "unit": "cup", "item": "buttermilk", "note": "cold" }
+					],
+					"steps": [
+						{ "instruction": "Heat the oven to 450°F and line a baking sheet with parchment." },
+						{ "instruction": "Whisk the flour, baking powder, baking soda, and salt. Cut in the butter until the pieces are the size of peas." },
+						{ "instruction": "Stir in the buttermilk just until a shaggy dough forms. Pat out, fold in thirds twice, and cut into rounds." },
+						{ "instruction": "Bake 12 to 14 minutes until tall and golden." }
+					]
+				},
+				"taxonomies": {
+					"course": ["bread", "breakfast"],
+					"recipe_tag": ["quick"]
+				}
+			},
+			{
+				"id": "recipe-2",
+				"slug": "sample-chicken-corn-soup",
+				"status": "published",
+				"data": {
+					"title": "Sample: Chicken Corn Soup",
+					"summary": "Placeholder recipe for development. A Lancaster County classic with rivels.",
+					"servings": 6,
+					"yield_unit": "servings",
+					"prep_minutes": 20,
+					"cook_minutes": 60,
+					"difficulty": "Medium",
+					"featured": true,
+					"ingredients": [
+						{ "group": "For the soup", "amount": "3", "unit": "lb", "item": "chicken thighs" },
+						{ "group": "For the soup", "amount": "3", "unit": "quart", "item": "water" },
+						{ "group": "For the soup", "amount": "4", "unit": "cup", "item": "sweet corn" },
+						{ "group": "For the soup", "amount": "1/4", "unit": "tsp", "item": "saffron", "note": "optional" },
+						{ "group": "For the rivels", "amount": "1", "unit": "cup", "item": "flour" },
+						{ "group": "For the rivels", "amount": "1", "item": "egg" }
+					],
+					"steps": [
+						{ "group": "Make the soup", "instruction": "Simmer the chicken in the water for 45 minutes. Remove, shred, and return to the pot." },
+						{ "group": "Make the soup", "instruction": "Add the corn and saffron and simmer 10 minutes." },
+						{ "group": "Add the rivels", "instruction": "Rub the egg into the flour until crumbly. Drop into the simmering soup and cook 5 minutes." }
+					]
+				},
+				"taxonomies": {
+					"course": ["soup-salad", "main"]
+				}
+			},
+			{
+				"id": "recipe-3",
+				"slug": "sample-shoofly-pie",
+				"status": "published",
+				"data": {
+					"title": "Sample: Wet-Bottom Shoofly Pie",
+					"summary": "Placeholder recipe for development. Molasses filling under a buttery crumb.",
+					"servings": 8,
+					"yield_unit": "slices",
+					"prep_minutes": 25,
+					"cook_minutes": 50,
+					"extra_minutes": 120,
+					"difficulty": "Medium",
+					"featured": true,
+					"ingredients": [
+						{ "amount": "1", "item": "unbaked pie crust" },
+						{ "amount": "1", "unit": "cup", "item": "molasses" },
+						{ "amount": "3/4", "unit": "cup", "item": "boiling water" },
+						{ "amount": "1 1/2", "unit": "cup", "item": "flour" },
+						{ "amount": "1/2", "unit": "cup", "item": "brown sugar" }
+					],
+					"steps": [
+						{ "instruction": "Mix the molasses and boiling water and pour into the crust." },
+						{ "instruction": "Rub the flour, sugar, and butter into crumbs and scatter over the top." },
+						{ "instruction": "Bake at 375°F for 50 minutes. Cool at least 2 hours before slicing." }
+					]
+				},
+				"taxonomies": {
+					"course": ["dessert"],
+					"recipe_tag": ["holiday", "make-ahead"]
 				}
 			}
 		]

@@ -1,0 +1,295 @@
+---
+/**
+ * Rotating quotes with dot navigation.
+ * - Without JS: shows the first quote only.
+ * - Auto-advances every 7s; pauses on hover/focus, has a pause button
+ *   (WCAG 2.2.2), and never auto-advances with prefers-reduced-motion.
+ */
+interface Quote {
+	quote: string;
+	author?: string | null;
+}
+
+interface Props {
+	quotes: Quote[];
+	interval?: number;
+}
+
+const { quotes, interval = 7000 } = Astro.props;
+const items = quotes.filter((q) => q.quote?.trim());
+---
+
+{
+	items.length > 0 && (
+		<section
+			class="quotes"
+			aria-roledescription="carousel"
+			aria-label="Favorite quotes"
+			data-interval={interval}
+		>
+			<div class="quote-track" aria-live="off">
+				{items.map((q, i) => (
+					<figure
+						class="quote"
+						role="group"
+						aria-roledescription="slide"
+						aria-label={`${i + 1} of ${items.length}`}
+						data-active={i === 0 ? "" : undefined}
+						aria-hidden={i === 0 ? undefined : "true"}
+					>
+						<blockquote>
+							<p>{q.quote}</p>
+						</blockquote>
+						{q.author && <figcaption>{q.author}</figcaption>}
+					</figure>
+				))}
+			</div>
+
+			{items.length > 1 && (
+				<div class="quote-controls" hidden>
+					<button type="button" class="quote-pause" aria-label="Pause quotes">
+						<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+							<path class="icon-pause" d="M7 5h3v14H7zM14 5h3v14h-3z" />
+							<path class="icon-play" d="M8 5v14l11-7z" />
+						</svg>
+					</button>
+					<div class="quote-dots">
+						{items.map((_, i) => (
+							<button
+								type="button"
+								class="quote-dot"
+								aria-label={`Show quote ${i + 1}`}
+								aria-current={i === 0 ? "true" : undefined}
+								data-index={i}
+							/>
+						))}
+					</div>
+				</div>
+			)}
+		</section>
+	)
+}
+
+<script>
+	document.querySelectorAll<HTMLElement>(".quotes").forEach((root) => {
+		const slides = Array.from(root.querySelectorAll<HTMLElement>(".quote"));
+		const controls = root.querySelector<HTMLElement>(".quote-controls");
+		if (slides.length < 2 || !controls) return;
+
+		const track = root.querySelector<HTMLElement>(".quote-track")!;
+		const dots = Array.from(root.querySelectorAll<HTMLButtonElement>(".quote-dot"));
+		const pauseBtn = root.querySelector<HTMLButtonElement>(".quote-pause")!;
+		const interval = Number(root.dataset.interval) || 7000;
+		const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+		let current = 0;
+		let timer: number | undefined;
+		let userPaused = reduceMotion;
+		let hovering = false;
+
+		controls.hidden = false;
+
+		const show = (index: number) => {
+			current = (index + slides.length) % slides.length;
+			slides.forEach((s, i) => {
+				const active = i === current;
+				s.toggleAttribute("data-active", active);
+				if (active) s.removeAttribute("aria-hidden");
+				else s.setAttribute("aria-hidden", "true");
+			});
+			dots.forEach((d, i) => {
+				if (i === current) d.setAttribute("aria-current", "true");
+				else d.removeAttribute("aria-current");
+			});
+		};
+
+		const stop = () => {
+			window.clearInterval(timer);
+			timer = undefined;
+		};
+
+		const start = () => {
+			stop();
+			if (userPaused || hovering) return;
+			timer = window.setInterval(() => show(current + 1), interval);
+		};
+
+		const syncPauseButton = () => {
+			root.classList.toggle("is-paused", userPaused);
+			pauseBtn.setAttribute("aria-label", userPaused ? "Play quotes" : "Pause quotes");
+			// Announce changes only when the visitor is driving.
+			track.setAttribute("aria-live", userPaused ? "polite" : "off");
+		};
+
+		dots.forEach((dot) =>
+			dot.addEventListener("click", () => {
+				show(Number(dot.dataset.index));
+				start();
+			}),
+		);
+
+		pauseBtn.addEventListener("click", () => {
+			userPaused = !userPaused;
+			syncPauseButton();
+			start();
+		});
+
+		root.addEventListener("mouseenter", () => {
+			hovering = true;
+			stop();
+		});
+		root.addEventListener("mouseleave", () => {
+			hovering = false;
+			start();
+		});
+		root.addEventListener("focusin", () => {
+			hovering = true;
+			stop();
+		});
+		root.addEventListener("focusout", (e) => {
+			if (!root.contains(e.relatedTarget as Node | null)) {
+				hovering = false;
+				start();
+			}
+		});
+
+		syncPauseButton();
+		start();
+	});
+</script>
+
+<style>
+	.quotes {
+		max-width: 46rem;
+		margin-inline: auto;
+		text-align: center;
+	}
+
+	/* Stack slides in one grid cell so the height fits the longest quote. */
+	.quote-track {
+		display: grid;
+	}
+
+	.quote {
+		grid-area: 1 / 1;
+		margin: 0;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 0.6s ease,
+			visibility 0.6s;
+	}
+
+	.quote[data-active] {
+		opacity: 1;
+		visibility: visible;
+	}
+
+	.quote blockquote {
+		margin: 0;
+	}
+
+	.quote blockquote p {
+		margin: 0;
+		font-family: var(--font-display);
+		font-style: italic;
+		font-weight: 400;
+		font-size: var(--text-2xl);
+		line-height: var(--leading-snug);
+		color: var(--color-olive);
+		text-wrap: balance;
+	}
+
+	.quote blockquote p::before {
+		content: "\201C";
+	}
+
+	.quote blockquote p::after {
+		content: "\201D";
+	}
+
+	.quote figcaption {
+		margin-top: var(--space-sm);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-moss);
+	}
+
+	.quote figcaption::before {
+		content: "\2014\00a0";
+	}
+
+	.quote-controls {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-sm);
+		margin-top: var(--space-lg);
+	}
+
+	.quote-controls[hidden] {
+		display: none;
+	}
+
+	.quote-dots {
+		display: flex;
+		gap: var(--space-3xs);
+	}
+
+	/* 24px hit area around a 10px dot */
+	.quote-dot {
+		display: grid;
+		place-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		cursor: pointer;
+	}
+
+	.quote-dot::before {
+		content: "";
+		width: 10px;
+		height: 10px;
+		border: 1.5px solid var(--color-moss);
+		border-radius: 50%;
+		transition: background-color 0.2s ease;
+	}
+
+	.quote-dot[aria-current="true"]::before {
+		background: var(--color-moss);
+	}
+
+	.quote-dot:hover::before {
+		background: var(--color-sage);
+	}
+
+	.quote-pause {
+		display: grid;
+		place-items: center;
+		width: 2rem;
+		height: 2rem;
+		padding: 0;
+		border: 1px solid var(--color-border-strong);
+		border-radius: 50%;
+		background: var(--color-surface);
+		color: var(--color-moss);
+		cursor: pointer;
+	}
+
+	.quote-pause svg {
+		fill: currentColor;
+	}
+
+	.quote-pause .icon-play,
+	.is-paused .quote-pause .icon-pause {
+		display: none;
+	}
+
+	.is-paused .quote-pause .icon-play {
+		display: inline;
+	}
+</style>

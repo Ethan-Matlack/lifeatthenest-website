@@ -12,8 +12,8 @@ export interface StarterSiteIdentitySettings {
 	favicon?: MediaReference;
 }
 
-const DEFAULT_SITE_TITLE = "My Site";
-const DEFAULT_SITE_TAGLINE = "Built with EmDash";
+const DEFAULT_SITE_TITLE = "Life at the Nest";
+const DEFAULT_SITE_TAGLINE = "With Audra Chalfant Matlack";
 
 export function resolveStarterSiteIdentity(settings?: StarterSiteIdentitySettings) {
 	return {
