@@ -230,15 +230,6 @@
 						"targetCollection": "products",
 						"multiple": true
 					}
-				},
-				{
-					"slug": "featured_recipes",
-					"label": "Recipes in this post (shown as cards below the post)",
-					"type": "reference",
-					"validation": {
-						"targetCollection": "recipes",
-						"multiple": true
-					}
 				}
 			]
 		},
@@ -3422,26 +3413,9 @@
 							]
 						},
 						{
-							"_type": "block",
-							"_key": "granola-link",
-							"style": "normal",
-							"markDefs": [
-								{
-									"_type": "link",
-									"_key": "gl",
-									"href": "/recipes/homemade-granola"
-								}
-							],
-							"children": [
-								{
-									"_type": "span",
-									"_key": "glt",
-									"marks": [
-										"gl"
-									],
-									"text": "Get my homemade granola recipe"
-								}
-							]
+							"_type": "recipeCard",
+							"_key": "granola-card",
+							"recipe": "Homemade Granola · homemade-granola"
 						},
 						{
 							"_type": "block",
@@ -3455,8 +3429,7 @@
 								}
 							]
 						}
-					],
-					"featured_recipes": []
+					]
 				},
 				"taxonomies": {
 					"category": [

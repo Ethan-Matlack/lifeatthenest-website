@@ -4,13 +4,14 @@
  * overrides (YouTube card). Use for post bodies, pages, and recipe stories.
  *
  * - A paragraph that is only a YouTube link becomes a video card.
- * - A paragraph that is only a link to one of our recipes becomes a recipe card.
+ * - "Recipe card" blocks (and other content cards) render via pt/ContentCard.
  * - Images aligned "wide" or "full" in the editor break out of the text column.
  */
 import { PortableText } from "emdash/ui";
 import PtEmbed from "./pt/PtEmbed.astro";
 import PtIframe from "./pt/PtIframe.astro";
-import PtRecipe from "./pt/PtRecipe.astro";
+import ContentCard from "./pt/ContentCard.astro";
+import { CARD_TYPES } from "../plugins/content-cards/card-types";
 import { autoEmbeds } from "../utils/portable-text";
 
 interface Props {
@@ -20,7 +21,14 @@ interface Props {
 }
 
 const { value, class: className, ...rest } = Astro.props;
-const components = { type: { embed: PtEmbed, iframe: PtIframe, recipeEmbed: PtRecipe } };
+const components = {
+	type: {
+		embed: PtEmbed,
+		iframe: PtIframe,
+		// One renderer for every content-card block type (recipeCard, …)
+		...Object.fromEntries(CARD_TYPES.map((t) => [t.type, ContentCard])),
+	},
+};
 ---
 
 <div class:list={["prose", "rich-text", className]} {...rest}>

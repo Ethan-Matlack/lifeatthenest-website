@@ -3,6 +3,7 @@ import react from "@astrojs/react";
 import { d1, r2 } from "@emdash-cms/cloudflare";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
+import { contentCardsPlugin } from "./src/plugins/content-cards/descriptor.mjs";
 
 export default defineConfig({
 	output: "server",
@@ -16,6 +17,8 @@ export default defineConfig({
 		emdash({
 			database: d1({ binding: "DB", session: "auto", coalesce: true }),
 			storage: r2({ binding: "MEDIA" }),
+			// Our own editor blocks: "Recipe card" (see src/plugins/content-cards)
+			plugins: [contentCardsPlugin()],
 		}),
 	],
 	fonts: [

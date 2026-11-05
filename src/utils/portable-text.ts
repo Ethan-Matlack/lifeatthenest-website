@@ -39,27 +39,11 @@ function soleLink(block: Block): string | null {
 	return links.get(keys[0]!) ?? null;
 }
 
-// Hosts that count as "this site" for recipe links (plus relative links).
-const SITE_HOST = /(^|\.)lifeatthenest\.com$|^localhost$|^127\.0\.0\.1$|\.workers\.dev$/;
-
-/** Recipe slug from a link to /recipes/<slug> on this site, else null. */
-export function recipeSlugFromUrl(href: string): string | null {
-	let url: URL;
-	try {
-		url = new URL(href, "https://lifeatthenest.com");
-	} catch {
-		return null;
-	}
-	if (!SITE_HOST.test(url.hostname)) return null;
-	const m = url.pathname.match(/^\/recipes\/([a-z0-9][a-z0-9-]*)\/?$/i);
-	return m ? m[1]!.toLowerCase() : null;
-}
-
 /**
- * Turn a paragraph that is nothing but one link into a card:
- * - a YouTube link becomes the video card (`embed` block)
- * - a link to one of our recipes becomes the recipe card (`recipeEmbed`)
- * A link inside a sentence is left alone.
+ * Turn a paragraph that is nothing but one YouTube link into an embed block,
+ * so pasting a link on its own line shows the video card. A link inside a
+ * sentence is left alone. (Recipe and other content cards are inserted with
+ * the editor's "Recipe card" block instead; see src/plugins/content-cards.)
  *
  * Skipped in visual-edit mode: the value carries edit metadata that a copy
  * would lose, and the editor should show what was actually typed.
@@ -68,11 +52,7 @@ export function autoEmbeds<T>(value: T): T {
 	if (!Array.isArray(value) || getEditMeta(value)) return value;
 	return (value as Block[]).map((block) => {
 		const href = soleLink(block);
-		if (!href) return block;
-		const key = block._key ?? href;
-		if (getYouTubeId(href)) return { _type: "embed", _key: key, url: href };
-		const slug = recipeSlugFromUrl(href);
-		if (slug) return { _type: "recipeEmbed", _key: key, slug, href, text: blockText(block).trim() };
-		return block;
+		if (!href || !getYouTubeId(href)) return block;
+		return { _type: "embed", _key: block._key ?? href, url: href };
 	}) as T;
 }

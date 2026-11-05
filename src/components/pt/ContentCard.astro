@@ -1,0 +1,29 @@
+---
+/**
+ * Renders a content-card block (inserted with the editor's "Recipe card"
+ * block, etc.) by loading the chosen entry and handing it to that type's
+ * card component. If the entry is gone or unpublished, nothing renders.
+ * Card types are defined in src/plugins/content-cards/card-types.ts.
+ */
+import { getEmDashEntry } from "emdash";
+import RecipeFeature from "../RecipeFeature.astro";
+import { cardTypeFor, decodeChoice } from "../../plugins/content-cards/card-types";
+
+/** Card component for each card type's `type`. Add new types here. */
+const CARD_COMPONENTS = {
+	recipeCard: RecipeFeature,
+} as const;
+
+const { node } = Astro.props as { node: Record<string, unknown> & { _type: string } };
+const cardType = cardTypeFor(node._type);
+const Card = (CARD_COMPONENTS as Record<string, typeof RecipeFeature | undefined>)[node._type];
+const id = cardType ? decodeChoice(node[cardType.field]) : null;
+
+const result = cardType && Card && id ? await getEmDashEntry(cardType.collection as "recipes", id) : null;
+// Public queries only return published entries, so a missing or unpublished
+// choice simply renders nothing.
+const entry = result?.entry ?? null;
+if (result?.cacheHint && Astro.cache?.enabled) Astro.cache.set(result.cacheHint);
+---
+
+{entry && Card && <Card recipe={entry as any} />}

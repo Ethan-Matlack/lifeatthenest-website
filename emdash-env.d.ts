@@ -106,7 +106,6 @@ export interface Recipe {
 
 export interface PostReferences {
   featured_products: ReferencePage<Product>;
-  featured_recipes: ReferencePage<Recipe>;
 }
 
 export interface RecipeReferences {
