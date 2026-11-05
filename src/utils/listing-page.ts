@@ -1,8 +1,8 @@
 /**
- * Editable heading + intro for the Blog, Recipes, and Shop listing pages.
+ * Editable heading + intro for route pages (Blog, Recipes, Shop, Contact).
  *
  * Each listing has a matching entry in Pages whose slug equals the route
- * ("posts", "recipes", "shop"). Astro's real route files take precedence
+ * ("posts", "recipes", "shop", "contact"). Astro's real route files take precedence
  * over the catch-all [slug] page, so these entries never render on their
  * own; the listing page reads their title, content, and SEO fields instead.
  * If the entry is missing or unpublished, the built-in fallback is used.

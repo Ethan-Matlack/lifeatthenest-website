@@ -6,6 +6,7 @@ import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import PostNav from "../../components/PostNav.astro";
 import ShopThis from "../../components/ShopThis.astro";
+import RecipeFeature from "../../components/RecipeFeature.astro";
 import RichText from "../../components/RichText.astro";
 import { formatDate } from "../../utils/format";
 import { readingMinutes } from "../../utils/portable-text";
@@ -17,7 +18,7 @@ const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
 
 const { entry: post, cacheHint } = await getEmDashEntry("posts", slug, {
-	references: { featured_products: true },
+	references: { featured_products: true, featured_recipes: true },
 });
 if (!post) return Astro.rewrite("/404");
 
@@ -64,6 +65,7 @@ const seo = getSeoMeta(post, {
 const category = d.terms?.category?.[0];
 const tags = d.terms?.tag ?? [];
 const products = post.references?.featured_products?.entries ?? [];
+const recipes = post.references?.featured_recipes?.entries ?? [];
 const minutes = readingMinutes(d.content);
 ---
 
@@ -113,6 +115,16 @@ const minutes = readingMinutes(d.content);
 
 		<div class="container container--prose post-body">
 			<RichText value={d.content} {...post.edit.content} />
+
+			{
+				recipes.length > 0 && (
+					<section class="post-recipes" aria-label={recipes.length > 1 ? "Recipes from this post" : "Recipe from this post"}>
+						{recipes.map((recipe) => (
+							<RecipeFeature recipe={recipe} />
+						))}
+					</section>
+				)
+			}
 
 			{
 				tags.length > 0 && (
@@ -190,6 +202,12 @@ const minutes = readingMinutes(d.content);
 
 	.post-body {
 		padding-bottom: var(--space-xl);
+	}
+
+	.post-recipes {
+		display: grid;
+		gap: var(--space-sm);
+		margin-top: var(--space-xl);
 	}
 
 	.post-tags {

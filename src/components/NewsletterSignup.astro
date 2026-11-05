@@ -1,0 +1,207 @@
+---
+/**
+ * Newsletter signup form. Posts to /api/newsletter, which is a stub until the
+ * real backend (Turnstile check, D1 storage, provider API) is built.
+ *
+ * - With JS: submits in place and shows the response message.
+ * - Without JS: a normal POST; the endpoint redirects back with
+ *   ?newsletter=<status>, which is shown here.
+ */
+interface Props {
+	heading?: string;
+	text?: string;
+	/** id for the section, used by "Sign up" links (#newsletter) */
+	id?: string;
+}
+
+const {
+	heading = "Join the newsletter family",
+	text = "Be the first to know when new recipes, tutorials, and stories become available.",
+	id = "newsletter",
+} = Astro.props;
+
+const status = Astro.url.searchParams.get("newsletter");
+const STATUS_MESSAGES: Record<string, string> = {
+	soon: "Thanks for your interest! Newsletter signups open soon. Please check back.",
+	ok: "Thanks! Check your inbox to confirm your subscription.",
+	invalid: "Please enter a valid email address.",
+	error: "Something went wrong. Please try again in a moment.",
+};
+const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
+---
+
+<section class="signup" id={id} aria-labelledby={`${id}-heading`}>
+	<h2 id={`${id}-heading`}>{heading}</h2>
+	<p class="signup-text">{text}</p>
+
+	<form class="signup-form" method="post" action="/api/newsletter" data-newsletter-form novalidate>
+		<div class="signup-field">
+			<label for={`${id}-name`}>First name <span class="optional">(optional)</span></label>
+			<input id={`${id}-name`} name="first_name" type="text" autocomplete="given-name" maxlength="80" />
+		</div>
+		<div class="signup-field">
+			<label for={`${id}-email`}>Email address</label>
+			<input
+				id={`${id}-email`}
+				name="email"
+				type="email"
+				autocomplete="email"
+				inputmode="email"
+				maxlength="254"
+				required
+			/>
+		</div>
+		<!-- Spam trap: real visitors never see or fill this. -->
+		<div class="signup-trap" aria-hidden="true">
+			<label for={`${id}-website`}>Leave this empty</label>
+			<input id={`${id}-website`} name="website" type="text" tabindex="-1" autocomplete="off" />
+		</div>
+		<button class="btn signup-submit" type="submit">Subscribe</button>
+		<p class="signup-consent">
+			We'll only email you about new posts, recipes, and happenings at the Nest. Unsubscribe
+			anytime.
+		</p>
+		<p class="signup-status" role="status" aria-live="polite" data-status>{initialMessage}</p>
+	</form>
+</section>
+
+<script>
+	for (const form of document.querySelectorAll("[data-newsletter-form]")) {
+		if (!(form instanceof HTMLFormElement)) continue;
+		const status = form.querySelector("[data-status]");
+		const button = form.querySelector("button[type=submit]");
+		const email = form.querySelector<HTMLInputElement>("input[name=email]");
+
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			if (!status || !(button instanceof HTMLButtonElement)) return;
+
+			if (!email?.value.trim() || !email.checkValidity()) {
+				status.textContent = "Please enter a valid email address.";
+				status.className = "signup-status is-error";
+				email?.focus();
+				return;
+			}
+
+			button.disabled = true;
+			button.textContent = "Subscribing…";
+			try {
+				const res = await fetch(form.action, {
+					method: "POST",
+					body: new FormData(form),
+					headers: { Accept: "application/json" },
+				});
+				const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string };
+				status.textContent = data.message ?? (res.ok ? "Thanks for subscribing!" : "Something went wrong. Please try again.");
+				status.className = `signup-status ${data.ok ? "is-success" : "is-info"}`;
+				if (data.ok) form.reset();
+			} catch {
+				status.textContent = "Something went wrong. Please try again in a moment.";
+				status.className = "signup-status is-error";
+			} finally {
+				button.disabled = false;
+				button.textContent = "Subscribe";
+			}
+		});
+	}
+</script>
+
+<style>
+	.signup {
+		scroll-margin-top: var(--space-lg);
+		padding: var(--space-lg);
+		border-radius: var(--radius-lg);
+		background: var(--color-aqua);
+		color: var(--color-teal);
+	}
+
+	.signup h2 {
+		margin-bottom: var(--space-2xs);
+		font-size: var(--text-2xl);
+		color: var(--color-teal);
+	}
+
+	.signup-text {
+		margin-bottom: var(--space-md);
+	}
+
+	.signup-form {
+		display: grid;
+		gap: var(--space-sm);
+	}
+
+	.signup-field {
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	.signup-field label {
+		font-size: var(--text-sm);
+		font-weight: 600;
+	}
+
+	.optional {
+		font-weight: 400;
+		opacity: 0.8;
+	}
+
+	.signup-field input {
+		min-height: 2.75rem;
+		padding: 0.55rem 0.9rem;
+		border: 1px solid rgb(29 67 84 / 0.35);
+		border-radius: var(--radius-md);
+		background: var(--color-surface);
+		font-size: var(--text-base);
+		color: var(--color-text);
+	}
+
+	.signup-field input:focus {
+		outline: 2px solid var(--color-teal);
+		outline-offset: 1px;
+		border-color: transparent;
+	}
+
+	.signup-trap {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+
+	.signup-submit {
+		justify-self: start;
+		background: var(--color-teal);
+		border-color: var(--color-teal);
+	}
+
+	.signup-submit:hover {
+		background: var(--color-olive);
+		border-color: var(--color-olive);
+	}
+
+	.signup-submit:disabled {
+		opacity: 0.7;
+		cursor: progress;
+	}
+
+	.signup-consent {
+		margin: 0;
+		font-size: var(--text-xs);
+		opacity: 0.85;
+	}
+
+	.signup-status {
+		margin: 0;
+		font-size: var(--text-sm);
+		font-weight: 600;
+	}
+
+	.signup-status:empty {
+		display: none;
+	}
+
+	.signup-status.is-error {
+		color: #8a2b1d;
+	}
+</style>

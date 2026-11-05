@@ -4,12 +4,14 @@
  * overrides (YouTube card). Use for post bodies, pages, and recipe stories.
  *
  * - A paragraph that is only a YouTube link becomes a video card.
+ * - A paragraph that is only a link to one of our recipes becomes a recipe card.
  * - Images aligned "wide" or "full" in the editor break out of the text column.
  */
 import { PortableText } from "emdash/ui";
 import PtEmbed from "./pt/PtEmbed.astro";
 import PtIframe from "./pt/PtIframe.astro";
-import { autoEmbedVideos } from "../utils/portable-text";
+import PtRecipe from "./pt/PtRecipe.astro";
+import { autoEmbeds } from "../utils/portable-text";
 
 interface Props {
 	value: unknown;
@@ -18,11 +20,11 @@ interface Props {
 }
 
 const { value, class: className, ...rest } = Astro.props;
-const components = { type: { embed: PtEmbed, iframe: PtIframe } };
+const components = { type: { embed: PtEmbed, iframe: PtIframe, recipeEmbed: PtRecipe } };
 ---
 
 <div class:list={["prose", "rich-text", className]} {...rest}>
-	<PortableText value={autoEmbedVideos(value) as any} components={components} />
+	<PortableText value={autoEmbeds(value) as any} components={components} />
 </div>
 
 <style is:global>

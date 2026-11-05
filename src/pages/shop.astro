@@ -95,7 +95,6 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 
 <Base title={pageTitle} description={description} canonical={canonical} image={seo?.ogImage ?? null}>
 	<header class="listing-header">
-		<span class="eyebrow">Shop the Nest</span>
 		{
 			activeCategory ? (
 				<h1>{activeCategory.label}</h1>

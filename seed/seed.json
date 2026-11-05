@@ -230,6 +230,15 @@
 						"targetCollection": "products",
 						"multiple": true
 					}
+				},
+				{
+					"slug": "featured_recipes",
+					"label": "Recipes in this post (shown as cards below the post)",
+					"type": "reference",
+					"validation": {
+						"targetCollection": "recipes",
+						"multiple": true
+					}
 				}
 			]
 		},
@@ -1225,6 +1234,30 @@
 									"_type": "span",
 									"_key": "page-shop0s",
 									"text": "The tools, supplies, and favorites we actually use around the Nest, from the kitchen to the garden."
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"id": "page-contact",
+				"slug": "contact",
+				"status": "published",
+				"data": {
+					"title": "Contact",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "ct0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "ct0s",
+									"marks": [],
+									"text": "We'd love to hear from you! The best way to reach out is a message on any of the platforms below. And if you'd like new recipes and stories delivered to your inbox, join the newsletter."
 								}
 							]
 						}
@@ -3390,6 +3423,28 @@
 						},
 						{
 							"_type": "block",
+							"_key": "granola-link",
+							"style": "normal",
+							"markDefs": [
+								{
+									"_type": "link",
+									"_key": "gl",
+									"href": "/recipes/homemade-granola"
+								}
+							],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "glt",
+									"marks": [
+										"gl"
+									],
+									"text": "Get my homemade granola recipe"
+								}
+							]
+						},
+						{
+							"_type": "block",
 							"_key": "k8b",
 							"style": "normal",
 							"children": [
@@ -3400,7 +3455,8 @@
 								}
 							]
 						}
-					]
+					],
+					"featured_recipes": []
 				},
 				"taxonomies": {
 					"category": [
@@ -4643,6 +4699,118 @@
 					"recipe_tag": [
 						"holiday",
 						"make-ahead"
+					]
+				}
+			},
+			{
+				"id": "recipe-granola",
+				"slug": "homemade-granola",
+				"status": "published",
+				"data": {
+					"title": "Homemade Granola",
+					"summary": "Crisp, lightly sweet granola toasted in coconut oil with honey, cinnamon, coconut, and pecans. Easy to make allergy-friendly.",
+					"servings": 8,
+					"yield_unit": "servings",
+					"prep_minutes": 20,
+					"cook_minutes": 40,
+					"difficulty": "Easy",
+					"featured": false,
+					"intro": [
+						{
+							"_type": "block",
+							"_key": "gi0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "gi0s",
+									"marks": [],
+									"text": "Granola that's neither too chewy nor dangerously crunchy, with just the right balance of sweet, salty, and crunchy. Read the whole story of how this recipe came together on the blog."
+								}
+							]
+						}
+					],
+					"ingredients": [
+						{
+							"item": "old-fashioned rolled oats"
+						},
+						{
+							"item": "unsweetened flake coconut"
+						},
+						{
+							"item": "pecans",
+							"note": "broken into bite-sized pieces (or almonds, or leave out for nut-free)"
+						},
+						{
+							"item": "brown sugar"
+						},
+						{
+							"item": "ground cinnamon"
+						},
+						{
+							"item": "salt"
+						},
+						{
+							"item": "coconut oil"
+						},
+						{
+							"item": "honey"
+						},
+						{
+							"item": "vanilla extract"
+						},
+						{
+							"item": "raisins",
+							"note": "added after baking"
+						}
+					],
+					"steps": [
+						{
+							"instruction": "Heat the oven. Choose a deep-sided baking pan so the granola can sit about 1 to 2 inches deep."
+						},
+						{
+							"instruction": "In a large mixing bowl, combine the oats, coconut, pecans, brown sugar, cinnamon, and salt. Mix thoroughly so everything is evenly distributed."
+						},
+						{
+							"instruction": "Warm the coconut oil and honey together until melted, then stir in the vanilla."
+						},
+						{
+							"instruction": "Pour the coconut oil and honey over the dry ingredients and stir until every bit is evenly coated."
+						},
+						{
+							"instruction": "Spread the granola in the pan and bake, stirring every so often, until golden and toasted. It takes about 40 minutes."
+						},
+						{
+							"instruction": "Stir in the raisins after baking so they stay plump and juicy. Let cool completely, then store airtight."
+						}
+					],
+					"notes": [
+						{
+							"_type": "block",
+							"_key": "gn0",
+							"style": "normal",
+							"markDefs": [],
+							"children": [
+								{
+									"_type": "span",
+									"_key": "gn0s",
+									"marks": [],
+									"text": "Placeholder: Audra to add ingredient amounts and the oven temperature. The ingredients and method come from the \"Mastering Granola\" blog post."
+								}
+							]
+						}
+					],
+					"credit": ""
+				},
+				"taxonomies": {
+					"course": [
+						"breakfast",
+						"snack"
+					],
+					"recipe_tag": [
+						"make-ahead",
+						"vegetarian"
 					]
 				}
 			}

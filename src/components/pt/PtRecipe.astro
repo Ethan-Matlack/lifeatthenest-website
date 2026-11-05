@@ -1,0 +1,23 @@
+---
+/**
+ * Inline recipe card in rich text: created by autoEmbeds() when a paragraph
+ * is nothing but a link to /recipes/<slug>. If the recipe can't be found
+ * (unpublished, renamed), the original link is shown instead.
+ */
+import { getEmDashEntry } from "emdash";
+import RecipeFeature from "../RecipeFeature.astro";
+
+const { node } = Astro.props as { node: { slug?: string; href?: string; text?: string } };
+const { entry, cacheHint } = node.slug ? await getEmDashEntry("recipes", node.slug) : { entry: null, cacheHint: null };
+if (cacheHint && Astro.cache?.enabled) Astro.cache.set(cacheHint);
+---
+
+{
+	entry ? (
+		<RecipeFeature recipe={entry} />
+	) : (
+		<p>
+			<a href={node.href}>{node.text || node.href}</a>
+		</p>
+	)
+}
