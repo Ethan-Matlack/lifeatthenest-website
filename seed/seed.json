@@ -1,0 +1,489 @@
+{
+	"$schema": "https://emdashcms.com/seed.schema.json",
+	"version": "1",
+	"meta": {
+		"name": "Life at the Nest",
+		"description": "Blog posts, recipes, shop products, and pages for lifeatthenest.com",
+		"author": "Ethan Matlack"
+	},
+	"settings": {
+		"title": "Life at the Nest",
+		"tagline": "With Audra Chalfant Matlack"
+	},
+	"collections": [
+		{
+			"slug": "products",
+			"label": "Shop Products",
+			"labelSingular": "Product",
+			"description": "Products you recommend. Pick them on a post or recipe and they appear on the Shop page.",
+			"icon": "shopping-bag",
+			"supports": ["drafts", "search"],
+			"titleField": "title",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Product name",
+					"type": "string",
+					"required": true,
+					"searchable": true,
+					"validation": { "minLength": 1, "maxLength": 120 }
+				},
+				{
+					"slug": "image",
+					"label": "Product photo",
+					"type": "image",
+					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+				},
+				{
+					"slug": "link",
+					"label": "Shopping link (where the Buy button goes)",
+					"type": "url",
+					"required": true
+				},
+				{
+					"slug": "store",
+					"label": "Store name (e.g. Amazon)",
+					"type": "string",
+					"defaultValue": "Amazon",
+					"validation": { "maxLength": 60 }
+				},
+				{
+					"slug": "blurb",
+					"label": "Why you love it (a sentence or two)",
+					"type": "text",
+					"searchable": true,
+					"options": { "rows": 3 },
+					"validation": { "maxLength": 300 }
+				}
+			]
+		},
+		{
+			"slug": "posts",
+			"label": "Blog Posts",
+			"labelSingular": "Blog Post",
+			"urlPattern": "/posts/{slug}",
+			"supports": ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
+			"commentsEnabled": true,
+			"titleField": "title",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "featured_image",
+					"label": "Main photo",
+					"type": "image"
+				},
+				{
+					"slug": "excerpt",
+					"label": "Short description (shows on blog cards and in Google)",
+					"type": "text",
+					"options": { "rows": 3 },
+					"validation": { "maxLength": 300 }
+				},
+				{
+					"slug": "content",
+					"label": "Post",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "featured_products",
+					"label": "Products in this post (also shown on the Shop page)",
+					"type": "reference",
+					"validation": { "targetCollection": "products", "multiple": true }
+				}
+			]
+		},
+		{
+			"slug": "recipes",
+			"label": "Recipes",
+			"labelSingular": "Recipe",
+			"description": "Recipes with a scalable, printable recipe card",
+			"icon": "cooking-pot",
+			"supports": ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
+			"urlPattern": "/recipes/{slug}",
+			"commentsEnabled": true,
+			"titleField": "title",
+			"admin": {
+				"listColumns": ["servings", "difficulty", "featured"]
+			},
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Recipe name",
+					"type": "string",
+					"required": true,
+					"searchable": true,
+					"validation": { "minLength": 1, "maxLength": 120 }
+				},
+				{
+					"slug": "summary",
+					"label": "Short description (shows on recipe cards and in Google)",
+					"type": "text",
+					"searchable": true,
+					"options": { "rows": 3 },
+					"validation": { "maxLength": 300 }
+				},
+				{
+					"slug": "hero_image",
+					"label": "Main photo",
+					"type": "image",
+					"required": true,
+					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+				},
+				{
+					"slug": "pin_image",
+					"label": "Pinterest photo (tall, optional)",
+					"type": "image",
+					"validation": { "allowedMimeTypes": ["image/jpeg", "image/png", "image/webp"] }
+				},
+				{
+					"slug": "intro",
+					"label": "Story / intro (shown above the recipe card)",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "servings",
+					"label": "Makes how many",
+					"type": "integer",
+					"required": true,
+					"defaultValue": 4,
+					"translatable": false,
+					"indexed": true,
+					"validation": { "min": 1, "max": 200 }
+				},
+				{
+					"slug": "yield_unit",
+					"label": "Of what (servings, cookies, loaves...)",
+					"type": "string",
+					"defaultValue": "servings",
+					"validation": { "maxLength": 40 }
+				},
+				{
+					"slug": "prep_minutes",
+					"label": "Prep time (minutes)",
+					"type": "integer",
+					"translatable": false,
+					"validation": { "min": 0, "max": 10000 }
+				},
+				{
+					"slug": "cook_minutes",
+					"label": "Cook time (minutes)",
+					"type": "integer",
+					"translatable": false,
+					"validation": { "min": 0, "max": 10000 }
+				},
+				{
+					"slug": "extra_minutes",
+					"label": "Extra time: resting, chilling, rising (minutes)",
+					"type": "integer",
+					"translatable": false,
+					"validation": { "min": 0, "max": 10000 }
+				},
+				{
+					"slug": "difficulty",
+					"label": "Difficulty",
+					"type": "select",
+					"indexed": true,
+					"translatable": false,
+					"validation": { "options": ["Easy", "Medium", "Involved"] }
+				},
+				{
+					"slug": "ingredients",
+					"label": "Ingredients",
+					"type": "repeater",
+					"required": true,
+					"validation": {
+						"minItems": 1,
+						"maxItems": 80,
+						"subFields": [
+							{
+								"slug": "group",
+								"label": "Group heading (optional, e.g. For the frosting)",
+								"type": "string"
+							},
+							{
+								"slug": "amount",
+								"label": "Amount (e.g. 1 1/2, 1/3, 2-3)",
+								"type": "string"
+							},
+							{
+								"slug": "unit",
+								"label": "Unit",
+								"type": "select",
+								"options": [
+									"tsp", "tbsp", "cup", "fl oz", "pint", "quart",
+									"oz", "lb", "g", "kg", "ml", "l",
+									"pinch", "dash", "clove", "can", "jar", "package",
+									"stick", "slice", "sprig", "bunch"
+								]
+							},
+							{
+								"slug": "item",
+								"label": "Ingredient",
+								"type": "string",
+								"required": true
+							},
+							{
+								"slug": "note",
+								"label": "Note (e.g. softened, finely chopped)",
+								"type": "string"
+							},
+							{
+								"slug": "fixed",
+								"label": "Don't scale this one (e.g. salt to taste)",
+								"type": "boolean"
+							}
+						]
+					}
+				},
+				{
+					"slug": "steps",
+					"label": "Instructions",
+					"type": "repeater",
+					"required": true,
+					"validation": {
+						"minItems": 1,
+						"maxItems": 60,
+						"subFields": [
+							{
+								"slug": "group",
+								"label": "Group heading (optional, e.g. Make the dough)",
+								"type": "string"
+							},
+							{
+								"slug": "instruction",
+								"label": "Step",
+								"type": "text",
+								"required": true
+							},
+							{
+								"slug": "image",
+								"label": "Step photo (optional)",
+								"type": "image"
+							}
+						]
+					}
+				},
+				{
+					"slug": "equipment",
+					"label": "Equipment (one per line, optional)",
+					"type": "text",
+					"options": { "rows": 4 }
+				},
+				{
+					"slug": "notes",
+					"label": "Tips, substitutions, and storage",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "calories",
+					"label": "Calories per serving (optional)",
+					"type": "integer",
+					"translatable": false,
+					"validation": { "min": 0, "max": 10000 }
+				},
+				{
+					"slug": "credit",
+					"label": "Credit (e.g. Adapted from Grandma's recipe box)",
+					"type": "string",
+					"validation": { "maxLength": 160 }
+				},
+				{
+					"slug": "video_url",
+					"label": "Video link (optional)",
+					"type": "url"
+				},
+				{
+					"slug": "featured_products",
+					"label": "Products used in this recipe (also shown on the Shop page)",
+					"type": "reference",
+					"validation": { "targetCollection": "products", "multiple": true }
+				},
+				{
+					"slug": "featured",
+					"label": "Feature on homepage",
+					"type": "boolean",
+					"defaultValue": false,
+					"indexed": true,
+					"translatable": false
+				}
+			]
+		},
+		{
+			"slug": "pages",
+			"label": "Pages",
+			"labelSingular": "Page",
+			"urlPattern": "/{slug}",
+			"supports": ["drafts", "revisions", "preview", "search", "seo"],
+			"titleField": "title",
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true
+				},
+				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				}
+			]
+		}
+	],
+	"taxonomies": [
+		{
+			"name": "category",
+			"label": "Blog Categories",
+			"labelSingular": "Blog Category",
+			"hierarchical": true,
+			"collections": ["posts"],
+			"terms": [
+				{ "slug": "kitchen", "label": "In the Kitchen" },
+				{ "slug": "garden", "label": "In the Garden" },
+				{ "slug": "pasture", "label": "In the Pasture" },
+				{ "slug": "studio", "label": "In the Studio" }
+			]
+		},
+		{
+			"name": "tag",
+			"label": "Blog Tags",
+			"labelSingular": "Blog Tag",
+			"hierarchical": false,
+			"collections": ["posts"],
+			"terms": []
+		},
+		{
+			"name": "course",
+			"label": "Courses",
+			"labelSingular": "Course",
+			"hierarchical": false,
+			"collections": ["recipes"],
+			"terms": [
+				{ "slug": "breakfast", "label": "Breakfast" },
+				{ "slug": "main", "label": "Main Dish" },
+				{ "slug": "side", "label": "Side Dish" },
+				{ "slug": "soup-salad", "label": "Soups & Salads" },
+				{ "slug": "bread", "label": "Breads" },
+				{ "slug": "dessert", "label": "Desserts" },
+				{ "slug": "snack", "label": "Snacks & Appetizers" },
+				{ "slug": "drink", "label": "Drinks" }
+			]
+		},
+		{
+			"name": "recipe_tag",
+			"label": "Recipe Tags",
+			"labelSingular": "Recipe Tag",
+			"hierarchical": false,
+			"collections": ["recipes"],
+			"terms": [
+				{ "slug": "quick", "label": "30 Minutes or Less" },
+				{ "slug": "make-ahead", "label": "Make Ahead" },
+				{ "slug": "holiday", "label": "Holiday" },
+				{ "slug": "vegetarian", "label": "Vegetarian" },
+				{ "slug": "gluten-free", "label": "Gluten Free" }
+			]
+		}
+	],
+	"menus": [
+		{
+			"name": "primary",
+			"label": "Main Navigation",
+			"items": [
+				{ "type": "custom", "label": "Home", "url": "/" },
+				{ "type": "custom", "label": "Blog", "url": "/posts" },
+				{ "type": "custom", "label": "Recipes", "url": "/recipes" },
+				{ "type": "custom", "label": "About", "url": "/about" },
+				{ "type": "custom", "label": "Shop", "url": "/shop" },
+				{ "type": "custom", "label": "Contact", "url": "/contact" }
+			]
+		},
+		{
+			"name": "social",
+			"label": "Social Links (footer)",
+			"items": [
+				{ "type": "custom", "label": "Facebook", "url": "https://www.facebook.com/lifeatthenest" },
+				{ "type": "custom", "label": "Instagram", "url": "https://www.instagram.com/life_at_the_nest/" },
+				{ "type": "custom", "label": "TikTok", "url": "https://www.tiktok.com/@life_at_the_nest" },
+				{ "type": "custom", "label": "YouTube", "url": "https://www.youtube.com/@LifeAtTheNest" }
+			]
+		}
+	],
+	"content": {
+		"pages": [
+			{
+				"id": "about",
+				"slug": "about",
+				"status": "published",
+				"data": {
+					"title": "About",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k0",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1",
+									"text": "Placeholder About page. Replace this text in the admin."
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"products": [
+			{
+				"id": "product-1",
+				"slug": "sample-dutch-oven",
+				"status": "published",
+				"data": {
+					"title": "Sample Dutch Oven",
+					"link": "https://www.amazon.com/shop/audrachalfantmatlack",
+					"store": "Amazon",
+					"blurb": "Placeholder product so the Shop page has something to show during development."
+				}
+			}
+		],
+		"posts": [
+			{
+				"id": "post-1",
+				"slug": "welcome",
+				"status": "published",
+				"data": {
+					"title": "Welcome to the Nest",
+					"excerpt": "Placeholder post for development. Replace or delete it in the admin.",
+					"content": [
+						{
+							"_type": "block",
+							"_key": "k0",
+							"style": "normal",
+							"children": [
+								{
+									"_type": "span",
+									"_key": "k1",
+									"text": "Placeholder post content for development."
+								}
+							]
+						}
+					]
+				},
+				"taxonomies": {
+					"category": ["kitchen"]
+				}
+			}
+		]
+	}
+}

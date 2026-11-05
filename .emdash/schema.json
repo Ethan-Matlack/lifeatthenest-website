@@ -1,0 +1,477 @@
+{
+  "collections": [
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "search",
+        "seo"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        }
+      ]
+    },
+    {
+      "slug": "posts",
+      "label": "Blog Posts",
+      "labelSingular": "Blog Post",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "featured_image",
+          "label": "Main photo",
+          "type": "image",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "content",
+          "label": "Post",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "excerpt",
+          "label": "Short description (shows on blog cards and in Google)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 300
+          },
+          "options": {
+            "rows": 3
+          }
+        },
+        {
+          "slug": "featured_products",
+          "label": "Products in this post (also shown on the Shop page)",
+          "type": "reference",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "targetCollection": "products",
+            "multiple": true,
+            "relation": "posts_featured_products",
+            "relationSide": "parent"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "products",
+      "label": "Shop Products",
+      "labelSingular": "Product",
+      "description": "Products you recommend. Pick them on a post or recipe and they appear on the Shop page.",
+      "icon": "shopping-bag",
+      "supports": [
+        "drafts",
+        "search"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Product name",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        {
+          "slug": "image",
+          "label": "Product photo",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "link",
+          "label": "Shopping link (where the Buy button goes)",
+          "type": "url",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "store",
+          "label": "Store name (e.g. Amazon)",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "defaultValue": "Amazon",
+          "validation": {
+            "maxLength": 60
+          }
+        },
+        {
+          "slug": "blurb",
+          "label": "Why you love it (a sentence or two)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 300
+          },
+          "options": {
+            "rows": 3
+          }
+        }
+      ]
+    },
+    {
+      "slug": "recipes",
+      "label": "Recipes",
+      "labelSingular": "Recipe",
+      "description": "Recipes with a scalable, printable recipe card",
+      "icon": "cooking-pot",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Recipe name",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "minLength": 1,
+            "maxLength": 120
+          }
+        },
+        {
+          "slug": "summary",
+          "label": "Short description (shows on recipe cards and in Google)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 300
+          },
+          "options": {
+            "rows": 3
+          }
+        },
+        {
+          "slug": "hero_image",
+          "label": "Main photo",
+          "type": "image",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "pin_image",
+          "label": "Pinterest photo (tall, optional)",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "intro",
+          "label": "Story / intro (shown above the recipe card)",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "servings",
+          "label": "Makes how many",
+          "type": "integer",
+          "required": true,
+          "unique": false,
+          "defaultValue": 4,
+          "validation": {
+            "min": 1,
+            "max": 200
+          }
+        },
+        {
+          "slug": "yield_unit",
+          "label": "Of what (servings, cookies, loaves...)",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "defaultValue": "servings",
+          "validation": {
+            "maxLength": 40
+          }
+        },
+        {
+          "slug": "prep_minutes",
+          "label": "Prep time (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "min": 0,
+            "max": 10000
+          }
+        },
+        {
+          "slug": "cook_minutes",
+          "label": "Cook time (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "min": 0,
+            "max": 10000
+          }
+        },
+        {
+          "slug": "extra_minutes",
+          "label": "Extra time: resting, chilling, rising (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "min": 0,
+            "max": 10000
+          }
+        },
+        {
+          "slug": "difficulty",
+          "label": "Difficulty",
+          "type": "select",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "options": [
+              "Easy",
+              "Medium",
+              "Involved"
+            ]
+          }
+        },
+        {
+          "slug": "ingredients",
+          "label": "Ingredients",
+          "type": "repeater",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "minItems": 1,
+            "maxItems": 80,
+            "subFields": [
+              {
+                "slug": "group",
+                "label": "Group heading (optional, e.g. For the frosting)",
+                "type": "string"
+              },
+              {
+                "slug": "amount",
+                "label": "Amount (e.g. 1 1/2, 1/3, 2-3)",
+                "type": "string"
+              },
+              {
+                "slug": "unit",
+                "label": "Unit",
+                "type": "select",
+                "options": [
+                  "tsp",
+                  "tbsp",
+                  "cup",
+                  "fl oz",
+                  "pint",
+                  "quart",
+                  "oz",
+                  "lb",
+                  "g",
+                  "kg",
+                  "ml",
+                  "l",
+                  "pinch",
+                  "dash",
+                  "clove",
+                  "can",
+                  "jar",
+                  "package",
+                  "stick",
+                  "slice",
+                  "sprig",
+                  "bunch"
+                ]
+              },
+              {
+                "slug": "item",
+                "label": "Ingredient",
+                "type": "string",
+                "required": true
+              },
+              {
+                "slug": "note",
+                "label": "Note (e.g. softened, finely chopped)",
+                "type": "string"
+              },
+              {
+                "slug": "fixed",
+                "label": "Don't scale this one (e.g. salt to taste)",
+                "type": "boolean"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "steps",
+          "label": "Instructions",
+          "type": "repeater",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "minItems": 1,
+            "maxItems": 60,
+            "subFields": [
+              {
+                "slug": "group",
+                "label": "Group heading (optional, e.g. Make the dough)",
+                "type": "string"
+              },
+              {
+                "slug": "instruction",
+                "label": "Step",
+                "type": "text",
+                "required": true
+              },
+              {
+                "slug": "image",
+                "label": "Step photo (optional)",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "equipment",
+          "label": "Equipment (one per line, optional)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "options": {
+            "rows": 4
+          }
+        },
+        {
+          "slug": "notes",
+          "label": "Tips, substitutions, and storage",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "calories",
+          "label": "Calories per serving (optional)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "min": 0,
+            "max": 10000
+          }
+        },
+        {
+          "slug": "credit",
+          "label": "Credit (e.g. Adapted from Grandma's recipe box)",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 160
+          }
+        },
+        {
+          "slug": "video_url",
+          "label": "Video link (optional)",
+          "type": "url",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "featured_products",
+          "label": "Products used in this recipe (also shown on the Shop page)",
+          "type": "reference",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "targetCollection": "products",
+            "multiple": true,
+            "relation": "recipes_featured_products",
+            "relationSide": "parent"
+          }
+        },
+        {
+          "slug": "featured",
+          "label": "Feature on homepage",
+          "type": "boolean",
+          "required": false,
+          "unique": false,
+          "defaultValue": false
+        }
+      ]
+    }
+  ],
+  "version": "92cd3030a445d8c4"
+}
