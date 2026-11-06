@@ -107,3 +107,30 @@ export function parseVideoLink(input: string | null | undefined): VideoLink | nu
 	const host = url.hostname.toLowerCase().replace(/^www\./, "");
 	return tiktok(url, host) ?? instagram(url, host) ?? facebook(url, host);
 }
+
+export interface VideoEntry {
+	url: string;
+	title?: string;
+}
+
+/**
+ * The videos to show for an entry: the `videos` repeater (link + optional
+ * title per row), falling back to the older single `video_url` field so
+ * entries keep working while the content type is migrated. Blank rows and
+ * repeated links are skipped.
+ */
+export function videoEntries(data: unknown): VideoEntry[] {
+	const d = (data && typeof data === "object" ? data : {}) as { videos?: unknown; video_url?: unknown };
+	const rows = Array.isArray(d.videos) ? d.videos : [];
+	const out: VideoEntry[] = [];
+	const seen = new Set<string>();
+	const add = (url: unknown, title?: unknown) => {
+		if (typeof url !== "string" || !url.trim() || seen.has(url.trim())) return;
+		seen.add(url.trim());
+		const t = typeof title === "string" ? title.trim() : "";
+		out.push(t ? { url: url.trim(), title: t } : { url: url.trim() });
+	};
+	for (const row of rows) if (row && typeof row === "object") add((row as VideoEntry).url, (row as VideoEntry).title);
+	if (!out.length) add(d.video_url);
+	return out;
+}

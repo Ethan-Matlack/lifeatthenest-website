@@ -223,9 +223,25 @@
 					"searchable": true
 				},
 				{
-					"slug": "video_url",
-					"label": "Video link (optional)",
-					"type": "url"
+					"slug": "videos",
+					"label": "Videos (optional)",
+					"type": "repeater",
+					"validation": {
+						"maxItems": 10,
+						"subFields": [
+							{
+								"slug": "url",
+								"label": "Video link (YouTube, TikTok, Instagram, Facebook)",
+								"type": "url",
+								"required": true
+							},
+							{
+								"slug": "title",
+								"label": "Title (optional, shown on the card)",
+								"type": "string"
+							}
+						]
+					}
 				},
 				{
 					"slug": "featured_products",
@@ -501,9 +517,25 @@
 					}
 				},
 				{
-					"slug": "video_url",
-					"label": "Video link (optional)",
-					"type": "url"
+					"slug": "videos",
+					"label": "Videos (optional)",
+					"type": "repeater",
+					"validation": {
+						"maxItems": 10,
+						"subFields": [
+							{
+								"slug": "url",
+								"label": "Video link (YouTube, TikTok, Instagram, Facebook)",
+								"type": "url",
+								"required": true
+							},
+							{
+								"slug": "title",
+								"label": "Title (optional, shown on the card)",
+								"type": "string"
+							}
+						]
+					}
 				},
 				{
 					"slug": "featured_products",

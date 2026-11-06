@@ -1,7 +1,7 @@
 // Run with: npm test
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { parseVideoLink } from "./video.ts";
+import { parseVideoLink, videoEntries } from "./video.ts";
 
 const kind = (url: string) => {
 	const v = parseVideoLink(url);
@@ -58,4 +58,34 @@ test("anything else is not a card", () => {
 	for (const url of ["", "not a url", "https://example.com/video/1", "javascript:alert(1)", "https://vimeo.com/123"]) {
 		assert.equal(parseVideoLink(url), null, url);
 	}
+});
+
+test("videoEntries reads the repeater, skipping blanks and duplicates", () => {
+	assert.deepEqual(
+		videoEntries({
+			videos: [
+				{ url: " https://youtu.be/jNQXAC9IVRw ", title: "  Zoo  " },
+				{ url: "" },
+				{ url: "https://youtu.be/jNQXAC9IVRw" },
+				{ url: "https://www.instagram.com/reel/C1a2b3c4d5e/", title: "" },
+				null,
+			],
+		}),
+		[
+			{ url: "https://youtu.be/jNQXAC9IVRw", title: "Zoo" },
+			{ url: "https://www.instagram.com/reel/C1a2b3c4d5e/" },
+		],
+	);
+});
+
+test("videoEntries falls back to the old single video_url field", () => {
+	assert.deepEqual(videoEntries({ video_url: "https://youtu.be/jNQXAC9IVRw" }), [{ url: "https://youtu.be/jNQXAC9IVRw" }]);
+	assert.deepEqual(videoEntries({ videos: [], video_url: "https://youtu.be/jNQXAC9IVRw" }).length, 1);
+	assert.deepEqual(
+		videoEntries({ videos: [{ url: "https://fb.watch/x/" }], video_url: "https://youtu.be/jNQXAC9IVRw" }),
+		[{ url: "https://fb.watch/x/" }],
+		"the list wins once it has rows",
+	);
+	assert.deepEqual(videoEntries(null), []);
+	assert.deepEqual(videoEntries({}), []);
 });
