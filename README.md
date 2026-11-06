@@ -57,7 +57,7 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 
 | Collection | Notes |
 |---|---|
-| Blog Posts (`posts`) | Title, short description (max 160), main photo, rich-text body, "Products in this post" picker. Comments on. |
+| Blog Posts (`posts`) | Title, short description (max 160), main photo, rich-text body, video link (shown as a "Watch" card at the end), "Products in this post" picker. Comments on. |
 | Recipes (`recipes`) | Title, short description (max 160), main photo, then structured fields: yield, times, difficulty, ingredient/step repeaters (with group headings), notes, video, credit, "Products used" picker. Comments on. |
 | Shop Products (`products`) | Name, photo, link, store, "Why you love it" blurb (max 100). Not routable (no product pages). |
 | Pages (`pages`) | Title, optional page photo, rich text. |

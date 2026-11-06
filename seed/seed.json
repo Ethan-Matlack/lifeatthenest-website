@@ -223,6 +223,11 @@
 					"searchable": true
 				},
 				{
+					"slug": "video_url",
+					"label": "Video link (optional)",
+					"type": "url"
+				},
+				{
 					"slug": "featured_products",
 					"label": "Products in this post (also shown on the Shop page)",
 					"type": "reference",

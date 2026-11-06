@@ -206,6 +206,13 @@
           "unique": false
         },
         {
+          "slug": "video_url",
+          "label": "Video link (optional)",
+          "type": "url",
+          "required": false,
+          "unique": false
+        },
+        {
           "slug": "featured_products",
           "label": "Products in this post (also shown on the Shop page)",
           "type": "reference",
@@ -589,5 +596,5 @@
       ]
     }
   ],
-  "version": "62e8c3d388118278"
+  "version": "c50b1db1d72063f2"
 }
