@@ -57,9 +57,9 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 
 | Collection | Notes |
 |---|---|
-| Blog Posts (`posts`) | Title, main photo, short description, rich-text body, "Products in this post" picker. Comments on. |
-| Recipes (`recipes`) | Structured fields: yield, times, difficulty, ingredient/step repeaters (with group headings), notes, video, credit, "Products used" picker. Comments on. |
-| Shop Products (`products`) | Name, photo, link, store, blurb. Not routable (no product pages). |
+| Blog Posts (`posts`) | Title, short description (max 160), main photo, rich-text body, "Products in this post" picker. Comments on. |
+| Recipes (`recipes`) | Title, short description (max 160), main photo, then structured fields: yield, times, difficulty, ingredient/step repeaters (with group headings), notes, video, credit, "Products used" picker. Comments on. |
+| Shop Products (`products`) | Name, photo, link, store, "Why you love it" blurb (max 100). Not routable (no product pages). |
 | Pages (`pages`) | Title, optional page photo, rich text. |
 | Homepage (`homepage`) | One entry: welcome text and photo, Meet Audra, quotes. Not routable. |
 
@@ -70,6 +70,8 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 | Recipe Categories (`course`) | Recipes (`/recipes?category=`) |
 | Recipe Tags (`recipe_tag`) | Recipes (`/recipes?tag=`) |
 | Shop Categories (`shop_category`) | Products (`/shop?category=`) |
+
+**SEO:** posts, recipes, and pages use `entrySeo()` (`src/utils/seo.ts`). The SEO panel's description and image win when filled in; otherwise the meta description is the short description (trimmed to 160 at a word boundary) and `og:image` is the main photo. Usually leave the SEO panel empty.
 
 Menus: **Main Navigation** (`primary`) and **Social Links** (`social`, which drives the footer icons and Contact cards; icons are picked from each URL's domain).
 
@@ -91,6 +93,7 @@ src/
     amount.ts                 Ingredient amount parsing/scaling/formatting (tested)
     recipe-schema.ts          schema.org Recipe JSON-LD
     portable-text.ts          Reading time, YouTube auto-embed
+    seo.ts                    Meta description / og:image fallbacks, image field → URL
 scripts/deploy-ci.mjs         Production deploy (migrate, deploy, verify)
 scripts/pull-live.mjs         Copy live content into the local dev site (npm run pull:live)
 seed/seed.json                Content model + sample content for fresh installs

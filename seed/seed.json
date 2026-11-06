@@ -172,7 +172,7 @@
 						"rows": 3
 					},
 					"validation": {
-						"maxLength": 300
+						"maxLength": 100
 					}
 				}
 			]
@@ -201,6 +201,17 @@
 					"searchable": true
 				},
 				{
+					"slug": "excerpt",
+					"label": "Short description (shows on blog cards and in Google)",
+					"type": "text",
+					"options": {
+						"rows": 3
+					},
+					"validation": {
+						"maxLength": 160
+					}
+				},
+				{
 					"slug": "featured_image",
 					"label": "Main photo",
 					"type": "image"
@@ -210,17 +221,6 @@
 					"label": "Post",
 					"type": "portableText",
 					"searchable": true
-				},
-				{
-					"slug": "excerpt",
-					"label": "Short description (shows on blog cards and in Google)",
-					"type": "text",
-					"options": {
-						"rows": 3
-					},
-					"validation": {
-						"maxLength": 300
-					}
 				},
 				{
 					"slug": "featured_products",
@@ -278,7 +278,7 @@
 						"rows": 3
 					},
 					"validation": {
-						"maxLength": 300
+						"maxLength": 160
 					}
 				},
 				{
@@ -286,18 +286,6 @@
 					"label": "Main photo",
 					"type": "image",
 					"required": true,
-					"validation": {
-						"allowedMimeTypes": [
-							"image/jpeg",
-							"image/png",
-							"image/webp"
-						]
-					}
-				},
-				{
-					"slug": "pin_image",
-					"label": "Pinterest photo (tall, optional)",
-					"type": "image",
 					"validation": {
 						"allowedMimeTypes": [
 							"image/jpeg",
@@ -1442,7 +1430,7 @@
 				"status": "published",
 				"data": {
 					"title": "Woven from the Wisdom of Strong Women: My Inspirational Heritage",
-					"excerpt": "My identity is a rich tapestry woven from the diverse influences of the remarkable women who have shaped my life. Each has contributed a unique thread to the fabric of my story, much like the handmade quilts prevalent in my community. I am a product of the care and attention of many individuals, but",
+					"excerpt": "My identity is a rich tapestry woven from the diverse influences of the remarkable women who have shaped my life.",
 					"content": [
 						{
 							"_type": "block",
@@ -1615,7 +1603,7 @@
 				"status": "published",
 				"data": {
 					"title": "Raising Meat Chickens: From Brooder to Pasture",
-					"excerpt": "Food is set up in an “all you can eat” tray, and water is refreshed twice daily. Our chicks are fed non-GMO broiler starter feed (22% protein) for the first 4weeks. In addition to providing warm shelter, a brooder needs to be secure from predators. Consider those that dig under, as well as critters ",
+					"excerpt": "Food is set up in an “all you can eat” tray, and water is refreshed twice daily.",
 					"content": [
 						{
 							"_type": "block",
@@ -1859,7 +1847,7 @@
 				"status": "published",
 				"data": {
 					"title": "A Guide to Hydrangea Care: Tips from Life at the Nest",
-					"excerpt": "As the seasons change and Spring gardening tasks start piling up, one chore that often requires immediate attention is pruning back hydrangeas. With their stunning blooms and diverse varieties, hydrangeas are a beloved addition to many gardens. However, proper care and pruning techniques are essenti",
+					"excerpt": "As the seasons change and Spring gardening tasks start piling up, one chore that often requires immediate attention is pruning back hydrangeas.",
 					"content": [
 						{
 							"_type": "block",
@@ -2281,7 +2269,7 @@
 				"status": "published",
 				"data": {
 					"title": "Seed Starting: What to Sow Indoors",
-					"excerpt": "Broccoli (6-8 weeks) & Cauliflower (8-10 weeks) These cruciferous vegetables are both cool weather vegetables. Get a jumpstart indoors in winter/early spring. They are easy to transplant at approximately 2 weeks before last frost. Also consider starting indoors in mid summer for your fall garden. Ca",
+					"excerpt": "Broccoli (6-8 weeks) & Cauliflower (8-10 weeks) These cruciferous vegetables are both cool weather vegetables. Get a jumpstart indoors in winter/early spring.",
 					"content": [
 						{
 							"_type": "block",
@@ -2621,7 +2609,7 @@
 				"status": "published",
 				"data": {
 					"title": "DIY Paper Bag Pots: A Sustainable Solution for Seedling Up-Potting",
-					"excerpt": "Are you gearing up to start your indoor seedlings this year? If you're like me and prefer to avoid excessive plastic use, you'll love this eco-friendly solution for potting up your seedlings: homemade paper bag pots! In this post, I'll guide you through the simple process of creating these biodegrad",
+					"excerpt": "Are you gearing up to start your indoor seedlings this year?",
 					"content": [
 						{
 							"_type": "block",
@@ -3016,7 +3004,7 @@
 				"status": "published",
 				"data": {
 					"title": "The Economics of Raising Meat Chickens",
-					"excerpt": "In today's post, we're diving into the economics of raising meat chickens at home. Many of you have followed our journey through various stages of chicken rearing, from bringing chicks home, to the butchering process. Now, it's time to crunch the numbers and see if raising your own meat chickens is ",
+					"excerpt": "In today's post, we're diving into the economics of raising meat chickens at home.",
 					"content": [
 						{
 							"_type": "block",
@@ -3308,7 +3296,7 @@
 				"status": "published",
 				"data": {
 					"title": "Celebrating the Youngest Child",
-					"excerpt": "If you've ever felt like being the youngest means being the target of older sibling teasing, chances are you're either the youngest yourself or the sympathetic parent of one. Yet, amidst the playful ribbing, it's worth recognizing that picking on the youngest is a common familial dynamic. As a proud",
+					"excerpt": "If you've ever felt like being the youngest means being the target of older sibling teasing, chances are you're either the youngest yourself or the…",
 					"content": [
 						{
 							"_type": "block",
@@ -3372,7 +3360,7 @@
 				"status": "published",
 				"data": {
 					"title": "Mastering Granola: A Journey of Trial, Error, and Delicious Discoveries!",
-					"excerpt": "Are you on the hunt for the perfect granola recipe? Well, you've come to theright place! My journey to mastering granola was filled with trial and error,as I sought to strike the ideal balance of sweetness, saltiness, andcrunchiness. After experimentingwith various recipes, I found many to beeither ",
+					"excerpt": "Are you on the hunt for the perfect granola recipe? Well, you've come to the right place!",
 					"content": [
 						{
 							"_type": "block",
@@ -3382,7 +3370,7 @@
 								{
 									"_type": "span",
 									"_key": "k82",
-									"text": "Are you on the hunt for the perfect granola recipe? Well, you’ve come to theright place! My journey to mastering granola was filled with trial and error,as I sought to strike the ideal balance of sweetness, saltiness, andcrunchiness. After experimentingwith various recipes, I found many to beeither too chewy or dangerously crunchy-nobody wants a broken tooth!Plus, with my children developing allergies, I needed an allergy-friendlyoption for breakfast. That’s when I discovered the magic of homemadegranola, tailored to meet their dietary needs. While I do add nuts to mine,fear not if allergies are a concern in your household; this recipe is just asdelicious without them!"
+									"text": "Are you on the hunt for the perfect granola recipe? Well, you’ve come to the right place! My journey to mastering granola was filled with trial and error,as I sought to strike the ideal balance of sweetness, saltiness, andcrunchiness. After experimentingwith various recipes, I found many to beeither too chewy or dangerously crunchy-nobody wants a broken tooth!Plus, with my children developing allergies, I needed an allergy-friendlyoption for breakfast. That’s when I discovered the magic of homemadegranola, tailored to meet their dietary needs. While I do add nuts to mine,fear not if allergies are a concern in your household; this recipe is just asdelicious without them!"
 								}
 							]
 						},
@@ -3453,7 +3441,7 @@
 				"status": "published",
 				"data": {
 					"title": "Savoring the Delights of \"Thanksgiving Cauliflower\" Beyond the Holiday Season",
-					"excerpt": "In our family, there's a dish that holds a special place on our Thanksgiving table, earning the endearing title of \"Thanksgiving Cauliflower.\" Despite my yearly resolution to enjoy it beyond the holiday season, time seems to slip away, leaving me wondering why we don't indulge in its deliciousness m",
+					"excerpt": "In our family, there's a dish that holds a special place on our Thanksgiving table, earning the endearing title of \"Thanksgiving Cauliflower.\"",
 					"content": [
 						{
 							"_type": "block",
@@ -3553,7 +3541,7 @@
 				"status": "published",
 				"data": {
 					"title": "Garden Transitions",
-					"excerpt": "As we step into the transitional period towards gardening season, I find myself caught between the tasks indoors—tending to seedlings—and the outdoor preparations for our garden. While it's still a few weeks away from transplanting, certain cool-weather crops like broccoli are eager to move into the",
+					"excerpt": "As we step into the transitional period towards gardening season, I find myself caught between the tasks indoors—tending to seedlings—and the outdoor…",
 					"content": [
 						{
 							"_type": "block",
@@ -3677,7 +3665,7 @@
 				"status": "published",
 				"data": {
 					"title": "Getting Started in Gardening: Tips for Success",
-					"excerpt": "As winter drags on, thoughts of vibrant gardens and fresh produce can provide a welcome escape from the cold and dreary weather. If you've ever toyed with the idea of starting your own garden but felt unprepared, now is the perfect time to take the plunge. The recent flooding in California serves as",
+					"excerpt": "As winter drags on, thoughts of vibrant gardens and fresh produce can provide a welcome escape from the cold and dreary weather.",
 					"content": [
 						{
 							"_type": "block",
@@ -3969,7 +3957,7 @@
 				"status": "published",
 				"data": {
 					"title": "Elevate Your Fall Decor with Fresh Floral Arrangements",
-					"excerpt": "But I wanted to take it up a notch. The idea struck me: why not design my arrangement inside a pumpkin? With a vision in mind, I carefully selected a pumpkin capable of holding the quart-sized mason jar I planned to put inside. Back at home, I set to work carving out my pumpkin from [&hellip;]",
+					"excerpt": "But I wanted to take it up a notch. The idea struck me: why not design my arrangement inside a pumpkin?",
 					"content": [
 						{
 							"_type": "block",
@@ -4093,7 +4081,7 @@
 				"status": "published",
 				"data": {
 					"title": "Culinary Staples: Chicken…Broth vs Stock vs Bone Broth",
-					"excerpt": "Let's demystify the differences between chicken stock, broth, and bone broth. With a surplus of chicken carcasses from our recent butchering day, we're determined not to let anything go to waste. As we gather our ingredients—mirepoix, herbs, chicken bones and feet—let's explore the nuanced flavors a",
+					"excerpt": "Let's demystify the differences between chicken stock, broth, and bone broth.",
 					"content": [
 						{
 							"_type": "block",
@@ -4229,7 +4217,7 @@
 				"status": "published",
 				"data": {
 					"title": "Good-Bye Minka",
-					"excerpt": "In response to the question \"What do you think you’re best at?\" I've always answered simply: \"Being honest.\" So, in the spirit of honesty, let me share a heartfelt confession. A few months back, my family bid farewell to our cherished German Shepherd, Minka. Her entry in to our lives coincided with ",
+					"excerpt": "In response to the question \"What do you think you’re best at?\" I've always answered simply: \"Being honest.\"",
 					"content": [
 						{
 							"_type": "block",
@@ -4317,7 +4305,7 @@
 				"status": "published",
 				"data": {
 					"title": "The Strength of a Mother",
-					"excerpt": "Barbara Kingsolver once said, \"Sometimes the strength of motherhood is greater than natural laws.\" This sentiment rings profoundly true for all mothers, though particularly poignant for mothers navigating the distressing journey of caring for a chronically-ill child. In the early days of motherhood,",
+					"excerpt": "Barbara Kingsolver once said, \"Sometimes the strength of motherhood is greater than natural laws.\"",
 					"content": [
 						{
 							"_type": "block",
@@ -4417,7 +4405,7 @@
 				"status": "published",
 				"data": {
 					"title": "Making the Case For Making Your Own Compost",
-					"excerpt": "A rare February gift, two consecutive days of 60+ degree weather, granted by nature, is nothing short of a gardener's delight! Seizing the opportunity, I dedicated last weekend to an array of tasks, from tending to neglected vegetable beds from the previous Fall, to tidying up the yard by clearing f",
+					"excerpt": "A rare February gift, two consecutive days of 60+ degree weather, granted by nature, is nothing short of a gardener's delight!",
 					"content": [
 						{
 							"_type": "block",

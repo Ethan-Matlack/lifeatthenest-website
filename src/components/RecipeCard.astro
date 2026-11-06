@@ -89,10 +89,12 @@ const multipliers = [
 		<img
 			class="rc-print-logo"
 			src="/images/logo.svg"
-			alt="Life at the Nest"
+			alt=""
+			aria-hidden="true"
 			width="341"
 			height="90"
-			loading="lazy"
+			loading="eager"
+			decoding="sync"
 		/>
 	</header>
 
@@ -426,13 +428,24 @@ const multipliers = [
 		color: var(--color-muted);
 	}
 
-	/* Logo only appears on the printout, top-right of the card. */
+	/* Logo only appears on the printout, top-right of the card. On screen it's
+	   kept loaded but out of sight (not display:none / lazy): iOS Safari prints
+	   without fetching images that weren't already loaded. */
 	.rc-print-logo {
-		display: none;
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		pointer-events: none;
 	}
 
 	@media print {
 		.rc-print-logo {
+			position: static;
+			clip-path: none;
+			overflow: visible;
+			pointer-events: auto;
 			display: block;
 			flex: none;
 			width: 1.75in;

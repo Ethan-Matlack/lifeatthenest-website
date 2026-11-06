@@ -140,6 +140,20 @@
           "type": "portableText",
           "required": false,
           "unique": false
+        },
+        {
+          "slug": "photo",
+          "label": "Page photo (optional, shown beside the title)",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
         }
       ]
     },
@@ -165,6 +179,19 @@
           "unique": false
         },
         {
+          "slug": "excerpt",
+          "label": "Short description (shows on blog cards and in Google)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 160
+          },
+          "options": {
+            "rows": 3
+          }
+        },
+        {
           "slug": "featured_image",
           "label": "Main photo",
           "type": "image",
@@ -177,19 +204,6 @@
           "type": "portableText",
           "required": false,
           "unique": false
-        },
-        {
-          "slug": "excerpt",
-          "label": "Short description (shows on blog cards and in Google)",
-          "type": "text",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "maxLength": 300
-          },
-          "options": {
-            "rows": 3
-          }
         },
         {
           "slug": "featured_products",
@@ -209,7 +223,7 @@
     {
       "slug": "products",
       "label": "Shop Products",
-      "labelSingular": "Product",
+      "labelSingular": "Shop Product",
       "description": "Products you recommend. Pick them on a post or recipe and they appear on the Shop page.",
       "icon": "shopping-bag",
       "supports": [
@@ -268,7 +282,7 @@
           "required": false,
           "unique": false,
           "validation": {
-            "maxLength": 300
+            "maxLength": 100
           },
           "options": {
             "rows": 3
@@ -310,7 +324,7 @@
           "required": false,
           "unique": false,
           "validation": {
-            "maxLength": 300
+            "maxLength": 160
           },
           "options": {
             "rows": 3
@@ -321,20 +335,6 @@
           "label": "Main photo",
           "type": "image",
           "required": true,
-          "unique": false,
-          "validation": {
-            "allowedMimeTypes": [
-              "image/jpeg",
-              "image/png",
-              "image/webp"
-            ]
-          }
-        },
-        {
-          "slug": "pin_image",
-          "label": "Pinterest photo (tall, optional)",
-          "type": "image",
-          "required": false,
           "unique": false,
           "validation": {
             "allowedMimeTypes": [
@@ -428,23 +428,21 @@
           "required": true,
           "unique": false,
           "validation": {
-            "minItems": 1,
-            "maxItems": 80,
             "subFields": [
               {
                 "slug": "group",
-                "label": "Group heading (optional, e.g. For the frosting)",
-                "type": "string"
+                "type": "string",
+                "label": "Group heading (optional, e.g. For the frosting)"
               },
               {
                 "slug": "amount",
-                "label": "Amount (e.g. 1 1/2, 1/3, 2-3)",
-                "type": "string"
+                "type": "string",
+                "label": "Amount (e.g. 1 1/2, 1/3, 2-3)"
               },
               {
                 "slug": "unit",
-                "label": "Unit",
                 "type": "select",
+                "label": "Unit",
                 "options": [
                   "tsp",
                   "tbsp",
@@ -472,22 +470,25 @@
               },
               {
                 "slug": "item",
-                "label": "Ingredient",
                 "type": "string",
+                "label": "Ingredient",
                 "required": true
               },
               {
                 "slug": "note",
-                "label": "Note (e.g. softened, finely chopped)",
-                "type": "string"
+                "type": "string",
+                "label": "Note (e.g. softened, finely chopped)"
               },
               {
                 "slug": "fixed",
-                "label": "Don't scale this one (e.g. salt to taste)",
-                "type": "boolean"
+                "type": "boolean",
+                "label": "Don't scale this one (e.g. salt to taste)"
               }
-            ]
-          }
+            ],
+            "minItems": 1,
+            "maxItems": 80
+          },
+          "widget": "recipe-editor:ingredients"
         },
         {
           "slug": "steps",
@@ -496,27 +497,28 @@
           "required": true,
           "unique": false,
           "validation": {
-            "minItems": 1,
-            "maxItems": 60,
             "subFields": [
               {
                 "slug": "group",
-                "label": "Group heading (optional, e.g. Make the dough)",
-                "type": "string"
+                "type": "string",
+                "label": "Group heading (optional, e.g. Make the dough)"
               },
               {
                 "slug": "instruction",
-                "label": "Step",
                 "type": "text",
+                "label": "Step",
                 "required": true
               },
               {
                 "slug": "image",
-                "label": "Step photo (optional)",
-                "type": "image"
+                "type": "image",
+                "label": "Step photo (optional)"
               }
-            ]
-          }
+            ],
+            "minItems": 1,
+            "maxItems": 60
+          },
+          "widget": "recipe-editor:steps"
         },
         {
           "slug": "equipment",
@@ -587,5 +589,5 @@
       ]
     }
   ],
-  "version": "50e663c82b9775e2"
+  "version": "62e8c3d388118278"
 }
