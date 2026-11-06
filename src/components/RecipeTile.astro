@@ -41,6 +41,7 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 		<div class="tile-body">
 			{course && <span class="eyebrow">{course}</span>}
 			<Heading class="tile-title">{d.title}</Heading>
+			{d.summary && <p class="tile-summary">{d.summary}</p>}
 			{time && <p class="tile-meta">{time}</p>}
 		</div>
 	</a>
@@ -49,6 +50,7 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 <style>
 	.recipe-tile {
 		height: 100%;
+		container-type: inline-size;
 	}
 
 	.tile-link {
@@ -85,6 +87,10 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 	}
 
 	.tile-body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		align-items: flex-start;
 		padding: var(--space-xs) var(--space-sm) var(--space-sm);
 	}
 
@@ -108,8 +114,30 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 		color: var(--color-moss);
 	}
 
-	.tile-meta {
+	/* Short description, like the blog cards: muted, cut off after 3 lines
+	   (2 in the narrow two-up tiles on phones). */
+	.tile-summary {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 		margin: var(--space-2xs) 0 0;
+		color: var(--color-muted);
+	}
+
+	@container (max-width: 14rem) {
+		.tile-summary {
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			font-size: var(--text-sm);
+		}
+	}
+
+	/* Pinned to the bottom so times line up across a row. */
+	.tile-meta {
+		margin: auto 0 0;
+		padding-top: var(--space-2xs);
 		font-size: var(--text-sm);
 		color: var(--color-muted);
 	}
