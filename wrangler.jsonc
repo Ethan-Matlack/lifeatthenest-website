@@ -4,6 +4,10 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
+	// D1 is matched by name (Wrangler reconnects deploys to the existing database).
+	// Don't add database_id here: local dev keys its database file on it, so adding
+	// it would switch `npm run dev` to a new, empty local database. The production
+	// database ID lives in scripts/deploy-ci.mjs for migrations.
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -14,6 +18,14 @@
 		{
 			"binding": "MEDIA",
 			"bucket_name": "lifeatthenest-media",
+		},
+	],
+	// Astro sessions (admin sign-in). Without this, a fresh build machine could
+	// provision a new namespace and sign everyone out.
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "9906a222ff754af6a75f2e9ea67db62e",
 		},
 	],
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:

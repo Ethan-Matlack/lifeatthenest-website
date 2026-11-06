@@ -12,6 +12,8 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"deploy": "astro build && wrangler deploy",
+		"deploy:ci": "node scripts/deploy-ci.mjs",
+		"deploy:check": "node scripts/deploy-ci.mjs --check",
 		"typecheck": "astro check",
 		"test": "node --test \"src/**/*.test.ts\""
 	},
