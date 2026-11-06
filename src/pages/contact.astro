@@ -1,0 +1,221 @@
+---
+/**
+ * Contact: social profiles ("reach out here") and the newsletter signup.
+ * Heading and intro come from the "contact" entry in Pages; the social
+ * cards come from the "social" menu (the same links as the footer).
+ */
+import { getMenuWithCacheHint, getSeoMeta } from "emdash";
+import Base from "../layouts/Base.astro";
+import NewsletterSignup from "../components/NewsletterSignup.astro";
+import RichText from "../components/RichText.astro";
+import SocialIcon from "../components/SocialIcon.astro";
+import { getListingPage } from "../utils/listing-page";
+import { socialHandle } from "../utils/social";
+
+const [page, socialResult] = await Promise.all([
+	getListingPage("contact", {
+		title: "Contact",
+		intro: "We'd love to hear from you! The best way to reach out is a message on any of the platforms below.",
+	}),
+	getMenuWithCacheHint("social"),
+]);
+if (Astro.cache?.enabled) {
+	Astro.cache.set(page.cacheHint);
+	Astro.cache.set(socialResult.cacheHint);
+}
+
+const socials = (socialResult.data?.items ?? []).map((item) => ({
+	label: item.label,
+	url: item.url,
+	handle: socialHandle(item.url),
+}));
+
+const seo = page.entry
+	? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/contact" })
+	: null;
+---
+
+<Base
+	title={page.title}
+	description={seo?.description ?? page.introText}
+	canonical={new URL("/contact", Astro.url).toString()}
+	image={seo?.ogImage ?? null}
+>
+	<header class="listing-header contact-header">
+		<h1 {...page.entry?.edit.title}>{page.title}</h1>
+		{
+			page.content ? (
+				<RichText value={page.content} class="listing-intro" {...page.entry?.edit.content} />
+			) : (
+				<p class="listing-intro">{page.fallbackIntro}</p>
+			)
+		}
+	</header>
+
+	<div class="contact-grid">
+		<section class="connect" aria-labelledby="connect-heading">
+			<h2 id="connect-heading">Let's Connect</h2>
+			<p class="connect-text">Follow along, say hello, or send a message.</p>
+			{
+				socials.length > 0 ? (
+					<ul class="social-cards">
+						{socials.map((s) => (
+							<li>
+								<a class="social-card" href={s.url} target="_blank" rel="noopener noreferrer me">
+									<span class="social-card-icon">
+										<SocialIcon url={s.url} size={26} />
+									</span>
+									<span class="social-card-text">
+										<span class="social-card-name">{s.label}</span>
+										{s.handle && <span class="social-card-handle">{s.handle}</span>}
+									</span>
+									<svg class="social-card-arrow" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+										<path d="M7 17 17 7M9 7h8v8" />
+									</svg>
+									<span class="visually-hidden">(opens in a new tab)</span>
+								</a>
+							</li>
+						))}
+					</ul>
+				) : (
+					<p class="connect-text">Social links coming soon.</p>
+				)
+			}
+		</section>
+
+		<NewsletterSignup />
+	</div>
+</Base>
+
+<style>
+	/* Everything on this page is centered in one column. */
+	.contact-header {
+		max-width: 48rem;
+		margin: 0 auto var(--space-xl);
+		text-align: center;
+	}
+
+	.contact-header :global(.listing-intro),
+	.contact-header :global(.listing-intro p) {
+		margin-inline: auto;
+	}
+
+	/* Stacked at every width: intro, Let's Connect, then the newsletter. */
+	.contact-grid {
+		display: grid;
+		gap: var(--space-2xl);
+		max-width: 48rem;
+		margin-inline: auto;
+		padding-bottom: var(--space-xl);
+	}
+
+	.connect {
+		text-align: center;
+	}
+
+	/* Social cards keep their icon/text layout; only the block is centered. */
+	.social-card {
+		text-align: left;
+	}
+
+	/* Newsletter card: centered heading, text, button, and note; fields full width. */
+	.contact-grid :global(.signup) {
+		text-align: center;
+	}
+
+	.contact-grid :global(.signup-field) {
+		text-align: left;
+	}
+
+	.contact-grid :global(.signup-submit) {
+		justify-self: center;
+	}
+
+	.connect h2 {
+		margin-bottom: var(--space-2xs);
+		font-size: var(--text-2xl);
+	}
+
+	.connect-text {
+		color: var(--color-muted);
+	}
+
+	.social-cards {
+		display: grid;
+		gap: var(--space-xs);
+		margin: var(--space-md) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media (min-width: 30rem) {
+		.social-cards {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	.social-card {
+		display: flex;
+		align-items: center;
+		gap: var(--space-sm);
+		height: 100%;
+		padding: var(--space-sm);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		color: inherit;
+		text-decoration: none;
+		transition:
+			border-color 0.15s ease,
+			box-shadow 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.social-card:hover {
+		border-color: var(--color-sage);
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+		color: inherit;
+	}
+
+	.social-card-icon {
+		display: grid;
+		flex: none;
+		place-items: center;
+		width: 3rem;
+		height: 3rem;
+		border-radius: 50%;
+		background: var(--color-olive);
+		color: #fff;
+	}
+
+	.social-card-text {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.social-card-name {
+		font-family: var(--font-display);
+		font-size: var(--text-lg);
+		color: var(--color-heading);
+	}
+
+	.social-card-handle {
+		overflow: hidden;
+		font-size: var(--text-sm);
+		color: var(--color-muted);
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.social-card-arrow {
+		flex: none;
+		fill: none;
+		stroke: var(--color-moss);
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+</style>

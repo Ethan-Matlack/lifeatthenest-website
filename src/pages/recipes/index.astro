@@ -1,0 +1,221 @@
+---
+/**
+ * Recipe index: recipe-category chips, recipe-tag dropdown, search, infinite scroll.
+ * Query params: ?category=&tag=&q=&cursor=
+ * (Recipe categories are stored in the "course" taxonomy.)
+ * Without a search, recipes are A–Z; with one, best match first.
+ */
+import { getEmDashCollection, getSeoMeta, getTaxonomyTermsWithCacheHint, search } from "emdash";
+import type { ContentEntry, WhereValue } from "emdash";
+import type { Recipe } from "../../../emdash-env";
+import Base from "../../layouts/Base.astro";
+import BackToTop from "../../components/BackToTop.astro";
+import ListingFilters from "../../components/ListingFilters.astro";
+import LoadMore from "../../components/LoadMore.astro";
+import RecipeTile from "../../components/RecipeTile.astro";
+import { listingUrl, param, sortBySlugRank } from "../../utils/listing";
+import { getListingPage } from "../../utils/listing-page";
+import RichText from "../../components/RichText.astro";
+
+const BASE = "/recipes";
+const PAGE_SIZE = 16;
+const SEARCH_LIMIT = 50;
+
+const params = Astro.url.searchParams;
+const courseSlug = param(params, "category");
+const tagSlug = param(params, "tag");
+const q = param(params, "q", 100);
+const cursor = param(params, "cursor", 500) || undefined;
+
+const [coursesResult, tagsResult] = await Promise.all([
+	getTaxonomyTermsWithCacheHint("course"),
+	getTaxonomyTermsWithCacheHint("recipe_tag"),
+]);
+
+const courses = coursesResult.data.filter((t) => !t.parentId);
+const tags = tagsResult.data;
+const activeCourse = courses.find((c) => c.slug === courseSlug) ?? null;
+const activeTag = tags.find((t) => t.slug === tagSlug) ?? null;
+
+// Heading, intro, and SEO come from the matching entry in Pages (slug "recipes").
+const page = await getListingPage("recipes", {
+	title: "Recipes",
+	intro: "Tried-and-true, made-from-scratch recipes from our family's kitchen.",
+});
+if (Astro.cache?.enabled) Astro.cache.set(page.cacheHint);
+
+const state = { category: activeCourse?.slug, tag: activeTag?.slug, q };
+const url = (overrides = {}) => listingUrl(BASE, state, overrides);
+
+const where: Record<string, WhereValue> = {};
+if (activeCourse) where.course = activeCourse.slug;
+if (activeTag) where.recipe_tag = activeTag.slug;
+
+let recipes: ContentEntry<Recipe>[] = [];
+let nextCursor: string | undefined;
+let loadFailed = false;
+
+if (q) {
+	// Full-text search, then the other filters in the database; keep relevance order.
+	const results = await search(q, { collections: ["recipes"], limit: SEARCH_LIMIT });
+	const slugs = results.items.map((r) => r.slug).filter((s): s is string => Boolean(s));
+	if (slugs.length > 0) {
+		const res = await getEmDashCollection("recipes", { where: { ...where, slug: slugs }, limit: SEARCH_LIMIT });
+		if (Astro.cache?.enabled) Astro.cache.set(res.cacheHint);
+		recipes = sortBySlugRank(res.entries, slugs);
+	}
+} else {
+	const res = await getEmDashCollection("recipes", {
+		where,
+		orderBy: { title: "asc" },
+		limit: PAGE_SIZE,
+		cursor,
+	});
+	if (res.error) {
+		// A stale or hand-edited cursor: start the same filtered list over.
+		if (cursor) return Astro.redirect(url(), 302);
+		loadFailed = true;
+	}
+	if (Astro.cache?.enabled) Astro.cache.set(res.cacheHint);
+	recipes = res.entries;
+	nextCursor = res.nextCursor;
+}
+
+if (Astro.cache?.enabled) {
+	Astro.cache.set(coursesResult.cacheHint);
+	Astro.cache.set(tagsResult.cacheHint);
+}
+
+const active = [
+	activeCourse && {
+		label: activeCourse.label,
+		removeHref: url({ category: null }),
+		removeLabel: `Remove category filter: ${activeCourse.label}`,
+	},
+	activeTag && {
+		label: activeTag.label,
+		removeHref: url({ tag: null }),
+		removeLabel: `Remove tag filter: ${activeTag.label}`,
+	},
+	q && { label: `“${q}”`, removeHref: url({ q: null }), removeLabel: `Remove search: ${q}` },
+].filter((f) => Boolean(f)) as { label: string; removeHref: string; removeLabel: string }[];
+
+const titleParts = [activeCourse?.label, activeTag?.label].filter(Boolean);
+// The page's SEO panel applies to the unfiltered listing only.
+const seo =
+	page.entry && !activeCourse && !q
+		? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/recipes" })
+		: null;
+const pageTitle = titleParts.length ? `${titleParts.join(" · ")} — Recipes` : page.title;
+const description = activeCourse?.description ?? seo?.description ?? page.introText;
+const canonical = new URL(url({ q: null }), Astro.url).toString();
+---
+
+<Base title={pageTitle} description={description} canonical={canonical} image={seo?.ogImage ?? null}>
+	<header class="listing-header">
+		{
+			activeCourse ? (
+				<h1>{activeCourse.label}</h1>
+			) : (
+				<h1 {...page.entry?.edit.title}>{page.title}</h1>
+			)
+		}
+		{
+			activeCourse ? (
+				<p class="listing-intro">{activeCourse.description ?? page.fallbackIntro}</p>
+			) : page.content ? (
+				<RichText value={page.content} class="listing-intro" {...page.entry?.edit.content} />
+			) : (
+				<p class="listing-intro">{page.fallbackIntro}</p>
+			)
+		}
+	</header>
+
+	<ListingFilters
+		action={BASE}
+		state={state}
+		search={{
+			value: q,
+			label: "Search recipes",
+			placeholder: activeCourse
+				? activeCourse.label.length <= 12
+					? `Search ${activeCourse.label}`
+					: "Search this category"
+				: "Search recipes",
+		}}
+		chips={{
+			label: "Recipe categories",
+			items: [
+				{ label: "All", href: url({ category: null }), current: !activeCourse },
+				...courses.map((c) => ({
+					label: c.label,
+					href: url({ category: c.slug }),
+					current: activeCourse?.slug === c.slug,
+				})),
+			],
+		}}
+		select={
+			tags.length > 0
+				? {
+						name: "tag",
+						label: "Recipe tag",
+						anyLabel: "Any tag",
+						options: tags.map((t) => ({ value: t.slug, label: t.label })),
+						value: activeTag?.slug ?? "",
+					}
+				: undefined
+		}
+		active={active}
+		clearHref={BASE}
+		panelCount={[activeCourse, activeTag].filter(Boolean).length}
+	/>
+
+	{
+		recipes.length > 0 ? (
+			<div class="card-grid recipe-grid" id="recipe-grid">
+				{recipes.map((recipe, i) => (
+					<RecipeTile recipe={recipe} headingLevel="h2" priority={i < 2} />
+				))}
+			</div>
+		) : (
+			<div class="listing-empty">
+				<h2>{loadFailed ? "Something went wrong" : "No recipes found"}</h2>
+				<p>
+					{loadFailed
+						? "We couldn't load the recipes. Please try again."
+						: active.length
+							? "Nothing matches those filters yet. Try another category or tag."
+							: "There are no recipes yet. Check back soon!"}
+				</p>
+				{active.length > 0 && (
+					<a class="btn btn--outline" href={BASE}>
+						See all recipes
+					</a>
+				)}
+			</div>
+		)
+	}
+
+	<LoadMore nextUrl={nextCursor ? url({ cursor: nextCursor }) : null} gridId="recipe-grid" noun="recipes" />
+	{
+		q && recipes.length >= SEARCH_LIMIT && (
+			<p class="listing-note">Showing the top {SEARCH_LIMIT} matches. Try a more specific search.</p>
+		)
+	}
+	<BackToTop />
+</Base>
+
+<style>
+	/* Two compact columns on phones, then as many as fit. */
+	.recipe-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-sm);
+	}
+
+	@media (min-width: 40rem) {
+		.recipe-grid {
+			grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+			gap: var(--space-lg) var(--space-md);
+		}
+	}
+</style>

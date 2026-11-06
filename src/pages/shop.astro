@@ -1,0 +1,203 @@
+---
+/**
+ * Shop: every published product, newest first, with shop-category chips,
+ * search, and infinite scroll. Query params: ?category=&q=&cursor=
+ * Products appear here as soon as they're published (including ones
+ * created while picking "Products in this post" on a post or recipe).
+ */
+import { getEmDashCollection, getSeoMeta, getTaxonomyTermsWithCacheHint, search } from "emdash";
+import type { ContentEntry, WhereValue } from "emdash";
+import type { Product } from "../../emdash-env";
+import Base from "../layouts/Base.astro";
+import BackToTop from "../components/BackToTop.astro";
+import ListingFilters from "../components/ListingFilters.astro";
+import LoadMore from "../components/LoadMore.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { listingUrl, param, sortBySlugRank } from "../utils/listing";
+import { getListingPage } from "../utils/listing-page";
+import RichText from "../components/RichText.astro";
+
+const BASE = "/shop";
+const PAGE_SIZE = 24;
+const SEARCH_LIMIT = 60;
+
+const params = Astro.url.searchParams;
+const categorySlug = param(params, "category");
+const q = param(params, "q", 100);
+const cursor = param(params, "cursor", 500) || undefined;
+
+const categoriesResult = await getTaxonomyTermsWithCacheHint("shop_category");
+const categories = categoriesResult.data.filter((t) => !t.parentId);
+const activeCategory = categories.find((c) => c.slug === categorySlug) ?? null;
+
+// Heading, intro, and SEO come from the matching entry in Pages (slug "shop").
+const page = await getListingPage("shop", {
+	title: "The Shop",
+	intro: "The tools, supplies, and favorites we actually use around the Nest, from the kitchen to the garden.",
+});
+if (Astro.cache?.enabled) Astro.cache.set(page.cacheHint);
+
+const state = { category: activeCategory?.slug, q };
+const url = (overrides = {}) => listingUrl(BASE, state, overrides);
+
+const where: Record<string, WhereValue> = {};
+if (activeCategory) where.shop_category = activeCategory.slug;
+
+let products: ContentEntry<Product>[] = [];
+let nextCursor: string | undefined;
+let loadFailed = false;
+
+if (q) {
+	// Full-text search (name + "why you love it"), then the category filter; keep relevance order.
+	const results = await search(q, { collections: ["products"], limit: SEARCH_LIMIT });
+	const slugs = results.items.map((r) => r.slug).filter((s): s is string => Boolean(s));
+	if (slugs.length > 0) {
+		const res = await getEmDashCollection("products", { where: { ...where, slug: slugs }, limit: SEARCH_LIMIT });
+		if (Astro.cache?.enabled) Astro.cache.set(res.cacheHint);
+		products = sortBySlugRank(res.entries, slugs);
+	}
+} else {
+	const res = await getEmDashCollection("products", {
+		where,
+		orderBy: { created_at: "desc" },
+		limit: PAGE_SIZE,
+		cursor,
+	});
+	if (res.error) {
+		if (cursor) return Astro.redirect(url(), 302);
+		loadFailed = true;
+	}
+	if (Astro.cache?.enabled) Astro.cache.set(res.cacheHint);
+	products = res.entries;
+	nextCursor = res.nextCursor;
+}
+
+if (Astro.cache?.enabled) Astro.cache.set(categoriesResult.cacheHint);
+
+const active = [
+	activeCategory && {
+		label: activeCategory.label,
+		removeHref: url({ category: null }),
+		removeLabel: `Remove category filter: ${activeCategory.label}`,
+	},
+	q && { label: `“${q}”`, removeHref: url({ q: null }), removeLabel: `Remove search: ${q}` },
+].filter((f) => Boolean(f)) as { label: string; removeHref: string; removeLabel: string }[];
+
+// The page's SEO panel applies to the unfiltered listing only.
+const seo =
+	page.entry && !activeCategory && !q
+		? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/shop" })
+		: null;
+const pageTitle = activeCategory ? `${activeCategory.label} — Shop` : page.title;
+const description = activeCategory?.description ?? seo?.description ?? page.introText;
+const canonical = new URL(url({ q: null }), Astro.url).toString();
+---
+
+<Base title={pageTitle} description={description} canonical={canonical} image={seo?.ogImage ?? null}>
+	<header class="listing-header">
+		{
+			activeCategory ? (
+				<h1>{activeCategory.label}</h1>
+			) : (
+				<h1 {...page.entry?.edit.title}>{page.title}</h1>
+			)
+		}
+		{
+			activeCategory ? (
+				<p class="listing-intro">{activeCategory.description ?? page.fallbackIntro}</p>
+			) : page.content ? (
+				<RichText value={page.content} class="listing-intro" {...page.entry?.edit.content} />
+			) : (
+				<p class="listing-intro">{page.fallbackIntro}</p>
+			)
+		}
+		<p class="shop-disclosure">
+			Some links are affiliate links. As an Amazon Associate, I earn from qualifying purchases, at no
+			extra cost to you.
+		</p>
+	</header>
+
+	<ListingFilters
+		action={BASE}
+		state={state}
+		search={{
+			value: q,
+			label: "Search the shop",
+			placeholder: activeCategory
+				? activeCategory.label.length <= 12
+					? `Search ${activeCategory.label}`
+					: "Search this category"
+				: "Search the shop",
+		}}
+		chips={{
+			label: "Shop categories",
+			items: [
+				{ label: "All", href: url({ category: null }), current: !activeCategory },
+				...categories.map((c) => ({
+					label: c.label,
+					href: url({ category: c.slug }),
+					current: activeCategory?.slug === c.slug,
+				})),
+			],
+		}}
+		active={active}
+		clearHref={BASE}
+		panelCount={activeCategory ? 1 : 0}
+	/>
+
+	{
+		products.length > 0 ? (
+			<div class="product-grid" id="product-grid">
+				{products.map((product) => (
+					<ProductCard product={product} headingLevel="h2" />
+				))}
+			</div>
+		) : (
+			<div class="listing-empty">
+				<h2>{loadFailed ? "Something went wrong" : "Nothing here yet"}</h2>
+				<p>
+					{loadFailed
+						? "We couldn't load the shop. Please try again."
+						: active.length
+							? "No products match that. Try another category or search."
+							: "Check back soon for favorites from around the Nest."}
+				</p>
+				{active.length > 0 && (
+					<a class="btn btn--outline" href={BASE}>
+						See everything
+					</a>
+				)}
+			</div>
+		)
+	}
+
+	<LoadMore nextUrl={nextCursor ? url({ cursor: nextCursor }) : null} gridId="product-grid" noun="products" />
+	{
+		q && products.length >= SEARCH_LIMIT && (
+			<p class="listing-note">Showing the top {SEARCH_LIMIT} matches. Try a more specific search.</p>
+		)
+	}
+	<BackToTop />
+</Base>
+
+<style>
+	.shop-disclosure {
+		margin: var(--space-2xs) 0 0;
+		font-size: var(--text-xs);
+		color: var(--color-muted);
+	}
+
+	/* Two per row on phones, then as many as fit. */
+	.product-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-sm);
+	}
+
+	@media (min-width: 40rem) {
+		.product-grid {
+			grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+			gap: var(--space-lg) var(--space-md);
+		}
+	}
+</style>

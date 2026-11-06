@@ -1,50 +1,291 @@
 ---
-import { getEmDashCollection, getSiteSettings } from "emdash";
-import { Image } from "emdash/ui";
+import { getEmDashCollection } from "emdash";
+import { Image, PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
-import { resolveStarterSiteIdentity } from "../utils/site-identity";
+import NewsletterCta from "../components/NewsletterCta.astro";
+import PostCard from "../components/PostCard.astro";
+import QuoteCarousel from "../components/QuoteCarousel.astro";
+import RecipeTile from "../components/RecipeTile.astro";
 
-const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
-	orderBy: { published_at: "desc" },
-	limit: 10,
-});
-const { siteTitle, siteTagline } = resolveStarterSiteIdentity(
-	await getSiteSettings(),
-);
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const FEATURED_RECIPE_COUNT = 4;
+const LATEST_POST_COUNT = 3;
+
+const [homeResult, featuredResult, postsResult] = await Promise.all([
+	// One "Homepage" entry holds the editable text. If an extra one is ever
+	// created by accident, the most recently edited one wins.
+	getEmDashCollection("homepage", { limit: 1, orderBy: { updated_at: "desc" } }),
+	getEmDashCollection("recipes", {
+		where: { featured: "1" },
+		orderBy: { published_at: "desc" },
+		limit: FEATURED_RECIPE_COUNT,
+	}),
+	getEmDashCollection("posts", {
+		orderBy: { published_at: "desc" },
+		limit: LATEST_POST_COUNT,
+	}),
+]);
+
+// Fall back to the newest recipes when nothing is marked "Feature on homepage".
+const recipesResult =
+	featuredResult.entries.length > 0
+		? featuredResult
+		: await getEmDashCollection("recipes", {
+				orderBy: { published_at: "desc" },
+				limit: FEATURED_RECIPE_COUNT,
+			});
+
+if (Astro.cache?.enabled) {
+	Astro.cache.set(homeResult.cacheHint);
+	Astro.cache.set(featuredResult.cacheHint);
+	Astro.cache.set(recipesResult.cacheHint);
+	Astro.cache.set(postsResult.cacheHint);
+}
+
+const home = homeResult.entries[0];
+const h = home?.data;
+const recipes = recipesResult.entries;
+const posts = postsResult.entries;
+
+const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 ---
 
-<Base title={siteTitle} description={siteTagline}>
-	<h1>Recent Posts</h1>
+<Base title="Life at the Nest" fullBleed>
+	<!-- Welcome -->
+	<section class="hero">
+		<div class="container hero-inner">
+			<div class="hero-copy">
+				<h1 {...home?.edit.welcome_heading}>{welcomeHeading}</h1>
+				{h?.welcome_text && <p class="hero-text" {...home?.edit.welcome_text}>{h.welcome_text}</p>}
+				<div class="hero-actions">
+					<a class="btn" href="/posts">Read the blog</a>
+					<a class="btn btn--outline" href="/recipes">Browse recipes</a>
+				</div>
+			</div>
+			<div class="hero-media arch" {...home?.edit.welcome_image}>
+				{
+					h?.welcome_image ? (
+						<Image
+							image={h.welcome_image}
+							sizes="(min-width: 56rem) 34rem, 100vw"
+							priority
+						/>
+					) : (
+						<div class="photo-placeholder" aria-hidden="true" />
+					)
+				}
+			</div>
+		</div>
+	</section>
 
+	<!-- Latest posts -->
 	{
-		posts.length === 0 ? (
-			<p>
-				No posts yet. <a href="/_emdash/admin/content/posts/new">Create one</a>.
-			</p>
-		) : (
-			<ul>
-				{posts.map((post) => (
-					<li>
-						<a href={`/posts/${post.id}`}>
-							{post.data.featured_image && (
-								<div {...post.edit.featured_image}><Image image={post.data.featured_image} /></div>
-							)}
-							<h2 {...post.edit.title}>{post.data.title}</h2>
-						</a>
-						{post.data.excerpt && <p {...post.edit.excerpt}>{post.data.excerpt}</p>}
-						{post.data.publishedAt && (
-							<time datetime={post.data.publishedAt.toISOString()}>
-								{post.data.publishedAt.toLocaleDateString("en-US", {
-									year: "numeric",
-									month: "long",
-									day: "numeric",
-								})}
-							</time>
+		posts.length > 0 && (
+			<section class="section section--alt" aria-labelledby="posts-heading">
+				<div class="container">
+					<div class="section-heading">
+						<div>
+							<span class="eyebrow">From the blog</span>
+							<h2 id="posts-heading">Latest from the Nest</h2>
+						</div>
+						<a href="/posts">All posts &rarr;</a>
+					</div>
+					<div class="card-grid card-grid--posts">
+						{posts.map((post) => (
+							<PostCard post={post} />
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Featured recipes -->
+	{
+		recipes.length > 0 && (
+			<section class="section" aria-labelledby="recipes-heading">
+				<div class="container">
+					<div class="section-heading">
+						<div>
+							<span class="eyebrow">From the kitchen</span>
+							<h2 id="recipes-heading">Featured Recipes</h2>
+						</div>
+						<a href="/recipes">All recipes &rarr;</a>
+					</div>
+					<div class="card-grid card-grid--recipes">
+						{recipes.map((recipe) => (
+							<RecipeTile recipe={recipe} />
+						))}
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	<NewsletterCta />
+
+	<!-- Meet Audra -->
+	{
+		h && (h.about_text?.length || h.about_image) && (
+			<section class="section about" aria-labelledby="about-heading">
+				<div class="container about-inner">
+					<div class="about-media arch" {...home?.edit.about_image}>
+						{h.about_image ? (
+							<Image image={h.about_image} sizes="(min-width: 56rem) 26rem, 100vw" />
+						) : (
+							<div class="photo-placeholder" aria-hidden="true" />
 						)}
-					</li>
-				))}
-			</ul>
+					</div>
+					<div class="about-copy">
+						<span class="eyebrow">About</span>
+						<h2 id="about-heading" {...home?.edit.about_heading}>
+							{h.about_heading || "Meet Audra"}
+						</h2>
+						{h.about_text && (
+							<div class="prose about-text" {...home?.edit.about_text}>
+								<PortableText value={h.about_text} />
+							</div>
+						)}
+						<a class="btn btn--outline" href="/about">
+							More about Audra
+						</a>
+					</div>
+				</div>
+			</section>
+		)
+	}
+
+	<!-- Quotes -->
+	{
+		h?.quotes && h.quotes.length > 0 && (
+			<section class="section quotes-band" aria-label="Quotes">
+				<div class="container">
+					<QuoteCarousel quotes={h.quotes} />
+				</div>
+			</section>
 		)
 	}
 </Base>
+
+<style>
+	/* ---------- Welcome ---------- */
+	.hero {
+		background: var(--color-bg);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.hero-inner {
+		display: grid;
+		gap: var(--space-xl);
+		align-items: center;
+		padding-block: var(--space-xl) var(--space-2xl);
+	}
+
+	.hero h1 {
+		max-width: 16ch;
+	}
+
+	.hero-text {
+		max-width: 36rem;
+		font-size: var(--text-lg);
+		color: var(--color-muted);
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-xs);
+		margin-top: var(--space-lg);
+	}
+
+	/* Farmhouse arched-window frame */
+	.arch {
+		overflow: hidden;
+		border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+	}
+
+	.hero-media {
+		width: min(70%, 16rem);
+		aspect-ratio: 4 / 5;
+		justify-self: center;
+	}
+
+	.hero-media :global(img),
+	.hero-media .photo-placeholder,
+	.about-media :global(img),
+	.about-media .photo-placeholder {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media (min-width: 56rem) {
+		.hero-inner {
+			grid-template-columns: 1.15fr 1fr;
+			gap: var(--space-2xl);
+			padding-block: var(--space-2xl);
+		}
+
+		.hero-media {
+			width: min(100%, 30rem);
+			justify-self: end;
+		}
+	}
+
+	/* ---------- Sections ---------- */
+	.section--alt {
+		background: var(--color-surface);
+	}
+
+	/* Two compact columns on phones; fill the row on wider screens. */
+	.card-grid--recipes {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--space-sm);
+	}
+
+	@media (min-width: 40rem) {
+		.card-grid--recipes {
+			grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+			gap: var(--space-lg) var(--space-md);
+		}
+	}
+
+	.card-grid--posts {
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+	}
+
+	/* ---------- Meet Audra ---------- */
+	.about-inner {
+		display: grid;
+		gap: var(--space-xl);
+		align-items: center;
+	}
+
+	.about-media {
+		width: min(70%, 16rem);
+		aspect-ratio: 4 / 5;
+		justify-self: center;
+	}
+
+	.about-text {
+		margin-bottom: var(--space-lg);
+		font-size: var(--text-base);
+	}
+
+	@media (min-width: 56rem) {
+		.about-inner {
+			grid-template-columns: 2fr 3fr;
+			gap: var(--space-2xl);
+		}
+
+		.about-media {
+			width: 100%;
+			max-width: 26rem;
+		}
+	}
+
+	/* ---------- Quotes ---------- */
+	.quotes-band {
+		background: var(--color-linen);
+		border-top: 1px solid var(--color-border);
+	}
+</style>

@@ -1,0 +1,377 @@
+---
+/**
+ * Single recipe: header + "Jump to recipe", hero photo, story, the printable
+ * RecipeCard, shop-this-recipe, and comments. Emits Recipe JSON-LD.
+ * Printing shows only the recipe card (see the print styles below).
+ */
+import { decodeSlug, getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
+import { Image } from "emdash/ui";
+import { Comments, CommentForm } from "emdash/ui/comments";
+import Base from "../../layouts/Base.astro";
+import BackToTop from "../../components/BackToTop.astro";
+import RecipeCard from "../../components/RecipeCard.astro";
+import RichText from "../../components/RichText.astro";
+import ShopThis from "../../components/ShopThis.astro";
+import { formatMinutes, totalMinutes } from "../../utils/format";
+import { jsonLdString, recipeJsonLd } from "../../utils/recipe-schema";
+import { resolveStarterSiteIdentity } from "../../utils/site-identity";
+
+const AUTHOR = "Audra Chalfant Matlack";
+
+const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
+
+const [{ entry: recipe, cacheHint }, settings] = await Promise.all([
+	getEmDashEntry("recipes", slug, { references: { featured_products: true } }),
+	getSiteSettings(),
+]);
+if (!recipe) return Astro.rewrite("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const d = recipe.data;
+const { siteTitle } = resolveStarterSiteIdentity(settings);
+const path = Astro.url.pathname.replace(/\/$/, "");
+const seo = getSeoMeta(recipe, { siteTitle, siteUrl: Astro.url.origin, path });
+const canonical = seo.canonical ?? new URL(path, Astro.url).toString();
+
+const courses = d.terms?.course ?? [];
+const tags = d.terms?.recipe_tag ?? [];
+const products = recipe.references?.featured_products?.entries ?? [];
+const total = totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_minutes);
+const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
+
+const absolute = (src?: string | null) => (src ? new URL(src, Astro.url).toString() : null);
+const images = [absolute(d.hero_image?.src), absolute(d.pin_image?.src)].filter((s): s is string => Boolean(s));
+
+const jsonLd = recipeJsonLd({
+	url: canonical,
+	name: d.title,
+	description: d.summary,
+	images,
+	author: AUTHOR,
+	datePublished: d.publishedAt,
+	servings: d.servings,
+	yieldUnit: d.yield_unit,
+	prepMinutes: d.prep_minutes,
+	cookMinutes: d.cook_minutes,
+	extraMinutes: d.extra_minutes,
+	ingredients: d.ingredients,
+	steps: d.steps,
+	categories: courses.map((c) => c.label),
+	keywords: tags.map((t) => t.label),
+	calories: d.calories,
+	intro: d.intro,
+});
+---
+
+<Base
+	title={seo.title}
+	pageTitle={seo.ogTitle}
+	description={seo.description ?? d.summary}
+	canonical={canonical}
+	image={seo.ogImage ?? images[0] ?? null}
+	content={{ collection: "recipes", id: d.id, slug }}
+	fullBleed
+>
+	<script type="application/ld+json" set:html={jsonLdString(jsonLd)} />
+
+	<article class="recipe-page">
+		<header class="container container--prose recipe-header">
+			{
+				courses.length > 0 && (
+					<p class="recipe-courses">
+						{courses.map((c, i) => (
+							<>
+								{i > 0 && <span aria-hidden="true"> · </span>}
+								<a class="eyebrow" href={`/recipes?category=${c.slug}`}>
+									{c.label}
+								</a>
+							</>
+						))}
+					</p>
+				)
+			}
+			<h1 {...recipe.edit.title}>{d.title}</h1>
+			{d.summary && <p class="recipe-summary" {...recipe.edit.summary}>{d.summary}</p>}
+			<p class="recipe-quick">
+				{total > 0 && <span>{formatMinutes(total)}</span>}
+				{d.servings && <span>Makes {d.servings} {d.yield_unit || "servings"}</span>}
+				{d.difficulty && <span>{d.difficulty}</span>}
+			</p>
+			<div class="recipe-actions">
+				<a class="btn" href="#recipe">
+					<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7" /></svg>
+					Jump to recipe
+				</a>
+				<button type="button" class="btn btn--outline" data-print-page hidden>Print recipe</button>
+			</div>
+		</header>
+
+		<div class="recipe-hero" {...recipe.edit.hero_image}>
+			{
+				d.hero_image ? (
+					<Image image={d.hero_image} sizes="(min-width: 64rem) 60rem, 100vw" priority />
+				) : (
+					<div class="photo-placeholder" aria-hidden="true" />
+				)
+			}
+		</div>
+
+		{
+			hasIntro && (
+				<div class="container container--prose recipe-intro">
+					<RichText value={d.intro} {...recipe.edit.intro} />
+				</div>
+			)
+		}
+
+		<div class="container recipe-card-wrap">
+			<RecipeCard recipe={recipe} />
+		</div>
+
+		{
+			tags.length > 0 && (
+				<div class="container container--prose recipe-tags">
+					<ul aria-label="Recipe tags">
+						{tags.map((t) => (
+							<li>
+								<a class="chip" href={`/recipes?tag=${t.slug}`}>
+									{t.label}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			)
+		}
+	</article>
+
+	<ShopThis products={products} eyebrow="Shop this recipe" />
+
+	<section class="container container--prose recipe-comments comments-section" aria-labelledby="comments-heading">
+		<h2 id="comments-heading" class="visually-hidden">Comments</h2>
+		<Comments collection="recipes" contentId={d.id} threaded />
+		<h3 class="comment-form-heading">Leave a comment</h3>
+		<CommentForm collection="recipes" contentId={d.id} />
+	</section>
+
+	<BackToTop />
+</Base>
+
+<script>
+	for (const button of document.querySelectorAll("[data-print-page]")) {
+		if (!(button instanceof HTMLButtonElement)) continue;
+		button.hidden = false;
+		button.addEventListener("click", () => window.print());
+	}
+</script>
+
+<style>
+	.recipe-header {
+		padding-block: var(--space-xl) var(--space-lg);
+		text-align: center;
+	}
+
+	.recipe-courses {
+		margin-bottom: var(--space-2xs);
+		color: var(--color-moss);
+	}
+
+	.recipe-courses a {
+		margin: 0;
+		text-decoration: none;
+	}
+
+	.recipe-header h1 {
+		margin-bottom: var(--space-sm);
+		font-size: clamp(2.1rem, 1.6rem + 2.4vw, 3.4rem);
+	}
+
+	.recipe-summary {
+		max-width: 36rem;
+		margin: 0 auto var(--space-sm);
+		font-size: var(--text-lg);
+		color: var(--color-muted);
+	}
+
+	.recipe-quick {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem 1.25rem;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-olive);
+	}
+
+	.recipe-quick span + span::before {
+		content: "·";
+		margin-right: 1.25rem;
+		color: var(--color-sage);
+	}
+
+	.recipe-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-xs);
+		margin-top: var(--space-md);
+	}
+
+	.recipe-actions svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.recipe-hero {
+		width: min(60rem, 100%);
+		aspect-ratio: 3 / 2;
+		margin: 0 auto var(--space-xl);
+		overflow: hidden;
+	}
+
+	.recipe-hero :global(img),
+	.recipe-hero .photo-placeholder {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	@media (min-width: 60rem) {
+		.recipe-hero {
+			border-radius: var(--radius-lg);
+		}
+	}
+
+	.recipe-intro {
+		padding-bottom: var(--space-xl);
+	}
+
+	.recipe-card-wrap {
+		max-width: calc(64rem + var(--gutter) * 2);
+		padding-bottom: var(--space-xl);
+	}
+
+	.recipe-tags ul {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-2xs);
+		margin: 0 0 var(--space-xl);
+		padding: 0;
+		list-style: none;
+	}
+
+	.recipe-comments {
+		padding-block: var(--space-xl) var(--space-2xl);
+	}
+
+	.comment-form-heading {
+		margin-top: var(--space-xl);
+		font-size: var(--text-xl);
+	}
+
+	/*
+	 * Print / Save PDF: only the recipe card, at the current scale.
+	 * Header, footer, story, photos, shop, comments, and controls are hidden.
+	 */
+	@media print {
+		@page {
+			margin: 0.6in;
+		}
+
+		:global(.site-main) > :not(.recipe-page),
+		.recipe-page > :not(.recipe-card-wrap) {
+			display: none !important;
+		}
+
+		.recipe-card-wrap {
+			max-width: none;
+			padding: 0;
+		}
+
+		:global(.recipe-card) {
+			padding: 0 !important;
+			border: 0 !important;
+			box-shadow: none !important;
+			color: #000;
+		}
+
+		:global(.recipe-card .eyebrow),
+		:global(.recipe-card .rc-meta dt),
+		:global(.recipe-card h4),
+		:global(.recipe-card .rc-num) {
+			color: #333 !important;
+		}
+
+		:global(.recipe-card h2),
+		:global(.recipe-card h3),
+		:global(.recipe-card .rc-meta dd),
+		:global(.recipe-card .rc-amt),
+		:global(.recipe-card .rc-unit) {
+			color: #000 !important;
+		}
+
+		:global(.recipe-card h2) {
+			font-size: 22pt !important;
+		}
+
+		:global(.recipe-card h3) {
+			font-size: 14pt !important;
+			margin-bottom: 6pt !important;
+		}
+
+		:global(.recipe-card .rc-body) {
+			display: grid !important;
+			grid-template-columns: 2fr 3fr !important;
+			gap: 0.35in !important;
+			margin-top: 12pt !important;
+		}
+
+		:global(.recipe-card .rc-ing label),
+		:global(.recipe-card .rc-step label) {
+			padding: 2pt 0 !important;
+		}
+
+		:global(.recipe-card .rc-step .rc-text) {
+			font-size: 11pt !important;
+		}
+
+		/* Print checkboxes as empty squares and drop the strike-through. */
+		:global(.recipe-card .rc-check) {
+			appearance: none;
+			width: 9pt;
+			height: 9pt;
+			margin-top: 3pt;
+			border: 1px solid #555;
+			border-radius: 2px;
+		}
+
+		:global(.recipe-card li .rc-text) {
+			color: #000 !important;
+			text-decoration: none !important;
+		}
+
+		:global(.recipe-card li),
+		:global(.recipe-card .rc-group) {
+			break-inside: avoid;
+		}
+
+		:global(.recipe-card .rc-extra) {
+			margin-top: 12pt !important;
+			padding-top: 8pt !important;
+			break-inside: avoid;
+		}
+
+		:global(.recipe-card .rc-foot)::after {
+			content: "From lifeatthenest.com";
+			display: block;
+			margin-top: 8pt;
+			font-size: 9pt;
+			color: #555;
+		}
+	}
+</style>

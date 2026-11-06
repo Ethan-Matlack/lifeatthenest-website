@@ -1,0 +1,205 @@
+---
+/**
+ * Renders a Portable Text field with the site's typography and our block
+ * overrides (YouTube card). Use for post bodies, pages, and recipe stories.
+ *
+ * - A paragraph that is only a YouTube link becomes a video card.
+ * - "Recipe card" blocks (and other content cards) render via pt/ContentCard.
+ * - Images aligned "wide" or "full" in the editor break out of the text column.
+ */
+import { PortableText } from "emdash/ui";
+import PtEmbed from "./pt/PtEmbed.astro";
+import PtIframe from "./pt/PtIframe.astro";
+import ContentCard from "./pt/ContentCard.astro";
+import { CARD_TYPES } from "../plugins/content-cards/card-types";
+import { autoEmbeds } from "../utils/portable-text";
+
+interface Props {
+	value: unknown;
+	class?: string;
+	[key: string]: unknown;
+}
+
+const { value, class: className, ...rest } = Astro.props;
+const components = {
+	type: {
+		embed: PtEmbed,
+		iframe: PtIframe,
+		// One renderer for every content-card block type (recipeCard, …)
+		...Object.fromEntries(CARD_TYPES.map((t) => [t.type, ContentCard])),
+	},
+};
+---
+
+<div class:list={["prose", "rich-text", className]} {...rest}>
+	<PortableText value={autoEmbeds(value) as any} components={components} />
+</div>
+
+<style is:global>
+	.rich-text {
+		--rt-wide: min(60rem, calc(100vw - var(--gutter) * 2));
+	}
+
+	.rich-text > :first-child {
+		margin-top: 0;
+	}
+
+	.rich-text p:empty {
+		display: none;
+	}
+
+	/* Images & figures */
+	.rich-text figure {
+		margin: var(--space-xl) 0;
+	}
+
+	.rich-text .emdash-image img,
+	.rich-text .emdash-gallery img,
+	.rich-text .emdash-video video {
+		border-radius: var(--radius-md);
+	}
+
+	.rich-text figcaption {
+		margin-top: var(--space-2xs);
+		font-size: var(--text-sm);
+		line-height: 1.5;
+		color: var(--color-muted);
+		text-align: center;
+	}
+
+	/* Wide/full images extend past the reading column (centered on it). */
+	.rich-text .emdash-image--align-wide,
+	.rich-text .emdash-image--align-full {
+		width: var(--rt-wide);
+		max-width: none;
+		margin-left: 50%;
+		transform: translateX(-50%);
+	}
+
+	.rich-text .emdash-image--align-full img {
+		border-radius: 0;
+	}
+
+	@media (min-width: 40rem) {
+		.rich-text .emdash-image--align-left {
+			float: left;
+			max-width: 50%;
+			margin: var(--space-2xs) var(--space-lg) var(--space-sm) 0;
+		}
+
+		.rich-text .emdash-image--align-right {
+			float: right;
+			max-width: 50%;
+			margin: var(--space-2xs) 0 var(--space-sm) var(--space-lg);
+		}
+	}
+
+	.rich-text h2,
+	.rich-text h3,
+	.rich-text hr,
+	.rich-text .emdash-break {
+		clear: both;
+	}
+
+	/* Links in body text */
+	.rich-text a {
+		text-decoration-color: var(--color-sage);
+		text-decoration-thickness: 2px;
+	}
+
+	.rich-text a:hover {
+		text-decoration-color: currentColor;
+	}
+
+	/* Pull quotes */
+	.rich-text .emdash-pullquote {
+		margin: var(--space-xl) 0;
+		padding: var(--space-md) 0;
+		border-top: 2px solid var(--color-sage);
+		border-bottom: 2px solid var(--color-sage);
+		text-align: center;
+	}
+
+	.rich-text .emdash-pullquote__text {
+		font-family: var(--font-display);
+		font-style: italic;
+		font-size: var(--text-2xl);
+		line-height: var(--leading-snug);
+		color: var(--color-olive);
+	}
+
+	.rich-text .emdash-pullquote__citation {
+		margin-top: var(--space-xs);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--color-moss);
+	}
+
+	/* Tables */
+	.rich-text .emdash-table-wrapper {
+		margin: var(--space-lg) 0;
+		overflow-x: auto;
+	}
+
+	.rich-text table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: var(--text-base);
+	}
+
+	.rich-text th,
+	.rich-text td {
+		padding: 0.6rem 0.75rem;
+		border-bottom: 1px solid var(--color-border);
+		text-align: left;
+	}
+
+	.rich-text th {
+		font-weight: 600;
+		color: var(--color-olive);
+		background: var(--color-linen);
+	}
+
+	/* Code */
+	.rich-text code {
+		padding: 0.1em 0.35em;
+		border-radius: var(--radius-sm);
+		background: var(--color-linen);
+		font-size: 0.9em;
+	}
+
+	.rich-text pre {
+		overflow-x: auto;
+		padding: var(--space-sm);
+		border-radius: var(--radius-md);
+		font-size: var(--text-sm);
+	}
+
+	.rich-text pre code {
+		padding: 0;
+		background: none;
+	}
+
+	/* Section breaks */
+	.rich-text hr,
+	.rich-text .emdash-break-line {
+		width: 6rem;
+		margin: var(--space-xl) auto;
+		border: 0;
+		border-top: 2px solid var(--color-sage);
+	}
+
+	/* Lists */
+	.rich-text li::marker {
+		color: var(--color-moss);
+	}
+
+	/* Columns stack on phones */
+	@media (max-width: 40rem) {
+		.rich-text .emdash-columns {
+			display: block;
+		}
+	}
+</style>

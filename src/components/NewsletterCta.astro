@@ -1,0 +1,66 @@
+---
+/**
+ * Newsletter call to action. For now it links to /contact; once the
+ * signup endpoint exists this becomes the inline form.
+ */
+interface Props {
+	heading?: string;
+	text?: string;
+}
+
+const {
+	heading = "Join the newsletter family",
+	text = "Be the first to know when new recipes, tutorials, and more become available.",
+} = Astro.props;
+---
+
+<section class="newsletter" aria-labelledby="newsletter-heading">
+	<div class="container newsletter-inner">
+		<div class="newsletter-copy">
+			<h2 id="newsletter-heading">{heading}</h2>
+			<p>{text}</p>
+		</div>
+		<a class="btn" href="/contact#newsletter">Sign up for the newsletter</a>
+	</div>
+</section>
+
+<style>
+	.newsletter {
+		background: var(--color-aqua);
+		color: var(--color-teal);
+	}
+
+	.newsletter-inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-md) var(--space-xl);
+		padding-block: var(--space-xl);
+	}
+
+	.newsletter-copy {
+		flex: 1 1 24rem;
+	}
+
+	.newsletter h2 {
+		margin-bottom: var(--space-2xs);
+		font-size: var(--text-2xl);
+		color: var(--color-teal);
+	}
+
+	.newsletter p {
+		margin: 0;
+		max-width: 36rem;
+	}
+
+	.newsletter .btn {
+		background: var(--color-teal);
+		border-color: var(--color-teal);
+	}
+
+	.newsletter .btn:hover {
+		background: var(--color-olive);
+		border-color: var(--color-olive);
+	}
+</style>
