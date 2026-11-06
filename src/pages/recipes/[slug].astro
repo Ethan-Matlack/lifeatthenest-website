@@ -108,23 +108,19 @@ const jsonLd = recipeJsonLd({
 			</div>
 		</header>
 
-		<div class="recipe-hero" {...recipe.edit.hero_image}>
-			{
-				d.hero_image ? (
-					<Image image={d.hero_image} sizes="(min-width: 64rem) 60rem, 100vw" priority />
-				) : (
-					<div class="photo-placeholder" aria-hidden="true" />
-				)
-			}
+		<!-- Main photo, with the story wrapping around it on wider screens. -->
+		<div class:list={["container recipe-lead", { "recipe-lead--story": hasIntro }]}>
+			<div class="recipe-hero" {...recipe.edit.hero_image}>
+				{
+					d.hero_image ? (
+						<Image image={d.hero_image} sizes="(min-width: 48rem) 30rem, 100vw" priority />
+					) : (
+						<div class="photo-placeholder" aria-hidden="true" />
+					)
+				}
+			</div>
+			{hasIntro && <RichText value={d.intro} {...recipe.edit.intro} />}
 		</div>
-
-		{
-			hasIntro && (
-				<div class="container container--prose recipe-intro">
-					<RichText value={d.intro} {...recipe.edit.intro} />
-				</div>
-			)
-		}
 
 		<div class="container recipe-card-wrap">
 			<RecipeCard recipe={recipe} />
@@ -227,11 +223,41 @@ const jsonLd = recipeJsonLd({
 		stroke-linejoin: round;
 	}
 
+	/* Photo + story. Phones: photo full width, story below. From 48rem the
+	   photo is half its old 60rem width; with a story it floats top-left and
+	   the text wraps around it (in a section a little wider than the usual
+	   reading column so the text beside the photo isn't cramped). */
+	.recipe-lead {
+		display: flow-root;
+		max-width: calc(56rem + var(--gutter) * 2);
+		padding-bottom: var(--space-xl);
+	}
+
+	.recipe-lead :global(.prose) {
+		max-width: none;
+	}
+
 	.recipe-hero {
-		width: min(60rem, 100%);
 		aspect-ratio: 3 / 2;
-		margin: 0 auto var(--space-xl);
 		overflow: hidden;
+		border-radius: var(--radius-lg);
+	}
+
+	.recipe-lead--story .recipe-hero {
+		margin-bottom: var(--space-lg);
+	}
+
+	@media (min-width: 48rem) {
+		.recipe-hero {
+			width: min(30rem, 100%);
+			margin-inline: auto;
+		}
+
+		.recipe-lead--story .recipe-hero {
+			float: left;
+			width: min(30rem, 50%);
+			margin: 0.35rem var(--space-lg) var(--space-sm) 0;
+		}
 	}
 
 	.recipe-hero :global(img),
@@ -241,15 +267,6 @@ const jsonLd = recipeJsonLd({
 		object-fit: cover;
 	}
 
-	@media (min-width: 60rem) {
-		.recipe-hero {
-			border-radius: var(--radius-lg);
-		}
-	}
-
-	.recipe-intro {
-		padding-bottom: var(--space-xl);
-	}
 
 	.recipe-card-wrap {
 		max-width: calc(64rem + var(--gutter) * 2);
