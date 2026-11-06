@@ -5,6 +5,7 @@ import { createPublicPageContext } from "emdash/page";
 import { Font } from "astro:assets";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
+import LocalNotice from "../components/LocalNotice.astro";
 import { resolveStarterSiteIdentity } from "../utils/site-identity";
 import "../styles/theme.css";
 
@@ -86,6 +87,7 @@ const pageCtx = createPublicPageContext({
 	<body>
 		<EmDashBodyStart page={pageCtx} />
 		<a class="skip-link" href="#main">Skip to content</a>
+		<LocalNotice />
 
 		<SiteHeader
 			siteTitle={siteTitle}

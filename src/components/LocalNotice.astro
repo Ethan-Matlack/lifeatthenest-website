@@ -1,0 +1,34 @@
+---
+/**
+ * Dev-only strip above the header: this is the local test copy, not the live
+ * site. Rendered only by `astro dev` (import.meta.env.DEV), so it never appears
+ * in a production build. The admin shows the same notice via the
+ * local-notice plugin.
+ */
+const show = import.meta.env.DEV;
+---
+
+{
+	show && (
+		<div class="local-notice" role="note">
+			<strong>Local test copy.</strong> Changes made here never reach the live site.
+		</div>
+	)
+}
+
+<style>
+	.local-notice {
+		padding: 0.4rem 1rem;
+		background: #f6d77a;
+		color: #3d3000;
+		font-size: 0.85rem;
+		text-align: center;
+		line-height: 1.4;
+	}
+
+	@media print {
+		.local-notice {
+			display: none;
+		}
+	}
+</style>

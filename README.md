@@ -86,12 +86,13 @@ src/
     ListingFilters.astro      Shared filter bar (search + chips + dropdown)
     LoadMore.astro            Shared infinite scroll / "Load more"
     ...                       Cards, header/footer, carousel, back-to-top, etc.
-  plugins/content-cards/      Our EmDash plugin (see Plugins)
+  plugins/                    Our EmDash plugins: content-cards, recipe-editor, local-notice (see Plugins)
   utils/
     amount.ts                 Ingredient amount parsing/scaling/formatting (tested)
     recipe-schema.ts          schema.org Recipe JSON-LD
     portable-text.ts          Reading time, YouTube auto-embed
 scripts/deploy-ci.mjs         Production deploy (migrate, deploy, verify)
+scripts/pull-live.mjs         Copy live content into the local dev site (npm run pull:live)
 seed/seed.json                Content model + sample content for fresh installs
 ```
 
@@ -127,6 +128,10 @@ Compact admin editors for a recipe's **Ingredients** and **Instructions**, repla
 
 Tests: `paste.test.ts`, `rows.test.ts`.
 
+### `local-notice` (ours, `src/plugins/local-notice/`)
+
+Dev-only reminder that you're editing the **local test copy**: a yellow "Local test copy · changes here never reach the live site" pill at the bottom of the admin (`admin.ts`), matching the strip above the header on the site (`src/components/LocalNotice.astro`). Both check `import.meta.env.DEV`, so neither appears in a production build. The pill ignores clicks. Removing the plugin only removes the notice.
+
 No third-party plugins are installed. Sandboxed plugins would require Workers Paid (the `worker_loaders` binding is commented out in `wrangler.jsonc`).
 
 ---
@@ -151,7 +156,7 @@ Workers Builds: build → migrate → deploy        live on the next page view (
 | EmDash internal migrations (from upgrading `emdash`) | Git (package bump) | Applied by the deploy's migrate step before the new code goes live |
 
 Rules of thumb:
-- **Production is the source of truth for content.** Local data is test data and will drift. To refresh local, export production with [site transfer](https://docs.emdashcms.com/guides/site-transfer/) and import locally.
+- **Production is the source of truth for content.** Local data is test data and will drift. To refresh local from live, run `npm run pull:live` (see [Copy live content to local](#copy-live-content-to-local)).
 - **`seed/seed.json` only applies when a brand-new site is set up.** Editing it does not change an existing site. Keep it in sync so a future staging site or rebuild matches production.
 - **Code that needs a new field ships after the field exists on production** (or handles its absence).
 - **Audra uses the Editor role;** she never needs git or code.
@@ -214,6 +219,30 @@ npm run build        # production build
 - **Dev-only sign-in shortcut:** `/_emdash/api/auth/dev-bypass?redirect=/_emdash/admin` signs in as a local "Dev Admin" (development builds only; returns 403 in production).
 - **Share the dev server with someone:** `npx astro dev --host` (LAN) or a Cloudflare quick tunnel (`cloudflared tunnel --url http://localhost:4321` with `--allowed-hosts .trycloudflare.com`).
 - **After changing the content model,** run `npx emdash types` or restart the dev server so `emdash-env.d.ts` is regenerated.
+
+> **⚠ Local is a separate copy. Nothing you do locally reaches the live site.**
+> Posts, photos, menus, and settings edited in the local admin stay on your machine, and live edits never come down on their own. Make real content changes in the **live** admin. A yellow "Local test copy" notice shows on the local site and admin as a reminder.
+
+### Copy live content to local
+
+`npm run pull:live` replaces the local site's content with a fresh copy of the live site (one-way: live → local; it never writes to live).
+
+1. **Create a short-lived live API token:** live admin → Settings → API Tokens → new token with only the **`transfer:export`** scope and the shortest expiry.
+2. **Stop the dev server**, then run `npm run pull:live`. Paste the token when asked (input is hidden; or set `LIVE_EMDASH_TOKEN` for that one command). It's never printed or saved.
+3. The script:
+   - exports live into `.local-sync/live-<time>.emdash` (gitignored);
+   - **asks**, then moves `.wrangler/state` to `.wrangler/state-backup-<time>` (moved, not deleted);
+   - starts a temporary dev server on an empty site (seed schema only, no sample content);
+   - shows the import plan, **asks**, imports, and stops the temporary server.
+4. `npm run dev`, then sign in with the dev bypass link above. **Revoke the token** in the live admin.
+
+Notes:
+- **Comes across:** all content including drafts and trash, media, menus, taxonomies, widgets, settings, and comments. **Doesn't:** users and passkeys. Live authors are credited to the local Dev Admin.
+- **Undo:** stop the dev server, delete `.wrangler/state`, and rename the backup back to `.wrangler/state`.
+- **Housekeeping:** the `.emdash` file holds all content plus author and commenter emails, so keep it private. Delete old exports and `state-backup-*` folders once you're done with them.
+- **Re-import without exporting again:** `npm run pull:live -- --package .local-sync/live-<time>.emdash`.
+- **Why the script deletes relations on the temporary site:** the seed's "featured products" reference fields create relations, and EmDash 1.4 doesn't count those as setup scaffold, so the import would refuse with `TRANSFER_TARGET_NOT_EMPTY`. The import recreates them from the live package.
+- **Local schema changes are replaced:** content types or fields added only locally are overwritten by live's. Code is unaffected.
 
 ---
 
