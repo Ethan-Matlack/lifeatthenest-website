@@ -1,16 +1,16 @@
 ---
-/** Portable Text `embed` block: YouTube gets the video card, others use EmDash's default. */
+/** Portable Text `embed` block: YouTube/TikTok/Instagram/Facebook get the video card, others use EmDash's default. */
 import { Embed } from "emdash/ui";
-import YouTubeCard from "../YouTubeCard.astro";
-import { getYouTubeId } from "../../utils/youtube";
+import VideoCard from "../VideoCard.astro";
+import { parseVideoLink } from "../../utils/video";
 
 const { node } = Astro.props as { node: { url?: string; caption?: string; title?: string } };
-const videoId = getYouTubeId(node?.url);
+const isVideo = Boolean(parseVideoLink(node?.url));
 ---
 
 {
-	videoId ? (
-		<YouTubeCard videoId={videoId} url={node.url} title={node.title} caption={node.caption} />
+	isVideo ? (
+		<VideoCard url={node.url!} title={node.title} caption={node.caption} />
 	) : (
 		<Embed {...(Astro.props as any)} />
 	)

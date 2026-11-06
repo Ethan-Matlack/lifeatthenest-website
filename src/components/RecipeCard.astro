@@ -13,10 +13,10 @@ import { Image } from "emdash/ui";
 import type { ContentEntry } from "emdash";
 import type { Recipe } from "../../emdash-env";
 import RichText from "./RichText.astro";
-import YouTubeCard from "./YouTubeCard.astro";
+import VideoCard from "./VideoCard.astro";
 import { formatMinutes, totalMinutes } from "../utils/format";
 import { formatNumber, scaleAmount, scaledMax, unitLabel } from "../utils/amount";
-import { getYouTubeId } from "../utils/youtube";
+import { parseVideoLink } from "../utils/video";
 
 interface Props {
 	// Any loaded references are ignored here, so accept whatever was requested.
@@ -56,7 +56,7 @@ const equipment = (d.equipment ?? "")
 	.split("\n")
 	.map((s) => s.trim())
 	.filter(Boolean);
-const videoId = getYouTubeId(d.video_url);
+const hasVideoCard = Boolean(parseVideoLink(d.video_url));
 const hasNotes = Array.isArray(d.notes) && d.notes.length > 0;
 const multipliers = [
 	{ factor: 0.5, label: "½×" },
@@ -245,8 +245,8 @@ const multipliers = [
 		d.video_url && (
 			<div class="rc-extra no-print">
 				<h3>Watch</h3>
-				{videoId ? (
-					<YouTubeCard videoId={videoId} url={d.video_url} />
+				{hasVideoCard ? (
+					<VideoCard url={d.video_url!} />
 				) : (
 					<p>
 						<a href={d.video_url} target="_blank" rel="noopener">

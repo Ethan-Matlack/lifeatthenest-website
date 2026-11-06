@@ -71,6 +71,8 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 | Recipe Tags (`recipe_tag`) | Recipes (`/recipes?tag=`) |
 | Shop Categories (`shop_category`) | Products (`/shop?category=`) |
 
+**Video links** (the "Video link" field on posts and recipes, an Embed block, or a paragraph that's just a link) render as a `VideoCard` that opens the video on its platform. YouTube cards show the thumbnail, title, and channel (YouTube oEmbed, no key). TikTok, Instagram, and Facebook cards show a branded panel, generic wording, and the creator handle from the URL: Instagram/Facebook oEmbed needs a Meta app token, and TikTok's oEmbed currently returns no title or thumbnail (used automatically if it does). Unrecognised links fall back to a plain "Watch the video" link.
+
 **SEO:** posts, recipes, and pages use `entrySeo()` (`src/utils/seo.ts`). The SEO panel's description and image win when filled in; otherwise the meta description is the short description (trimmed to 160 at a word boundary) and `og:image` is the main photo. Usually leave the SEO panel empty.
 
 Menus: **Main Navigation** (`primary`) and **Social Links** (`social`, which drives the footer icons and Contact cards; icons are picked from each URL's domain).
@@ -83,7 +85,8 @@ src/
   styles/theme.css            Design tokens (palette, type, spacing) + shared styles
   components/
     RichText.astro            Renders all rich text (posts, pages, recipe stories)
-    pt/                       Rich-text block renderers (YouTube, iframe, content cards)
+    pt/                       Rich-text block renderers (video links, iframe, content cards)
+    VideoCard.astro           Link-out card for YouTube/TikTok/Instagram/Facebook videos & posts
     RecipeCard.astro          Printable recipe card (scaling, checkboxes, print)
     ListingFilters.astro      Shared filter bar (search + chips + dropdown)
     LoadMore.astro            Shared infinite scroll / "Load more"
@@ -92,7 +95,8 @@ src/
   utils/
     amount.ts                 Ingredient amount parsing/scaling/formatting (tested)
     recipe-schema.ts          schema.org Recipe JSON-LD
-    portable-text.ts          Reading time, YouTube auto-embed
+    portable-text.ts          Reading time, video-link auto-embed
+    video.ts                  Recognises YouTube/TikTok/Instagram/Facebook links (tested)
     seo.ts                    Meta description / og:image fallbacks, image field → URL
 scripts/deploy-ci.mjs         Production deploy (migrate, deploy, verify)
 scripts/pull-live.mjs         Copy live content into the local dev site (npm run pull:live)

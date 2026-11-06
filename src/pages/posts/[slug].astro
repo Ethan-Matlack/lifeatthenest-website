@@ -7,11 +7,11 @@ import BackToTop from "../../components/BackToTop.astro";
 import PostNav from "../../components/PostNav.astro";
 import ShopThis from "../../components/ShopThis.astro";
 import RichText from "../../components/RichText.astro";
-import YouTubeCard from "../../components/YouTubeCard.astro";
+import VideoCard from "../../components/VideoCard.astro";
 import { formatDate } from "../../utils/format";
 import { readingMinutes } from "../../utils/portable-text";
 import { entrySeo } from "../../utils/seo";
-import { getYouTubeId } from "../../utils/youtube";
+import { parseVideoLink } from "../../utils/video";
 import { resolveStarterSiteIdentity } from "../../utils/site-identity";
 
 const AUTHOR = "Audra Chalfant Matlack";
@@ -64,7 +64,7 @@ const category = d.terms?.category?.[0];
 const tags = d.terms?.tag ?? [];
 const products = post.references?.featured_products?.entries ?? [];
 const minutes = readingMinutes(d.content);
-const videoId = getYouTubeId(d.video_url);
+const hasVideoCard = Boolean(parseVideoLink(d.video_url));
 ---
 
 <Base
@@ -120,8 +120,8 @@ const videoId = getYouTubeId(d.video_url);
 						<h2 id="post-video-heading" class="post-video-title">
 							Watch
 						</h2>
-						{videoId ? (
-							<YouTubeCard videoId={videoId} url={d.video_url} />
+						{hasVideoCard ? (
+							<VideoCard url={d.video_url!} />
 						) : (
 							<p>
 								<a href={d.video_url} target="_blank" rel="noopener">
@@ -222,7 +222,7 @@ const videoId = getYouTubeId(d.video_url);
 		font-size: var(--text-xl);
 	}
 
-	.post-video :global(.yt-card) {
+	.post-video :global(.vc-card) {
 		margin: 0;
 	}
 
