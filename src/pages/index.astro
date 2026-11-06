@@ -66,7 +66,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 					h?.welcome_image ? (
 						<Image
 							image={h.welcome_image}
-							sizes="(min-width: 56rem) 34rem, 100vw"
+							sizes="(min-width: 56rem) 34rem, (min-width: 44rem) 45vw, 100vw"
 							priority
 						/>
 					) : (
@@ -130,7 +130,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 				<div class="container about-inner">
 					<div class="about-media arch" {...home?.edit.about_image}>
 						{h.about_image ? (
-							<Image image={h.about_image} sizes="(min-width: 56rem) 26rem, 100vw" />
+							<Image image={h.about_image} sizes="(min-width: 56rem) 26rem, (min-width: 44rem) 40vw, 100vw" />
 						) : (
 							<div class="photo-placeholder" aria-hidden="true" />
 						)}
@@ -218,16 +218,23 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 		object-fit: cover;
 	}
 
-	@media (min-width: 56rem) {
+	/* Side by side from about 700px (portrait tablets), stacked below. */
+	@media (min-width: 44rem) {
 		.hero-inner {
 			grid-template-columns: 1.15fr 1fr;
-			gap: var(--space-2xl);
-			padding-block: var(--space-2xl);
+			gap: var(--space-xl);
 		}
 
 		.hero-media {
 			width: min(100%, 30rem);
 			justify-self: end;
+		}
+	}
+
+	@media (min-width: 56rem) {
+		.hero-inner {
+			gap: var(--space-2xl);
+			padding-block: var(--space-2xl);
 		}
 	}
 
@@ -271,15 +278,21 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 		font-size: var(--text-base);
 	}
 
-	@media (min-width: 56rem) {
+	/* Side by side from about 700px (portrait tablets), like the hero. */
+	@media (min-width: 44rem) {
 		.about-inner {
 			grid-template-columns: 2fr 3fr;
-			gap: var(--space-2xl);
 		}
 
 		.about-media {
 			width: 100%;
 			max-width: 26rem;
+		}
+	}
+
+	@media (min-width: 56rem) {
+		.about-inner {
+			gap: var(--space-2xl);
 		}
 	}
 
