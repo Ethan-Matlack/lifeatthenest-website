@@ -204,6 +204,7 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 ### Things to know
 
 - **D1 is matched by name in `wrangler.jsonc`.** Don't add `database_id` there: local dev keys its database file on it and would switch to an empty local database. The production database ID lives in `scripts/deploy-ci.mjs`.
+- **Images are resized and served as WebP on the fly** by Cloudflare's Images binding (originals stay in R2 untouched). Astro only optimizes hosts listed in `SITE_HOSTS` in `astro.config.mjs`. **Add any new domain there**, or that domain silently serves full-size originals. The Images Free plan covers 5,000 unique transformations a month (each photo × each width counts once); past that, new sizes fail to load, so keep an eye on it in the dashboard (Images → Transformations) as the library grows.
 - **Passkeys are bound to the address they were created on.** Admin passkeys created on the workers.dev address stop working after the domain change; use EmDash's **Change domain** flow (Settings → General) to move sign-in.
 
 ---

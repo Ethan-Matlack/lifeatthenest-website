@@ -7,12 +7,25 @@ import { contentCardsPlugin } from "./src/plugins/content-cards/descriptor.mjs";
 import { localNoticePlugin } from "./src/plugins/local-notice/descriptor.mjs";
 import { recipeEditorPlugin } from "./src/plugins/recipe-editor/descriptor.mjs";
 
+// Hostnames this site is served from. Astro only optimizes (resizes + WebP)
+// absolute image URLs from allowed hosts; EmDash allows its own media route
+// only when it knows the site URL at build time, which we don't set. Without
+// this, production serves full-size originals. Add any new domain here.
+const SITE_HOSTS = ["lifeatthenest.ethan-5da.workers.dev", "lifeatthenest.com", "www.lifeatthenest.com"];
+
 export default defineConfig({
 	output: "server",
 	adapter: cloudflare(),
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
+		// Only EmDash's own media route on our hosts. Its image endpoint reads
+		// these from R2 directly; the URL itself is never fetched.
+		remotePatterns: SITE_HOSTS.map((hostname) => ({
+			protocol: "https",
+			hostname,
+			pathname: "/_emdash/api/media/file/**",
+		})),
 	},
 	integrations: [
 		react(),
