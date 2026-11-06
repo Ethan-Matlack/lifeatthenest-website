@@ -1,0 +1,318 @@
+---
+/**
+ * Compact card linking out to a video or post on YouTube, TikTok, Instagram,
+ * or Facebook: a thumbnail (or a branded panel) on the left, title/creator
+ * and a "Watch on …" link on the right. No player or third-party script
+ * loads on our page.
+ *
+ * Details come from public oEmbed endpoints where they exist without an API
+ * key (YouTube, TikTok), cached at Cloudflare's edge for a day. Instagram
+ * and Facebook require a Meta app token for oEmbed, so their cards use a
+ * branded panel and generic wording unless a title is given. If any lookup
+ * fails or is slow, the card still renders.
+ *
+ * Callers check the link with parseVideoLink() first; unrecognised links
+ * should render as a plain link instead.
+ */
+import { BRAND_ICONS } from "../utils/brand-icons";
+import { PLATFORM_NAMES, parseVideoLink } from "../utils/video";
+
+interface Props {
+	url: string;
+	title?: string | null;
+	caption?: string | null;
+}
+
+const { url, title: givenTitle, caption } = Astro.props;
+const link = parseVideoLink(url);
+
+let title = givenTitle?.trim() || "";
+let creator = "";
+let thumbnail = "";
+
+async function oembed(endpoint: string) {
+	try {
+		const res = await fetch(endpoint, {
+			signal: AbortSignal.timeout(1500),
+			// Cloudflare Workers: cache the lookup at the edge for a day.
+			cf: { cacheTtl: 86400, cacheEverything: true },
+		} as RequestInit);
+		if (!res.ok) return null;
+		return (await res.json()) as { title?: string; author_name?: string; thumbnail_url?: string };
+	} catch {
+		return null; // Offline, slow, private, or removed: fall back below.
+	}
+}
+
+if (link?.platform === "youtube" && link.youtubeId) {
+	thumbnail = `https://i.ytimg.com/vi/${link.youtubeId}/mqdefault.jpg`;
+	const data = await oembed(
+		`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(`https://www.youtube.com/watch?v=${link.youtubeId}`)}`,
+	);
+	title ||= data?.title?.trim() ?? "";
+	creator = data?.author_name?.trim() ?? "";
+} else if (link?.platform === "tiktok") {
+	const data = await oembed(`https://www.tiktok.com/oembed?url=${encodeURIComponent(link.href)}`);
+	title ||= data?.title?.trim() ?? "";
+	creator = data?.author_name?.trim() ? `@${data.author_name.trim().replace(/^@/, "")}` : "";
+	// Only accept an https image URL from TikTok's response.
+	if (data?.thumbnail_url?.startsWith("https://")) thumbnail = data.thumbnail_url;
+}
+
+creator ||= link?.handle ?? "";
+const platform = link?.platform ?? "youtube";
+const name = PLATFORM_NAMES[platform];
+const isVideo = link?.kind !== "post";
+// TikTok titles are the post caption: often long and full of hashtags.
+if (platform === "tiktok") title = title.replace(/(\s#[^\s#]+)+\s*$/, "").trim();
+title ||= isVideo ? `Watch this video on ${name}` : `See this post on ${name}`;
+const label = isVideo ? (platform === "instagram" ? "Reel" : "Video") : "Post";
+const cta = `${isVideo ? "Watch" : "View"} on ${name}`;
+const icon = BRAND_ICONS[platform];
+---
+
+{
+	link && (
+		<figure class="vc-card" data-platform={platform}>
+			<a class="vc-link" href={link.href} target="_blank" rel="noopener">
+				<span class:list={["vc-thumb", { "vc-thumb--brand": !thumbnail }]}>
+					{thumbnail ? (
+						<>
+							<img
+								src={thumbnail}
+								alt=""
+								width="320"
+								height="180"
+								loading="lazy"
+								decoding="async"
+								referrerpolicy="no-referrer"
+							/>
+							{isVideo && (
+								<span class="vc-play" aria-hidden="true">
+									<svg viewBox="0 0 24 24" width="22" height="22">
+										<path d="M8 5.5v13l11-6.5z" />
+									</svg>
+								</span>
+							)}
+						</>
+					) : (
+						<svg class="vc-logo" viewBox="0 0 24 24" aria-hidden="true">
+							<path d={icon} />
+						</svg>
+					)}
+				</span>
+				<span class="vc-body">
+					<span class="vc-source">
+						<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+							<path d={icon} />
+						</svg>
+						{label}
+					</span>
+					<span class="vc-title">{title}</span>
+					{creator && <span class="vc-creator">{creator}</span>}
+					<span class="vc-cta">
+						{cta}
+						<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+							<path d="M7 17 17 7M9 7h8v8" />
+						</svg>
+						<span class="visually-hidden">(opens in a new tab)</span>
+					</span>
+				</span>
+			</a>
+			{caption && <figcaption class="vc-caption">{caption}</figcaption>}
+		</figure>
+	)
+}
+
+<style>
+	/* Per-platform colours. --vc-accent is used for small text on white, so
+	   each is darkened where needed to keep 4.5:1 contrast. */
+	.vc-card {
+		--vc-accent: #c4302b;
+		--vc-panel: #000;
+		margin: var(--space-xl) 0;
+	}
+
+	.vc-card[data-platform="tiktok"] {
+		--vc-accent: #161823;
+		--vc-panel: #000;
+	}
+
+	.vc-card[data-platform="instagram"] {
+		--vc-accent: #b1306e;
+		--vc-panel: linear-gradient(45deg, #f9a03f 0%, #ee4b4b 30%, #d62976 55%, #962fbf 80%, #4f5bd5 100%);
+	}
+
+	.vc-card[data-platform="facebook"] {
+		--vc-accent: #1463d4;
+		--vc-panel: #1877f2;
+	}
+
+	.vc-link {
+		display: grid;
+		grid-template-columns: minmax(7.5rem, 38%) 1fr;
+		align-items: stretch;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		color: inherit;
+		text-decoration: none;
+		box-shadow: var(--shadow-sm);
+		transition:
+			box-shadow 0.2s ease,
+			transform 0.2s ease,
+			border-color 0.2s ease;
+	}
+
+	.vc-link:hover {
+		color: inherit;
+		border-color: var(--color-sage);
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+	}
+
+	/* Thumbnail fills its column at whatever height the text needs. */
+	.vc-thumb {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-width: 0;
+		min-height: 6rem;
+		background: var(--vc-panel);
+	}
+
+	@media (min-width: 40rem) {
+		.vc-thumb {
+			min-height: 9rem;
+		}
+	}
+
+	.vc-thumb img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* No thumbnail: the platform's logo on its brand colour. */
+	.vc-logo {
+		width: clamp(2.25rem, 30%, 3.5rem);
+		height: auto;
+		fill: #fff;
+		transition: transform 0.2s ease;
+	}
+
+	.vc-card[data-platform="tiktok"] .vc-logo {
+		filter: drop-shadow(-2px -2px 0 #25f4ee) drop-shadow(2px 2px 0 #fe2c55);
+	}
+
+	.vc-link:hover .vc-logo {
+		transform: scale(1.08);
+	}
+
+	.vc-play {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		display: grid;
+		place-items: center;
+		width: 2.75rem;
+		height: 2.75rem;
+		border-radius: 50%;
+		background: rgb(255 255 255 / 0.92);
+		color: var(--vc-accent);
+		box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+		transform: translate(-50%, -50%);
+		transition: transform 0.2s ease;
+	}
+
+	.vc-play svg {
+		fill: currentColor;
+		margin-left: 2px;
+	}
+
+	.vc-link:hover .vc-play {
+		transform: translate(-50%, -50%) scale(1.1);
+	}
+
+	.vc-body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 0.2rem;
+		min-width: 0;
+		padding: var(--space-xs) var(--space-sm);
+	}
+
+	.vc-source {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		font-size: var(--text-xs);
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--vc-accent);
+	}
+
+	.vc-source svg {
+		fill: currentColor;
+	}
+
+	.vc-title {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		font-family: var(--font-display);
+		font-size: clamp(1rem, 0.92rem + 0.4vw, 1.25rem);
+		line-height: var(--leading-snug);
+		color: var(--color-heading);
+	}
+
+	.vc-creator {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		font-size: var(--text-sm);
+		color: var(--color-muted);
+	}
+
+	.vc-cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+		margin-top: 0.15rem;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-link);
+	}
+
+	.vc-cta svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2.2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.vc-link:hover .vc-cta {
+		text-decoration: underline;
+	}
+
+	/* Very narrow phones: drop the CTA line; the whole card is the link. */
+	@media (max-width: 22rem) {
+		.vc-cta {
+			display: none;
+		}
+	}
+
+	.vc-caption {
+		margin-top: var(--space-2xs);
+		font-size: var(--text-sm);
+		color: var(--color-muted);
+	}
+</style>

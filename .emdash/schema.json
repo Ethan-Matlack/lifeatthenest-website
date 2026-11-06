@@ -206,11 +206,27 @@
           "unique": false
         },
         {
-          "slug": "video_url",
-          "label": "Video link (optional)",
-          "type": "url",
+          "slug": "videos",
+          "label": "Videos (optional)",
+          "type": "repeater",
           "required": false,
-          "unique": false
+          "unique": false,
+          "validation": {
+            "subFields": [
+              {
+                "slug": "url",
+                "type": "url",
+                "label": "Video link (YouTube, TikTok, Instagram, Facebook)",
+                "required": true
+              },
+              {
+                "slug": "title",
+                "type": "string",
+                "label": "Title (optional, shown on the card)"
+              }
+            ],
+            "maxItems": 10
+          }
         },
         {
           "slug": "featured_products",
@@ -566,11 +582,27 @@
           }
         },
         {
-          "slug": "video_url",
-          "label": "Video link (optional)",
-          "type": "url",
+          "slug": "videos",
+          "label": "Videos (optional)",
+          "type": "repeater",
           "required": false,
-          "unique": false
+          "unique": false,
+          "validation": {
+            "subFields": [
+              {
+                "slug": "url",
+                "type": "url",
+                "label": "Video link (YouTube, TikTok, Instagram, Facebook)",
+                "required": true
+              },
+              {
+                "slug": "title",
+                "type": "string",
+                "label": "Title (optional, shown on the card)"
+              }
+            ],
+            "maxItems": 10
+          }
         },
         {
           "slug": "featured_products",
@@ -596,5 +628,5 @@
       ]
     }
   ],
-  "version": "c50b1db1d72063f2"
+  "version": "23a0e588a4d01581"
 }

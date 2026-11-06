@@ -1,0 +1,43 @@
+---
+/**
+ * Stacked video cards for an entry's "Watch" section (posts and recipes).
+ * Recognised links (YouTube, TikTok, Instagram, Facebook) get a VideoCard;
+ * anything else becomes a plain link. Callers supply the heading.
+ */
+import VideoCard from "./VideoCard.astro";
+import { parseVideoLink, type VideoEntry } from "../utils/video";
+
+interface Props {
+	videos: VideoEntry[];
+}
+
+const { videos } = Astro.props;
+---
+
+<div class="video-list">
+	{
+		videos.map((v) =>
+			parseVideoLink(v.url) ? (
+				<VideoCard url={v.url} title={v.title} />
+			) : (
+				<p class="video-list-link">
+					<a href={v.url} target="_blank" rel="noopener">
+						{v.title || "Watch the video"}
+					</a>
+				</p>
+			),
+		)
+	}
+</div>
+
+<style>
+	.video-list {
+		display: grid;
+		gap: var(--space-sm);
+	}
+
+	.video-list :global(.vc-card),
+	.video-list-link {
+		margin: 0;
+	}
+</style>

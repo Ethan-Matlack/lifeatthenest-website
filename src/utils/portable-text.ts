@@ -1,5 +1,5 @@
 import { getEditMeta } from "emdash";
-import { getYouTubeId } from "./youtube";
+import { parseVideoLink } from "./video";
 
 type Block = { _type: string; _key?: string; [key: string]: unknown };
 type Span = { _type: string; text?: string; marks?: string[] };
@@ -40,7 +40,8 @@ function soleLink(block: Block): string | null {
 }
 
 /**
- * Turn a paragraph that is nothing but one YouTube link into an embed block,
+ * Turn a paragraph that is nothing but one video link (YouTube, TikTok,
+ * Instagram, Facebook; see utils/video.ts) into an embed block,
  * so pasting a link on its own line shows the video card. A link inside a
  * sentence is left alone. (Recipe and other content cards are inserted with
  * the editor's "Recipe card" block instead; see src/plugins/content-cards.)
@@ -52,7 +53,7 @@ export function autoEmbeds<T>(value: T): T {
 	if (!Array.isArray(value) || getEditMeta(value)) return value;
 	return (value as Block[]).map((block) => {
 		const href = soleLink(block);
-		if (!href || !getYouTubeId(href)) return block;
+		if (!href || !parseVideoLink(href)) return block;
 		return { _type: "embed", _key: block._key ?? href, url: href };
 	}) as T;
 }
