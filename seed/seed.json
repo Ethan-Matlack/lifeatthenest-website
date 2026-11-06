@@ -206,6 +206,12 @@
 					"type": "image"
 				},
 				{
+					"slug": "content",
+					"label": "Post",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
 					"slug": "excerpt",
 					"label": "Short description (shows on blog cards and in Google)",
 					"type": "text",
@@ -215,12 +221,6 @@
 					"validation": {
 						"maxLength": 300
 					}
-				},
-				{
-					"slug": "content",
-					"label": "Post",
-					"type": "portableText",
-					"searchable": true
 				},
 				{
 					"slug": "featured_products",
@@ -551,6 +551,12 @@
 					"searchable": true
 				},
 				{
+					"slug": "content",
+					"label": "Content",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
 					"slug": "photo",
 					"label": "Page photo (optional, shown beside the title)",
 					"type": "image",
@@ -561,12 +567,6 @@
 							"image/webp"
 						]
 					}
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText",
-					"searchable": true
 				}
 			]
 		}
@@ -583,22 +583,22 @@
 			"terms": [
 				{
 					"slug": "kitchen",
-					"label": "In the Kitchen",
+					"label": "Kitchen",
 					"description": "Recipes and stories from a mostly scratch kitchen"
 				},
 				{
 					"slug": "garden",
-					"label": "In the Garden",
+					"label": "Garden",
 					"description": "Sowing seeds for health & wellness"
 				},
 				{
 					"slug": "pasture",
-					"label": "In the Pasture",
+					"label": "Pasture",
 					"description": "Raising healthy animals sustainably on pasture"
 				},
 				{
-					"slug": "studio",
-					"label": "In the Studio",
+					"slug": "design",
+					"label": "Design",
 					"description": "Sharing seasonal design ideas to decorate the Nest"
 				},
 				{
@@ -657,6 +657,10 @@
 				{
 					"slug": "drink",
 					"label": "Drinks"
+				},
+				{
+					"slug": "canning",
+					"label": "Canning"
 				}
 			]
 		},
@@ -688,6 +692,10 @@
 				{
 					"slug": "gluten-free",
 					"label": "Gluten Free"
+				},
+				{
+					"slug": "baking",
+					"label": "Baking"
 				}
 			]
 		},
@@ -745,13 +753,13 @@
 				},
 				{
 					"type": "custom",
-					"label": "About",
-					"url": "/about"
+					"label": "Shop",
+					"url": "/shop"
 				},
 				{
 					"type": "custom",
-					"label": "Shop",
-					"url": "/shop"
+					"label": "About",
+					"url": "/about"
 				},
 				{
 					"type": "custom",
@@ -4073,7 +4081,7 @@
 				},
 				"taxonomies": {
 					"category": [
-						"studio"
+						"design"
 					]
 				}
 			},
