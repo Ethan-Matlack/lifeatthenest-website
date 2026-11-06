@@ -443,7 +443,8 @@
 								"type": "boolean"
 							}
 						]
-					}
+					},
+					"widget": "recipe-editor:ingredients"
 				},
 				{
 					"slug": "steps",
@@ -471,7 +472,8 @@
 								"type": "image"
 							}
 						]
-					}
+					},
+					"widget": "recipe-editor:steps"
 				},
 				{
 					"slug": "equipment",

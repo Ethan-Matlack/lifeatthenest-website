@@ -115,6 +115,18 @@ Adds a **Recipe card** block to the rich-text editor: type `/`, choose **Recipe 
 
 Tests: `src/plugins/content-cards/card-types.test.ts`.
 
+### `recipe-editor` (ours, `src/plugins/recipe-editor/`)
+
+Compact admin editors for a recipe's **Ingredients** and **Instructions**, replacing the default one-block-per-row repeater editor:
+
+- **Ingredients:** a table (Amount / Unit / Ingredient / Note / Fixed) with group-heading rows ("For the frosting"), ↑ ↓ ✕ per row, Enter in Note to add a row, and **Paste ingredients**. Paste turns a list like `1 1/2 cups flour, sifted` into rows using the site's amount parser (`paste.ts`); a line ending in `:` becomes a heading.
+- **Instructions:** numbered rows with auto-growing text, group-heading rows, and an optional step photo through the admin's media picker.
+- **How it's attached:** these are **field widgets**, set on the schema as `widget: "recipe-editor:ingredients"` / `"recipe-editor:steps"`. Only the editor changes; the fields stay `repeater`s and store the same data, so the recipe page, scaling, print, and JSON-LD are unaffected. Removing the plugin (or the `widget` setting) falls back to the default editor with no data loss.
+- **Group headings:** stored on each row's `group` field (`rows.ts` converts between stored rows and heading lines).
+- **Native plugin with a React admin module** (`admin.tsx`, built from the admin's own Kumo components so it matches light/dark themes). Registered in `astro.config.mjs` via `descriptor.mjs`.
+
+Tests: `paste.test.ts`, `rows.test.ts`.
+
 No third-party plugins are installed. Sandboxed plugins would require Workers Paid (the `worker_loaders` binding is commented out in `wrangler.jsonc`).
 
 ---
