@@ -1,7 +1,9 @@
 ---
 /**
  * Previous / next links at the end of an article, in publish order.
- * "Previous" is the older neighbor, "Next" the newer one.
+ * "Previous" is the older neighbor, "Next" the newer one. On the oldest or
+ * newest post the missing side shows an "end of the line" card linking to
+ * the full list, so the row stays balanced.
  */
 import { Image } from "emdash/ui";
 
@@ -15,9 +17,12 @@ interface Props {
 	previous?: NavEntry | null;
 	next?: NavEntry | null;
 	label?: string;
+	/** Where the end card points, and what it calls the list. */
+	allHref?: string;
+	allLabel?: string;
 }
 
-const { previous, next, label = "More posts" } = Astro.props;
+const { previous, next, label = "More posts", allHref = "/posts", allLabel = "Browse all posts" } = Astro.props;
 ---
 
 {
@@ -38,7 +43,18 @@ const { previous, next, label = "More posts" } = Astro.props;
 					</span>
 				</a>
 			) : (
-				<span class="post-nav-spacer" />
+				<a class="post-nav-link post-nav-end" href={allHref}>
+					<span class="post-nav-thumb post-nav-end-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="26" height="26">
+							<path d="M12 21v-9M12 12c0-3.5-2.5-6-6.5-6 0 3.5 2.5 6 6.5 6ZM12 15c0-3 2.2-5.5 6-5.5 0 3-2.2 5.5-6 5.5Z" />
+						</svg>
+					</span>
+					<span class="post-nav-text">
+						<span class="post-nav-dir">The beginning</span>
+						<span class="post-nav-title">You've reached the very first post</span>
+						<span class="post-nav-more">{allLabel}</span>
+					</span>
+				</a>
 			)}
 			{next ? (
 				<a class="post-nav-link post-nav-link--next" href={next.href} rel="next">
@@ -55,7 +71,18 @@ const { previous, next, label = "More posts" } = Astro.props;
 					)}
 				</a>
 			) : (
-				<span class="post-nav-spacer" />
+				<a class="post-nav-link post-nav-link--next post-nav-end" href={allHref}>
+					<span class="post-nav-text">
+						<span class="post-nav-dir">All caught up</span>
+						<span class="post-nav-title">This is the newest post</span>
+						<span class="post-nav-more">{allLabel}</span>
+					</span>
+					<span class="post-nav-thumb post-nav-end-icon" aria-hidden="true">
+						<svg viewBox="0 0 24 24" width="26" height="26">
+							<path d="M5 12.5 10 17.5 19 7.5" />
+						</svg>
+					</span>
+				</a>
 			)}
 		</nav>
 	)
@@ -141,14 +168,35 @@ const { previous, next, label = "More posts" } = Astro.props;
 		color: var(--color-moss);
 	}
 
-	/* Hide the empty side on phones so a lone link isn't preceded by a gap. */
-	.post-nav-spacer {
-		display: none;
+	/* "End of the line" card: a quieter sibling of the real links. */
+	.post-nav-end {
+		border-style: dashed;
+		background: var(--color-surface-alt);
 	}
 
-	@media (min-width: 40rem) {
-		.post-nav-spacer {
-			display: block;
-		}
+	.post-nav-end-icon {
+		display: grid;
+		place-items: center;
+		background: var(--color-surface);
+		color: var(--color-moss);
+	}
+
+	.post-nav-end-icon svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.8;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.post-nav-more {
+		margin-top: 0.1rem;
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-link);
+	}
+
+	.post-nav-end:hover .post-nav-more {
+		text-decoration: underline;
 	}
 </style>
