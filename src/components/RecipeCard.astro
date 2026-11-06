@@ -208,7 +208,7 @@ const multipliers = [
 										<span class="rc-text"><span class="rc-num" aria-hidden="true">{index + 1}.</span> {row.instruction?.trim()}</span>
 									</label>
 									{row.image && (
-										<Image image={row.image} class="rc-step-img no-print" sizes="(min-width: 48rem) 30rem, 90vw" />
+										<Image image={row.image} class="rc-step-img no-print" sizes="16rem" />
 									)}
 								</li>
 							))}
@@ -556,13 +556,16 @@ const multipliers = [
 	/* Ingredients + steps */
 	.rc-body {
 		display: grid;
+		/* minmax(0, …): wide content (photos, long words) can't stretch the
+		   column past the screen. */
+		grid-template-columns: minmax(0, 1fr);
 		gap: var(--space-xl);
 		margin-top: var(--space-xl);
 	}
 
 	@media (min-width: 56rem) {
 		.rc-body {
-			grid-template-columns: minmax(16rem, 2fr) 3fr;
+			grid-template-columns: minmax(16rem, 2fr) minmax(0, 3fr);
 			gap: var(--space-2xl);
 		}
 	}
@@ -665,8 +668,15 @@ const multipliers = [
 		color: var(--color-moss);
 	}
 
+	/* Step photos are small thumbnails under the step text, lined up with
+	   it (past the checkbox), and never wider than the space available. */
 	.rc-step :global(.rc-step-img) {
-		max-width: 30rem;
+		display: block;
+		width: min(16rem, 100% - (1.25rem + var(--space-xs)));
+		max-width: none;
+		height: auto;
+		aspect-ratio: 4 / 3;
+		object-fit: cover;
 		margin: 0 0 var(--space-sm) calc(1.25rem + var(--space-xs));
 		border-radius: var(--radius-md);
 	}
