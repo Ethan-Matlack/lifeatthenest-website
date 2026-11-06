@@ -7,6 +7,9 @@ data.db
 data.db-*
 .wrangler
 
+# Live-site exports from `npm run pull:live` (contain all content + emails)
+.local-sync
+
 # Environment / Wrangler secrets
 .env
 .env.*

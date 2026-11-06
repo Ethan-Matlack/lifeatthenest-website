@@ -1,5 +1,5 @@
 ---
-import { decodeSlug, getEmDashCollection, getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
+import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
 import Base from "../../layouts/Base.astro";
@@ -9,6 +9,7 @@ import ShopThis from "../../components/ShopThis.astro";
 import RichText from "../../components/RichText.astro";
 import { formatDate } from "../../utils/format";
 import { readingMinutes } from "../../utils/portable-text";
+import { entrySeo } from "../../utils/seo";
 import { resolveStarterSiteIdentity } from "../../utils/site-identity";
 
 const AUTHOR = "Audra Chalfant Matlack";
@@ -55,11 +56,7 @@ const previous = toNav(olderResult?.entries[0]);
 const next = toNav(newerResult?.entries[0]);
 
 const { siteTitle } = resolveStarterSiteIdentity(settings);
-const seo = getSeoMeta(post, {
-	siteTitle,
-	siteUrl: Astro.url.origin,
-	path: Astro.url.pathname.replace(/\/$/, ""),
-});
+const seo = entrySeo(post, { siteTitle, url: Astro.url, description: d.excerpt, image: d.featured_image, publicMediaUrl: Astro.locals.emdash?.getPublicMediaUrl });
 
 const category = d.terms?.category?.[0];
 const tags = d.terms?.tag ?? [];
@@ -70,7 +67,7 @@ const minutes = readingMinutes(d.content);
 <Base
 	title={seo.title}
 	pageTitle={seo.ogTitle}
-	description={seo.description ?? d.excerpt}
+	description={seo.description}
 	canonical={seo.canonical}
 	image={seo.ogImage}
 	content={{ collection: "posts", id: d.id, slug }}

@@ -4,7 +4,7 @@
  * RecipeCard, shop-this-recipe, and comments. Emits Recipe JSON-LD.
  * Printing shows only the recipe card (see the print styles below).
  */
-import { decodeSlug, getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
+import { decodeSlug, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
 import Base from "../../layouts/Base.astro";
@@ -14,6 +14,7 @@ import RichText from "../../components/RichText.astro";
 import ShopThis from "../../components/ShopThis.astro";
 import { formatMinutes, totalMinutes } from "../../utils/format";
 import { jsonLdString, recipeJsonLd } from "../../utils/recipe-schema";
+import { entrySeo, imageUrl } from "../../utils/seo";
 import { resolveStarterSiteIdentity } from "../../utils/site-identity";
 
 const AUTHOR = "Audra Chalfant Matlack";
@@ -30,9 +31,8 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const d = recipe.data;
 const { siteTitle } = resolveStarterSiteIdentity(settings);
-const path = Astro.url.pathname.replace(/\/$/, "");
-const seo = getSeoMeta(recipe, { siteTitle, siteUrl: Astro.url.origin, path });
-const canonical = seo.canonical ?? new URL(path, Astro.url).toString();
+const seo = entrySeo(recipe, { siteTitle, url: Astro.url, description: d.summary, image: d.hero_image, publicMediaUrl: Astro.locals.emdash?.getPublicMediaUrl });
+const canonical = seo.canonical;
 
 const courses = d.terms?.course ?? [];
 const tags = d.terms?.recipe_tag ?? [];
@@ -40,8 +40,9 @@ const products = recipe.references?.featured_products?.entries ?? [];
 const total = totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_minutes);
 const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 
-const absolute = (src?: string | null) => (src ? new URL(src, Astro.url).toString() : null);
-const images = [absolute(d.hero_image?.src), absolute(d.pin_image?.src)].filter((s): s is string => Boolean(s));
+// The hero photo (same as og:image unless the SEO panel overrides it).
+const heroUrl = imageUrl(d.hero_image, Astro.url, Astro.locals.emdash?.getPublicMediaUrl);
+const images = heroUrl ? [heroUrl] : [];
 
 const jsonLd = recipeJsonLd({
 	url: canonical,
@@ -67,9 +68,9 @@ const jsonLd = recipeJsonLd({
 <Base
 	title={seo.title}
 	pageTitle={seo.ogTitle}
-	description={seo.description ?? d.summary}
+	description={seo.description}
 	canonical={canonical}
-	image={seo.ogImage ?? images[0] ?? null}
+	image={seo.ogImage}
 	content={{ collection: "recipes", id: d.id, slug }}
 	fullBleed
 >
