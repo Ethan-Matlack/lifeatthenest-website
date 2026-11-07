@@ -18,7 +18,7 @@ const { videos } = Astro.props;
 	{
 		videos.map((v) =>
 			parseVideoLink(v.url) ? (
-				<VideoCard url={v.url} title={v.title} />
+				<VideoCard url={v.url} title={v.title} image={v.image} />
 			) : (
 				<p class="video-list-link">
 					<a href={v.url} target="_blank" rel="noopener">

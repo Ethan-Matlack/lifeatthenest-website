@@ -78,6 +78,15 @@ test("videoEntries reads the repeater, skipping blanks and duplicates", () => {
 	);
 });
 
+test("videoEntries passes an uploaded thumbnail through, ignoring empty ones", () => {
+	const image = { id: "01ABC", provider: "local", meta: { storageKey: "01ABC.jpg" } };
+	assert.deepEqual(videoEntries({ videos: [{ url: "https://fb.watch/x/", image }] }), [
+		{ url: "https://fb.watch/x/", image },
+	]);
+	assert.deepEqual(videoEntries({ videos: [{ url: "https://fb.watch/x/", image: null }] }), [{ url: "https://fb.watch/x/" }]);
+	assert.deepEqual(videoEntries({ videos: [{ url: "https://fb.watch/x/", image: {} }] }), [{ url: "https://fb.watch/x/" }]);
+});
+
 test("videoEntries falls back to the old single video_url field", () => {
 	assert.deepEqual(videoEntries({ video_url: "https://youtu.be/jNQXAC9IVRw" }), [{ url: "https://youtu.be/jNQXAC9IVRw" }]);
 	assert.deepEqual(videoEntries({ videos: [], video_url: "https://youtu.be/jNQXAC9IVRw" }).length, 1);

@@ -13,7 +13,7 @@ interface Props {
 const { post, headingLevel = "h3" } = Astro.props;
 const d = post.data;
 const Heading = headingLevel;
-const category = d.terms?.category?.[0];
+const categories = d.terms?.category ?? [];
 ---
 
 <article class="post-card">
@@ -32,10 +32,17 @@ const category = d.terms?.category?.[0];
 	</a>
 	<div class="card-body">
 		{
-			category && (
-				<a class="eyebrow card-category" href={`/posts?category=${category.slug}`}>
-					{category.label}
-				</a>
+			categories.length > 0 && (
+				<p class="card-categories">
+					{categories.map((c, i) => (
+						<>
+							{i > 0 && <span aria-hidden="true"> · </span>}
+							<a class="eyebrow card-category" href={`/posts?category=${c.slug}`}>
+								{c.label}
+							</a>
+						</>
+					))}
+				</p>
 			)
 		}
 		<Heading class="card-title">
@@ -82,7 +89,13 @@ const category = d.terms?.category?.[0];
 		padding-top: var(--space-sm);
 	}
 
+	.card-categories {
+		margin: 0 0 var(--space-2xs);
+		color: var(--color-moss);
+	}
+
 	.card-category {
+		margin: 0;
 		text-decoration: none;
 	}
 

@@ -373,15 +373,22 @@ const jsonLd = recipeJsonLd({
 			text-decoration: none !important;
 		}
 
-		:global(.recipe-card li),
-		:global(.recipe-card .rc-group) {
+		/* Lists flow across pages: a single ingredient or step stays whole,
+		   and headings stay with the line after them. Whole groups are NOT
+		   kept together: a recipe without group headings is one big group,
+		   which would push the whole list to page 2. */
+		:global(.recipe-card li) {
 			break-inside: avoid;
+		}
+
+		:global(.recipe-card h3),
+		:global(.recipe-card h4) {
+			break-after: avoid;
 		}
 
 		:global(.recipe-card .rc-extra) {
 			margin-top: 12pt !important;
 			padding-top: 8pt !important;
-			break-inside: avoid;
 		}
 
 		:global(.recipe-card .rc-foot)::after {

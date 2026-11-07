@@ -108,14 +108,19 @@ export function parseVideoLink(input: string | null | undefined): VideoLink | nu
 	return tiktok(url, host) ?? instagram(url, host) ?? facebook(url, host);
 }
 
+/** An uploaded image field value (EmDash media); rendered with <Image>. */
+export type VideoThumbnail = { id: string } & Record<string, unknown>;
+
 export interface VideoEntry {
 	url: string;
 	title?: string;
+	/** Uploaded thumbnail; overrides YouTube's or fills the branded panel. */
+	image?: VideoThumbnail;
 }
 
 /**
  * The videos to show for an entry: the `videos` repeater (link + optional
- * title per row), falling back to the older single `video_url` field so
+ * title + optional thumbnail per row), falling back to the older single `video_url` field so
  * entries keep working while the content type is migrated. Blank rows and
  * repeated links are skipped.
  */
@@ -124,13 +129,23 @@ export function videoEntries(data: unknown): VideoEntry[] {
 	const rows = Array.isArray(d.videos) ? d.videos : [];
 	const out: VideoEntry[] = [];
 	const seen = new Set<string>();
-	const add = (url: unknown, title?: unknown) => {
+	const add = (url: unknown, title?: unknown, image?: unknown) => {
 		if (typeof url !== "string" || !url.trim() || seen.has(url.trim())) return;
 		seen.add(url.trim());
+		const entry: VideoEntry = { url: url.trim() };
 		const t = typeof title === "string" ? title.trim() : "";
-		out.push(t ? { url: url.trim(), title: t } : { url: url.trim() });
+		if (t) entry.title = t;
+		if (image && typeof image === "object" && typeof (image as { id?: unknown }).id === "string") {
+			entry.image = image as VideoThumbnail;
+		}
+		out.push(entry);
 	};
-	for (const row of rows) if (row && typeof row === "object") add((row as VideoEntry).url, (row as VideoEntry).title);
+	for (const row of rows) {
+		if (row && typeof row === "object") {
+			const r = row as Record<string, unknown>;
+			add(r.url, r.title, r.image);
+		}
+	}
 	if (!out.length) add(d.video_url);
 	return out;
 }

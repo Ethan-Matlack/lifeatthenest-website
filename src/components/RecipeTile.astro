@@ -18,7 +18,7 @@ interface Props {
 const { recipe, headingLevel = "h3", priority = false } = Astro.props;
 const d = recipe.data;
 const Heading = headingLevel;
-const course = d.terms?.course?.[0]?.label;
+const courses = (d.terms?.course ?? []).map((c) => c.label).join(" · ");
 const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_minutes));
 ---
 
@@ -39,7 +39,7 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 			}
 		</div>
 		<div class="tile-body">
-			{course && <span class="eyebrow">{course}</span>}
+			{courses && <span class="eyebrow">{courses}</span>}
 			<Heading class="tile-title">{d.title}</Heading>
 			{d.summary && <p class="tile-summary">{d.summary}</p>}
 			{time && <p class="tile-meta">{time}</p>}
