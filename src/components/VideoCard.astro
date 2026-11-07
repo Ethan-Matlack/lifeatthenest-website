@@ -9,21 +9,27 @@
  * key (YouTube, TikTok), cached at Cloudflare's edge for a day. Instagram
  * and Facebook require a Meta app token for oEmbed, so their cards use a
  * branded panel and generic wording unless a title is given. If any lookup
- * fails or is slow, the card still renders.
+ * fails or is slow, the card still renders. An uploaded `image` replaces
+ * the automatic thumbnail (or the branded panel) on any platform.
  *
  * Callers check the link with parseVideoLink() first; unrecognised links
  * should render as a plain link instead.
  */
+import { Image } from "emdash/ui";
 import { BRAND_ICONS } from "../utils/brand-icons";
-import { PLATFORM_NAMES, parseVideoLink } from "../utils/video";
+import { PLATFORM_NAMES, parseVideoLink, type VideoThumbnail } from "../utils/video";
 
 interface Props {
 	url: string;
 	title?: string | null;
 	caption?: string | null;
+	/** Uploaded thumbnail (image field value); wins over any automatic one. */
+	image?: VideoThumbnail | null;
 }
 
-const { url, title: givenTitle, caption } = Astro.props;
+type ImageValue = Parameters<typeof Image>[0]["image"];
+
+const { url, title: givenTitle, caption, image } = Astro.props;
 const link = parseVideoLink(url);
 
 let title = givenTitle?.trim() || "";
@@ -75,18 +81,22 @@ const icon = BRAND_ICONS[platform];
 	link && (
 		<figure class="vc-card" data-platform={platform}>
 			<a class="vc-link" href={link.href} target="_blank" rel="noopener">
-				<span class:list={["vc-thumb", { "vc-thumb--brand": !thumbnail }]}>
-					{thumbnail ? (
+				<span class:list={["vc-thumb", { "vc-thumb--brand": !image && !thumbnail }]}>
+					{image || thumbnail ? (
 						<>
-							<img
-								src={thumbnail}
-								alt=""
-								width="320"
-								height="180"
-								loading="lazy"
-								decoding="async"
-								referrerpolicy="no-referrer"
-							/>
+							{image ? (
+								<Image image={image as ImageValue} alt="" sizes="(min-width: 40rem) 18rem, 40vw" />
+							) : (
+								<img
+									src={thumbnail}
+									alt=""
+									width="320"
+									height="180"
+									loading="lazy"
+									decoding="async"
+									referrerpolicy="no-referrer"
+								/>
+							)}
 							{isVideo && (
 								<span class="vc-play" aria-hidden="true">
 									<svg viewBox="0 0 24 24" width="22" height="22">
@@ -188,7 +198,7 @@ const icon = BRAND_ICONS[platform];
 		}
 	}
 
-	.vc-thumb img {
+	.vc-thumb :global(img) {
 		position: absolute;
 		inset: 0;
 		width: 100%;

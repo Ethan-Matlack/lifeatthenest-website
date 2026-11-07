@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 /**
- * One-off content-type migration: single "Video link" field (`video_url`)
- * -> "Videos" repeater (`videos`, rows of { url, title }), on posts and recipes.
+ * Content-type migration for the "Videos" repeater on posts and recipes:
+ * moves the old single "Video link" field (`video_url`) into `videos`
+ * (rows of { url, title, image }), and keeps the repeater's sub-fields in
+ * sync with VIDEOS_FIELD below when new ones are added (e.g. the thumbnail).
  *
  *   node scripts/migrate-videos.mjs                       # local dev site, dry run
  *   node scripts/migrate-videos.mjs --apply               # local, do it
  *   EMDASH_TOKEN=... node scripts/migrate-videos.mjs --url https://lifeatthenest.ethan-5da.workers.dev --apply
  *
  * Steps, per collection (each is skipped if already done, so re-running is safe):
- *   1. Add the `videos` repeater right where `video_url` sits.
+ *   1. Add the `videos` repeater right where `video_url` sits, or, if it
+ *      exists, add any sub-fields it's missing (existing rows are untouched).
  *   2. Copy each entry's `video_url` into `videos` and re-publish it.
  *      Entries with unpublished draft edits are SKIPPED (publishing would
  *      push those edits live); they're listed so they can be done by hand.
@@ -33,6 +36,7 @@ const VIDEOS_FIELD = {
 		subFields: [
 			{ slug: "url", label: "Video link (YouTube, TikTok, Instagram, Facebook)", type: "url", required: true },
 			{ slug: "title", label: "Title (optional, shown on the card)", type: "string" },
+			{ slug: "image", label: "Thumbnail (optional, replaces the automatic one)", type: "image" },
 		],
 	},
 };
@@ -91,7 +95,20 @@ for (const collection of COLLECTIONS) {
 			}
 		}
 	} else {
-		console.log("   field `videos` already exists");
+		const current = fields.find((f) => f.slug === "videos");
+		const have = new Set((current.validation?.subFields ?? []).map((f) => f.slug));
+		const missing = VIDEOS_FIELD.validation.subFields.filter((f) => !have.has(f.slug));
+		if (missing.length) {
+			console.log(`   field \`videos\`: add sub-field(s) ${missing.map((f) => `\`${f.slug}\``).join(", ")}`);
+			if (APPLY) {
+				const subFields = [...(current.validation?.subFields ?? []), ...missing];
+				await api(`/schema/collections/${collection}/fields/videos`, "PUT", {
+					validation: { ...current.validation, subFields },
+				});
+			}
+		} else {
+			console.log("   field `videos` is up to date");
+		}
 	}
 
 	if (!hasOld) {

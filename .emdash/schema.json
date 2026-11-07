@@ -223,6 +223,11 @@
                 "slug": "title",
                 "type": "string",
                 "label": "Title (optional, shown on the card)"
+              },
+              {
+                "slug": "image",
+                "type": "image",
+                "label": "Thumbnail (optional, replaces the automatic one)"
               }
             ],
             "maxItems": 10
@@ -599,6 +604,11 @@
                 "slug": "title",
                 "type": "string",
                 "label": "Title (optional, shown on the card)"
+              },
+              {
+                "slug": "image",
+                "type": "image",
+                "label": "Thumbnail (optional, replaces the automatic one)"
               }
             ],
             "maxItems": 10
@@ -628,5 +638,5 @@
       ]
     }
   ],
-  "version": "23a0e588a4d01581"
+  "version": "6419ee9959d10159"
 }

@@ -239,6 +239,11 @@
 								"slug": "title",
 								"label": "Title (optional, shown on the card)",
 								"type": "string"
+							},
+							{
+								"slug": "image",
+								"label": "Thumbnail (optional, replaces the automatic one)",
+								"type": "image"
 							}
 						]
 					}
@@ -533,6 +538,11 @@
 								"slug": "title",
 								"label": "Title (optional, shown on the card)",
 								"type": "string"
+							},
+							{
+								"slug": "image",
+								"label": "Thumbnail (optional, replaces the automatic one)",
+								"type": "image"
 							}
 						]
 					}
