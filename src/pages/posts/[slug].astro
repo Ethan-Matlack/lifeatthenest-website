@@ -60,7 +60,7 @@ const next = toNav(newerResult?.entries[0]);
 const { siteTitle } = resolveStarterSiteIdentity(settings);
 const seo = entrySeo(post, { siteTitle, url: Astro.url, description: d.excerpt, image: d.featured_image, publicMediaUrl: Astro.locals.emdash?.getPublicMediaUrl });
 
-const category = d.terms?.category?.[0];
+const categories = d.terms?.category ?? [];
 const tags = d.terms?.tag ?? [];
 const products = post.references?.featured_products?.entries ?? [];
 const minutes = readingMinutes(d.content);
@@ -85,10 +85,17 @@ const videos = videoEntries(d);
 	<article class="post">
 		<header class="container container--prose post-header">
 			{
-				category && (
-					<a class="eyebrow post-category" href={`/posts?category=${category.slug}`}>
-						{category.label}
-					</a>
+				categories.length > 0 && (
+					<p class="post-categories">
+						{categories.map((c, i) => (
+							<>
+								{i > 0 && <span aria-hidden="true"> · </span>}
+								<a class="eyebrow post-category" href={`/posts?category=${c.slug}`}>
+									{c.label}
+								</a>
+							</>
+						))}
+					</p>
 				)
 			}
 			<h1 {...post.edit.title}>{d.title}</h1>
@@ -163,7 +170,13 @@ const videos = videoEntries(d);
 		text-align: center;
 	}
 
+	.post-categories {
+		margin-bottom: var(--space-2xs);
+		color: var(--color-moss);
+	}
+
 	.post-category {
+		margin: 0;
 		text-decoration: none;
 	}
 
