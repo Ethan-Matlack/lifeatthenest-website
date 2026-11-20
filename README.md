@@ -195,6 +195,13 @@ Plain variables set in the dashboard are overwritten by `wrangler deploy` unless
 
 **Local testing:** create `.dev.vars` (gitignored) with Cloudflare's [Turnstile test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA` always pass) and a real Kit key + test form only if you want real Kit calls. Restart the dev server after changing it.
 
+### Comments
+
+Built into EmDash: honeypot, rate limit (5 per 10 minutes per visitor), and per-collection moderation (Content Types → the collection: "first time" holds a new commenter's first comment for review).
+
+- **"Close comments after (days)" is 0 (never) on every collection with comments, on live and local.** EmDash's default is 90, which closes comments on older posts ("Comments are closed for this content"). The setting lives in the database (Content Types → the collection), not `seed/seed.json`, which can't set it, so set it to 0 again on any new site or new collection with comments.
+- **Turnstile:** EmDash enforces Turnstile on comments whenever `TURNSTILE_SECRET_KEY` is set (the same secret the newsletter uses). The post and recipe pages pass `TURNSTILE_SITE_KEY` to `<CommentForm>` via `turnstileSiteKey()` (`src/utils/turnstile.ts`); without the widget, every comment would be rejected.
+
 ## Deploy process
 
 ### Automatic (normal path)
