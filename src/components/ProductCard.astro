@@ -53,14 +53,11 @@ const store = d.store?.trim() || "the store";
 		background: #fff;
 	}
 
+	/* Fill the square and crop, like the other cards. */
 	.product-media :global(img),
 	.product-media .photo-placeholder {
 		width: 100%;
 		height: 100%;
-		object-fit: contain;
-	}
-
-	.product-media .photo-placeholder {
 		object-fit: cover;
 	}
 
