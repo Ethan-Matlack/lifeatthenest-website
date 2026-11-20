@@ -1,12 +1,18 @@
 ---
 /**
- * Newsletter signup form. Posts to /api/newsletter, which is a stub until the
- * real backend (Turnstile check, D1 storage, provider API) is built.
+ * Newsletter signup form. Posts to /api/newsletter (Kit, double opt-in, with
+ * a Cloudflare Turnstile spam check; see src/utils/newsletter.ts).
  *
  * - With JS: submits in place and shows the response message.
  * - Without JS: a normal POST; the endpoint redirects back with
- *   ?newsletter=<status>, which is shown here.
+ *   ?newsletter=<status>, which is shown here. (Turnstile needs JS, so
+ *   no-JS visitors get the "complete the spam check" message.)
+ * - Until the newsletter settings are configured, no Turnstile widget is
+ *   shown and the endpoint replies "signups open soon".
  */
+import { env } from "cloudflare:workers";
+import { SIGNUP_MESSAGES, newsletterConfig, type SignupStatus } from "../utils/newsletter";
+
 interface Props {
 	heading?: string;
 	text?: string;
@@ -20,14 +26,9 @@ const {
 	id = "newsletter",
 } = Astro.props;
 
+const siteKey = newsletterConfig(env as unknown as Record<string, unknown>)?.turnstileSiteKey ?? "";
 const status = Astro.url.searchParams.get("newsletter");
-const STATUS_MESSAGES: Record<string, string> = {
-	soon: "Thanks for your interest! Newsletter signups open soon. Please check back.",
-	ok: "Thanks! Check your inbox to confirm your subscription.",
-	invalid: "Please enter a valid email address.",
-	error: "Something went wrong. Please try again in a moment.",
-};
-const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
+const initialMessage = status && status in SIGNUP_MESSAGES ? SIGNUP_MESSAGES[status as SignupStatus] : "";
 ---
 
 <section class="signup" id={id} aria-labelledby={`${id}-heading`}>
@@ -56,6 +57,7 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 			<label for={`${id}-website`}>Leave this empty</label>
 			<input id={`${id}-website`} name="website" type="text" tabindex="-1" autocomplete="off" />
 		</div>
+		{siteKey && <div class="cf-turnstile signup-turnstile" data-sitekey={siteKey} data-size="flexible" data-theme="light" />}
 		<button class="btn signup-submit" type="submit">Subscribe</button>
 		<p class="signup-consent">
 			We'll only email you about new posts, recipes, and happenings at the Nest. Unsubscribe
@@ -65,12 +67,17 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 	</form>
 </section>
 
+{siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer />}
+
 <script>
+	type Turnstile = { reset(container?: string | HTMLElement): void };
+
 	for (const form of document.querySelectorAll("[data-newsletter-form]")) {
 		if (!(form instanceof HTMLFormElement)) continue;
 		const status = form.querySelector("[data-status]");
 		const button = form.querySelector("button[type=submit]");
 		const email = form.querySelector<HTMLInputElement>("input[name=email]");
+		const widget = form.querySelector(".cf-turnstile");
 
 		form.addEventListener("submit", async (event) => {
 			event.preventDefault();
@@ -80,6 +87,13 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 				status.textContent = "Please enter a valid email address.";
 				status.className = "signup-status is-error";
 				email?.focus();
+				return;
+			}
+
+			const token = form.querySelector<HTMLInputElement>("input[name='cf-turnstile-response']");
+			if (widget && !token?.value) {
+				status.textContent = "Please complete the spam check and try again.";
+				status.className = "signup-status is-error";
 				return;
 			}
 
@@ -93,7 +107,7 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 				});
 				const data = (await res.json().catch(() => ({}))) as { ok?: boolean; message?: string };
 				status.textContent = data.message ?? (res.ok ? "Thanks for subscribing!" : "Something went wrong. Please try again.");
-				status.className = `signup-status ${data.ok ? "is-success" : "is-info"}`;
+				status.className = `signup-status ${data.ok ? "is-success" : res.status >= 500 ? "is-info" : "is-error"}`;
 				if (data.ok) form.reset();
 			} catch {
 				status.textContent = "Something went wrong. Please try again in a moment.";
@@ -101,6 +115,8 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 			} finally {
 				button.disabled = false;
 				button.textContent = "Subscribe";
+				// Each Turnstile token works once; get a fresh one for another try.
+				if (widget instanceof HTMLElement) (window as { turnstile?: Turnstile }).turnstile?.reset(widget);
 			}
 		});
 	}
@@ -167,6 +183,10 @@ const initialMessage = status ? STATUS_MESSAGES[status] ?? "" : "";
 		width: 1px;
 		height: 1px;
 		overflow: hidden;
+	}
+
+	.signup-turnstile {
+		min-height: 65px;
 	}
 
 	.signup-submit {

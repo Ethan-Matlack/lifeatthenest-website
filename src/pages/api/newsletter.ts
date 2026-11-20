@@ -1,56 +1,84 @@
 /**
- * POST /api/newsletter — newsletter signup.
+ * POST /api/newsletter: newsletter signup (Kit, double opt-in).
  *
- * STUB: validates input but does not store or send anything yet. The real
- * version will (1) verify Turnstile, (2) save the email in D1, and
- * (3) forward it to the newsletter provider (provider TBD, behind an adapter).
+ *   1. honeypot field filled -> pretend success, do nothing
+ *   2. validate the email
+ *   3. verify Cloudflare Turnstile
+ *   4. add to Kit (see src/utils/newsletter.ts); Kit emails a confirmation
  *
- * Responds with JSON when the request asks for it (the form's JS does);
- * otherwise redirects back to the contact page with ?newsletter=<status>.
+ * Until KIT_API_KEY, KIT_FORM_ID, TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY
+ * are all set on the Worker, it replies "signups open soon".
+ *
+ * Replies with JSON when the request asks for it (the form's JS does);
+ * otherwise redirects back to the page with ?newsletter=<status>.
  */
 import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
+import {
+	SIGNUP_MESSAGES,
+	newsletterConfig,
+	parseSignup,
+	subscribeToKit,
+	verifyTurnstile,
+	type SignupStatus,
+} from "../../utils/newsletter";
 
 export const prerender = false;
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const HTTP_STATUS: Record<SignupStatus, number> = {
+	ok: 200,
+	already: 200,
+	invalid: 400,
+	verify: 400,
+	error: 502,
+	soon: 503,
+};
 
-function reply(request: Request, status: "soon" | "invalid", message: string, httpStatus: number) {
-	const wantsJson = request.headers.get("accept")?.includes("application/json");
-	if (wantsJson) {
-		return new Response(JSON.stringify({ ok: false, status, message }), {
-			status: httpStatus,
-			headers: { "Content-Type": "application/json" },
-		});
-	}
-	return new Response(null, {
-		status: 303,
-		headers: { Location: `/contact?newsletter=${status}#newsletter` },
-	});
+/** Same-site page the form was on, for the no-JS redirect and Kit's referrer. */
+function sourcePage(request: Request, url: URL): URL {
+	try {
+		const ref = new URL(request.headers.get("referer") ?? "");
+		if (ref.origin === url.origin) return ref;
+	} catch {}
+	return new URL("/contact", url);
 }
 
-export const POST: APIRoute = async ({ request }) => {
+function reply(request: Request, url: URL, status: SignupStatus) {
+	const ok = status === "ok" || status === "already";
+	if (request.headers.get("accept")?.includes("application/json")) {
+		return new Response(JSON.stringify({ ok, status, message: SIGNUP_MESSAGES[status] }), {
+			status: HTTP_STATUS[status],
+			headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
+		});
+	}
+	const back = sourcePage(request, url);
+	back.searchParams.set("newsletter", status);
+	back.hash = "newsletter";
+	return new Response(null, { status: 303, headers: { Location: back.pathname + back.search + back.hash } });
+}
+
+export const POST: APIRoute = async ({ request, url }) => {
 	let form: FormData;
 	try {
 		form = await request.formData();
 	} catch {
-		return reply(request, "invalid", "Please enter a valid email address.", 400);
+		return reply(request, url, "invalid");
 	}
 
-	// Spam trap filled in: pretend all is well, do nothing.
-	if (String(form.get("website") ?? "").trim()) {
-		return reply(request, "soon", "Thanks for your interest! Newsletter signups open soon.", 202);
-	}
+	const config = newsletterConfig(env as unknown as Record<string, unknown>);
 
-	const email = String(form.get("email") ?? "").trim();
-	if (!EMAIL.test(email) || email.length > 254) {
-		return reply(request, "invalid", "Please enter a valid email address.", 400);
-	}
+	// Spam trap filled in: look successful, do nothing.
+	if (String(form.get("website") ?? "").trim()) return reply(request, url, config ? "ok" : "soon");
 
-	// TODO(newsletter backend): verify Turnstile, store in D1, forward to provider.
-	return reply(
-		request,
-		"soon",
-		"Thanks for your interest! Newsletter signups open soon. Please check back.",
-		503,
-	);
+	const { email, firstName } = parseSignup(form);
+	if (!email) return reply(request, url, "invalid");
+	if (!config) return reply(request, url, "soon");
+
+	const token = String(form.get("cf-turnstile-response") ?? "");
+	const human = await verifyTurnstile(token, config.turnstileSecretKey, request.headers.get("CF-Connecting-IP"));
+	if (!human) return reply(request, url, "verify");
+
+	const page = sourcePage(request, url);
+	const status = await subscribeToKit({ email, firstName, referrer: page.origin + page.pathname }, config);
+	return reply(request, url, status);
 };

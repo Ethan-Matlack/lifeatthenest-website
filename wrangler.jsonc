@@ -28,6 +28,13 @@
 			"id": "9906a222ff754af6a75f2e9ea67db62e",
 		},
 	],
+	// Public (non-secret) settings. They live here because each deploy replaces
+	// plain variables set in the dashboard. Secrets (KIT_API_KEY,
+	// TURNSTILE_SECRET_KEY) are set in the dashboard only. See README > Newsletter.
+	"vars": {
+		"KIT_FORM_ID": "10220575",
+		"TURNSTILE_SITE_KEY": "0x4AAAAAAGK62fQc9mpsoW-Z",
+	},
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
 	// "worker_loaders": [{ "binding": "LOADER" }],
 	// General maintenance cron trigger

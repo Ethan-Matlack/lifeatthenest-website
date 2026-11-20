@@ -48,7 +48,7 @@ All pages are server-rendered on request, so published content appears without a
 | `/contact` | `src/pages/contact.astro` | Social profile cards and newsletter signup | **Pages** entry with slug `contact`; cards from the **Social** menu |
 | `/[slug]` | `src/pages/[slug].astro` | Static pages (e.g. `/about`): optional arched photo + rich text | Pages |
 | `/category/[slug]`, `/tag/[slug]` | | 301 redirects to `/posts?category=` / `/posts?tag=` | |
-| `/api/newsletter` | `src/pages/api/newsletter.ts` | Newsletter signup endpoint. **Stub:** validates, stores nothing yet | |
+| `/api/newsletter` | `src/pages/api/newsletter.ts` | Newsletter signup: Turnstile spam check, then adds the subscriber to Kit (double opt-in). Replies "signups open soon" until configured (see [Newsletter](#newsletter-kit)) | |
 | `/_emdash/*` | (EmDash) | Admin, REST API, media, sitemap, robots.txt | |
 
 Listing pages read their heading/intro from a **Pages** entry whose slug matches the route (`src/utils/listing-page.ts`). Real route files take precedence over `/[slug]`, so those entries never render on their own. **Don't change the slugs of the `posts`, `recipes`, `shop`, or `contact` pages.**
@@ -170,6 +170,31 @@ Rules of thumb:
 
 ---
 
+## Newsletter (Kit)
+
+Signup forms post to `/api/newsletter` (`src/pages/api/newsletter.ts`, logic in `src/utils/newsletter.ts`, tested):
+
+1. Honeypot field filled in → pretend success, do nothing.
+2. Validate the email; verify **Cloudflare Turnstile** (the widget on the form).
+3. Create the subscriber in Kit as `inactive`, then add them to the **Kit form**. With double opt-in on that form, Kit sends its confirmation ("incentive") email and activates them when they click. Already on the form → "you're already signed up" (Kit doesn't resend).
+
+Kit holds the list and handles unsubscribes; nothing is stored on our side. The form's page is sent to Kit as the referrer.
+
+**Settings** (Workers & Pages → `lifeatthenest` → Settings → Variables and Secrets). Until all four are set, the widget is hidden and the endpoint replies "signups open soon":
+
+| Name | Type | Where it comes from |
+|---|---|---|
+| `KIT_API_KEY` | Secret | Kit → Settings → Developer → API keys (v4) |
+| `KIT_FORM_ID` | Variable | Kit → Grow → Landing Pages & Forms → the form; the number in its URL |
+| `TURNSTILE_SITE_KEY` | Variable | Cloudflare → Turnstile → the site widget (public) |
+| `TURNSTILE_SECRET_KEY` | Secret | Same Turnstile widget |
+
+Plain variables set in the dashboard are overwritten by `wrangler deploy` unless they're in `wrangler.jsonc`, so put `KIT_FORM_ID` and `TURNSTILE_SITE_KEY` under `"vars"` there; keep the two secrets in the dashboard only.
+
+**The Kit form must have double opt-in on** (form settings → Incentive email, "auto-confirm new members" unchecked), or people are subscribed without confirming.
+
+**Local testing:** create `.dev.vars` (gitignored) with Cloudflare's [Turnstile test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA` always pass) and a real Kit key + test form only if you want real Kit calls. Restart the dev server after changing it.
+
 ## Deploy process
 
 ### Automatic (normal path)
@@ -269,7 +294,8 @@ Notes:
 
 ### Features
 - [ ] Comments: Turnstile on the form, first-time-commenter moderation, email notifications (Cloudflare Email Service).
-- [ ] Newsletter backend behind `/api/newsletter`: Turnstile, store in D1, forward to provider (Buttondown / Kit / MailerLite, TBD) via a small adapter; double opt-in.
+- [x] Newsletter backend behind `/api/newsletter`: Turnstile + Kit with double opt-in (see [Newsletter](#newsletter-kit)). Kit holds the list; nothing is stored in D1.
+- [ ] Newsletter go-live: Kit account, form with double opt-in, sender authentication in DNS, the four Worker settings, then an end-to-end test on live.
 - [ ] RSS feed of posts and recipes (for the newsletter's RSS-to-email).
 - [ ] Optional: blog-post card type, Shop "Featured in" links, recipe → blog post backlink, ingredient search, unit conversion when scaling.
 
