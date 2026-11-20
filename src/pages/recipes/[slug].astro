@@ -342,11 +342,28 @@ const jsonLd = recipeJsonLd({
 			margin-bottom: 6pt !important;
 		}
 
+		/* Two columns WITHOUT grid: Firefox won't split a grid row across
+		   pages (it moved the whole ingredients + steps block to page 2).
+		   A floated ingredients column with the steps flowing beside it
+		   breaks across pages in every browser. */
 		:global(.recipe-card .rc-body) {
-			display: grid !important;
-			grid-template-columns: 2fr 3fr !important;
-			gap: 0.35in !important;
+			display: block !important;
 			margin-top: 12pt !important;
+		}
+
+		:global(.recipe-card .rc-body)::after {
+			content: "";
+			display: block;
+			clear: both;
+		}
+
+		:global(.recipe-card .rc-ingredients) {
+			float: left;
+			width: 36%;
+		}
+
+		:global(.recipe-card .rc-steps) {
+			margin-left: calc(36% + 0.35in);
 		}
 
 		:global(.recipe-card .rc-ing label),
