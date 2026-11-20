@@ -2,6 +2,7 @@
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
+import { env } from "cloudflare:workers";
 import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import PostNav from "../../components/PostNav.astro";
@@ -13,6 +14,7 @@ import { readingMinutes } from "../../utils/portable-text";
 import { entrySeo } from "../../utils/seo";
 import { videoEntries } from "../../utils/video";
 import { resolveStarterSiteIdentity } from "../../utils/site-identity";
+import { turnstileSiteKey } from "../../utils/turnstile";
 
 const AUTHOR = "Audra Chalfant Matlack";
 
@@ -158,7 +160,11 @@ const videos = videoEntries(d);
 		<h2 id="comments-heading" class="visually-hidden">Comments</h2>
 		<Comments collection="posts" contentId={d.id} threaded />
 		<h3 class="comment-form-heading">Leave a comment</h3>
-		<CommentForm collection="posts" contentId={d.id} />
+		<CommentForm
+			collection="posts"
+			contentId={d.id}
+			turnstileSiteKey={turnstileSiteKey(env as unknown as Record<string, unknown>) || undefined}
+		/>
 	</section>
 
 	<BackToTop />

@@ -7,6 +7,7 @@
 import { decodeSlug, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
+import { env } from "cloudflare:workers";
 import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import RecipeCard from "../../components/RecipeCard.astro";
@@ -16,6 +17,7 @@ import { formatMinutes, totalMinutes } from "../../utils/format";
 import { jsonLdString, recipeJsonLd } from "../../utils/recipe-schema";
 import { entrySeo, imageUrl } from "../../utils/seo";
 import { resolveStarterSiteIdentity } from "../../utils/site-identity";
+import { turnstileSiteKey } from "../../utils/turnstile";
 
 const AUTHOR = "Audra Chalfant Matlack";
 
@@ -119,7 +121,7 @@ const jsonLd = recipeJsonLd({
 					)
 				}
 			</div>
-			{hasIntro && <RichText value={d.intro} {...recipe.edit.intro} />}
+			{hasIntro && <RichText value={d.intro} column="wide" {...recipe.edit.intro} />}
 		</div>
 
 		<div class="container recipe-card-wrap">
@@ -149,7 +151,11 @@ const jsonLd = recipeJsonLd({
 		<h2 id="comments-heading" class="visually-hidden">Comments</h2>
 		<Comments collection="recipes" contentId={d.id} threaded />
 		<h3 class="comment-form-heading">Leave a comment</h3>
-		<CommentForm collection="recipes" contentId={d.id} />
+		<CommentForm
+			collection="recipes"
+			contentId={d.id}
+			turnstileSiteKey={turnstileSiteKey(env as unknown as Record<string, unknown>) || undefined}
+		/>
 	</section>
 
 	<BackToTop />

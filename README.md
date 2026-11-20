@@ -195,6 +195,13 @@ Plain variables set in the dashboard are overwritten by `wrangler deploy` unless
 
 **Local testing:** create `.dev.vars` (gitignored) with Cloudflare's [Turnstile test keys](https://developers.cloudflare.com/turnstile/troubleshooting/testing/) (`1x00000000000000000000AA` / `1x0000000000000000000000000000000AA` always pass) and a real Kit key + test form only if you want real Kit calls. Restart the dev server after changing it.
 
+### Comments
+
+Built into EmDash: honeypot, rate limit (5 per 10 minutes per visitor), and per-collection moderation (Content Types → the collection: "first time" holds a new commenter's first comment for review).
+
+- **"Close comments after (days)" is 0 (never) on every collection with comments, on live and local.** EmDash's default is 90, which closes comments on older posts ("Comments are closed for this content"). The setting lives in the database (Content Types → the collection), not `seed/seed.json`, which can't set it, so set it to 0 again on any new site or new collection with comments.
+- **Turnstile:** EmDash enforces Turnstile on comments whenever `TURNSTILE_SECRET_KEY` is set (the same secret the newsletter uses). The post and recipe pages pass `TURNSTILE_SITE_KEY` to `<CommentForm>` via `turnstileSiteKey()` (`src/utils/turnstile.ts`); without the widget, every comment would be rejected.
+
 ## Deploy process
 
 ### Automatic (normal path)
@@ -236,6 +243,7 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 - **Images are resized by Cloudflare's CDN**, not the Worker: `imageService: "cloudflare"` in `astro.config.mjs` makes pages use `/cdn-cgi/image/<options>/<media URL>` URLs. Cloudflare fetches the original from EmDash's media route on a cache miss, resizes it, and caches the result (about 4 hours, its default), so image requests don't run the Worker: no cold-start delays, and they don't count toward Workers requests. Originals stay in R2 untouched.
   - **Requires Images → Transformations enabled on the lifeatthenest.com zone.** Turning it off breaks resizing (images fall back to originals via `onerror=redirect`).
   - Astro only resizes hosts listed in `SITE_HOSTS`. **Add any new domain there** (it must be a Cloudflare zone with Transformations on). `/cdn-cgi/image` doesn't exist on `*.workers.dev`, so images don't load there; `astro dev` serves originals.
+  - **Photos inside post/page/recipe text** render through `src/components/pt/PtImage.astro`, which tells EmDash's image block the column width (672 px, half for left/right, 960 px for wide/full; `column="wide"` on `RichText` for the recipe story and notes). Without it, EmDash sized them by the original upload, and browsers downloaded multi-MB versions.
   - WebP is sent to browsers that accept it; opening an image URL directly in the address bar returns JPEG, which is expected.
   - **After "Replace original" (crop)**, the old version can show for up to ~4 hours. To clear it right away: dashboard → Caching → Configuration → Purge Everything.
   - The free plan covers 5,000 unique transformations a month (each photo × each width counts once); past that, new sizes fall back to originals. Check Images → Transformations now and then.
@@ -280,50 +288,6 @@ Notes:
 - **Re-import without exporting again:** `npm run pull:live -- --package .local-sync/live-<time>.emdash`.
 - **Why the script deletes relations on the temporary site:** the seed's "featured products" reference fields create relations, and EmDash 1.4 doesn't count those as setup scaffold, so the import would refuse with `TRANSFER_TARGET_NOT_EMPTY`. The import recreates them from the live package.
 - **Local schema changes are replaced:** content types or fields added only locally are overwritten by live's. Code is unaffected.
-
----
-
-## To-do
-
-### Housekeeping
-- [x] Delete the local D1 token now that Workers Builds deploys. The only long-lived copy is the `EMDASH_MIGRATE_TOKEN` build secret; create short-lived tokens for any future manual recovery.
-- [x] Keep the workers.dev site out of search engines until launch: Settings → SEO → robots.txt is set to `User-agent: *` / `Disallow: /` (EmDash 1.4 has no staging toggle). **Must be removed at launch** (see Launch / cutover).
-- [ ] Decide whether `npm run deploy` should refuse to run locally (GitHub-only deploys).
-- [ ] Configure Astro route caching (pages already pass cache hints; dev logs "caching is not enabled").
-- [ ] Plan an EmDash upgrade (newer releases add a staging/"Go live" setting); run migrations through the deploy pipeline.
-
-### Features
-- [ ] Comments: Turnstile on the form, first-time-commenter moderation, email notifications (Cloudflare Email Service).
-- [x] Newsletter backend behind `/api/newsletter`: Turnstile + Kit with double opt-in (see [Newsletter](#newsletter-kit)). Kit holds the list; nothing is stored in D1.
-- [ ] Newsletter go-live: Kit account, form with double opt-in, sender authentication in DNS, the four Worker settings, then an end-to-end test on live.
-- [ ] RSS feed of posts and recipes (for the newsletter's RSS-to-email).
-- [ ] Optional: blog-post card type, Shop "Featured in" links, recipe → blog post backlink, ingredient search, unit conversion when scaling.
-
-### Environments
-- [ ] Staging: separate D1/R2/KV, a `previews` block in `wrangler.jsonc`, real preview command, branch builds on.
-
-### Performance (images)
-Originally, images were slow on heavier pages because every image request ran the Worker: EmDash's image endpoint downloads the original from R2, converts it with the Images binding, and returns it with `Cache-Control: max-age=0, must-revalidate`. Browsers revalidate each time; a "not modified" answer skips the conversion but still runs the Worker and reads R2. EmDash avoids long caching because **Replace original** (crop) keeps the same URL. Cost is fine (each unique photo × width is billed once a month), but first-view latency and Worker requests grow with content. Every image counts against Workers Free's 100,000 requests/day; a 12-tile listing page is about 13 requests.
-
-In priority order:
-- [x] **Serve images without the Worker.** A Cache API cache inside the Worker (tried first) made repeat views fast, but parallel image loads still hit Worker cold starts (0.5–1 s "waiting" on random images). Images now use Cloudflare's URL-based resizing (`/cdn-cgi/image`), which caches at the CDN so the Worker never runs for an image. Astro route caching was considered and not used: it turns on Workers Cache site-wide, and our layout's settings/menu cache hints would make every page cacheable unless every route gets a rule.
-- [ ] **Generate fewer widths per image.** The `constrained` layout emits 9 widths (640–2400 px), including widths larger than the original, which all return the same bytes but count as separate transformations. Cap at about 1600 px and trim to roughly 4–5 widths (via `widths` on `<Image>` or Astro's `image.breakpoints`). This means fewer conversions, better cache hit rates, and slower growth toward the 5,000/month limit.
-- [ ] **Size each image for its slot.** Check every `<Image>` has accurate `sizes` (tiles vs. heroes) so phones pick the smallest width, and that only the top image on a page uses `priority`; everything else stays lazy-loaded.
-- [ ] **Keep listing pages short.** Blog, recipes, and shop already load in pages via infinite scroll (`PAGE_SIZE`: blog 12, recipes 16, shop 24). Consider trimming recipes and shop to about 12 so the first screen needs fewer image requests.
-- [ ] **Watch the limits monthly:** Cloudflare dashboard → Images → Transformations (5,000 unique/month on the free plan; past that, *new* sizes fail to load) and Workers → requests (100,000/day). If either gets close, trim widths further or move to Workers Paid / Images Paid.
-- [ ] Optional: try `formats={["avif", "webp"]}` on large hero images (smaller files, but doubles transformations for those images).
-
----
-
-## Upstream requests (EmDash)
-
-Things to file with [EmDash](https://github.com/emdash-cms/emdash/issues) rather than work around locally.
-
-- [ ] **Cache transformed images in EmDash's image endpoint.** `@astrojs/cloudflare`'s own transform endpoint stores results with the Cache API, but EmDash's wrapper (`emdash/dist/astro/image-endpoint.mjs`, used for stored media) re-converts on every request and sends `max-age=0`. Request an opt-in edge cache, ideally keyed on the media's version so **Replace original** busts it automatically. If added upstream, it replaces our own wrapper (see Performance).
-- [ ] **Production image optimization needs a build-time site URL.** Without `siteUrl` or `EMDASH_SITE_URL` at `astro build`, EmDash registers no `remotePatterns` and production silently serves full-size originals (dev works, so this goes unnoticed). Request a build warning, or allowing the media route for the request's own host at runtime. We work around it with `SITE_HOSTS` in `astro.config.mjs`.
-
-- [ ] **Tag icon for any flat taxonomy in the admin sidebar.** The admin picks a taxonomy's nav icon by name only: `getTaxonomyNavIcon(name)` returns the tag icon when `name === "tag"` and the generic taxonomy icon otherwise (`@emdash-cms/admin`). Our "Recipe Tags" (`recipe_tag`) is a tag list but shows the generic icon, while "Blog Tags" (`tag`) gets the tag icon. Request either an `icon` option on taxonomy definitions (seed + Content Types UI), or defaulting non-hierarchical taxonomies to the tag icon. Cosmetic only; ignore until fixed upstream.
-- [ ] **Searchable picker for plugin block fields.** In the rich-text block editor, `optionsRoute` only works on `select` (a plain dropdown); a searchable `combobox` with `optionsRoute` would scale better as the recipe list grows.
 
 ---
 
