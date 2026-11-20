@@ -1,8 +1,8 @@
 # Life at the Nest
 
-Website for **Life at the Nest** (Audra Chalfant Matlack): a blog, scalable and printable recipes, an affiliate shop, and a few static pages. Built on [EmDash](https://docs.emdashcms.com/) (an Astro-based CMS) and running on Cloudflare Workers.
+Website for **Life at the Nest** (by Audra Chalfant Matlack): a blog, scalable and printable recipes, an affiliate shop, and a few static pages. Built on [EmDash](https://docs.emdashcms.com/) (an Astro-based CMS) and running on Cloudflare Workers.
 
-- **Live (temporary):** https://lifeatthenest.ethan-5da.workers.dev (final domain: lifeatthenest.com, not yet cut over)
+- **Live :** lifeatthenest.com
 - **Admin:** `/_emdash/admin`
 - **Repo:** `main` deploys to production automatically; day-to-day work happens on `dev`.
 
@@ -209,7 +209,6 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 
 - **D1 is matched by name in `wrangler.jsonc`.** Don't add `database_id` there: local dev keys its database file on it and would switch to an empty local database. The production database ID lives in `scripts/deploy-ci.mjs`.
 - **Images are resized and served as WebP on the fly** by Cloudflare's Images binding (originals stay in R2 untouched). Astro only optimizes hosts listed in `SITE_HOSTS` in `astro.config.mjs`. **Add any new domain there**, or that domain silently serves full-size originals. The Images Free plan covers 5,000 unique transformations a month (each photo × each width counts once); past that, new sizes fail to load, so keep an eye on it in the dashboard (Images → Transformations) as the library grows.
-- **Passkeys are bound to the address they were created on.** Admin passkeys created on the workers.dev address stop working after the domain change; use EmDash's **Change domain** flow (Settings → General) to move sign-in.
 
 ---
 
@@ -263,15 +262,6 @@ Notes:
 - [ ] Configure Astro route caching (pages already pass cache hints; dev logs "caching is not enabled").
 - [ ] Plan an EmDash upgrade (newer releases add a staging/"Go live" setting); run migrations through the deploy pipeline.
 
-### Content (production)
-- [ ] Restore original publish dates on the 16 imported blog posts (the seed set them to the setup date).
-- [ ] Real photos: homepage welcome and Meet Audra, About page, product images, post featured images.
-- [ ] Granola recipe: ingredient amounts and oven temperature (currently blank).
-- [ ] Re-enter "Thanksgiving Cauliflower" and "Butternut Squash Soup" from the old site as Recipes.
-- [ ] Fix run-together words in imported posts (e.g. "wellwithin", "15-20minutes").
-- [ ] Descriptions for the Family blog category and the recipe/shop categories.
-- [ ] Remove "Sample:" posts, recipes, and products once real ones exist.
-
 ### Features
 - [ ] Comments: Turnstile on the form, first-time-commenter moderation, email notifications (Cloudflare Email Service).
 - [ ] Newsletter backend behind `/api/newsletter`: Turnstile, store in D1, forward to provider (Buttondown / Kit / MailerLite, TBD) via a small adapter; double opt-in.
@@ -291,16 +281,6 @@ In priority order:
 - [ ] **Keep listing pages short.** Blog, recipes, and shop already load in pages via infinite scroll (`PAGE_SIZE`: blog 12, recipes 16, shop 24). Consider trimming recipes and shop to about 12 so the first screen needs fewer image requests.
 - [ ] **Watch the limits monthly:** Cloudflare dashboard → Images → Transformations (5,000 unique/month on the free plan; past that, *new* sizes fail to load) and Workers → requests (100,000/day). If either gets close, trim widths further or move to Workers Paid / Images Paid.
 - [ ] Optional: try `formats={["avif", "webp"]}` on large hero images (smaller files, but doubles transformations for those images).
-
-### Launch / cutover
-- [ ] Map old WordPress URLs and add 301 redirects (posts at `/<slug>/` → `/posts/<slug>`, `/blog/?tx_category=`, recipes, feeds).
-- [ ] Check whether email is hosted at SiteGround; migrate it before DNS changes.
-- [ ] Add lifeatthenest.com to the Worker, run **Change domain**, re-register passkeys on the new domain.
-- [ ] Confirm images on lifeatthenest.com load as `/_image?…f=webp` (the domain must be in `SITE_HOSTS` in `astro.config.mjs`), then add the image edge cache (see Performance).
-- [ ] Create Audra's account with the **Editor** role (after domain + email).
-- [ ] Validate recipes with Google's Rich Results Test; set up Search Console.
-- [ ] **Remove the robots.txt block** (Settings → SEO → robots.txt: delete the `Disallow: /` rules so the default robots.txt returns), then confirm `https://lifeatthenest.com/robots.txt` no longer disallows crawling. Until this is done, search engines won't index the site.
-- [ ] Go live, then cancel SiteGround.
 
 ---
 
