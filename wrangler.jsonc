@@ -34,4 +34,11 @@
 	"triggers": {
 		"crons": ["* * * * *"],
 	},
+	// Enabling basic observability for Cloudflare Workers.
+	"observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  }
 }
