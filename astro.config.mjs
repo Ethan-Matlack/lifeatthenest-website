@@ -12,17 +12,22 @@ import { recipeEditorPlugin } from "./src/plugins/recipe-editor/descriptor.mjs";
 // Hostnames this site is served from. Astro only optimizes (resizes + WebP)
 // absolute image URLs from allowed hosts; EmDash allows its own media route
 // only when it knows the site URL at build time, which we don't set. Without
-// this, production serves full-size originals. Add any new domain here.
+// this, production serves full-size originals. Add any new domain here
+// (it must be a Cloudflare zone with Image Transformations enabled).
 const SITE_HOSTS = ["lifeatthenest.ethan-5da.workers.dev", "lifeatthenest.com", "www.lifeatthenest.com"];
 
 export default defineConfig({
 	output: "server",
-	adapter: cloudflare(),
+	// Images are resized by Cloudflare's CDN (/cdn-cgi/image/... URLs), which
+	// caches the result, so image requests never run the Worker (no cold
+	// starts). Needs Images -> Transformations enabled on the zone. `astro dev`
+	// serves originals instead. Doesn't work on *.workers.dev.
+	adapter: cloudflare({ imageService: "cloudflare" }),
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
-		// Only EmDash's own media route on our hosts. Its image endpoint reads
-		// these from R2 directly; the URL itself is never fetched.
+		// Only EmDash's own media route on our hosts. Cloudflare fetches the
+		// original from this route on a cache miss, then serves its cached copy.
 		remotePatterns: SITE_HOSTS.map((hostname) => ({
 			protocol: "https",
 			hostname,
