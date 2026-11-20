@@ -1,0 +1,9 @@
+---
+/**
+ * PtImage for wider text columns (the recipe story and recipe card notes,
+ * up to ~58rem). RichText picks it with `column="wide"`.
+ */
+import PtImage from "./PtImage.astro";
+---
+
+<PtImage {...(Astro.props as Parameters<typeof PtImage>[0])} columnWidth={928} />

@@ -1,0 +1,34 @@
+---
+/**
+ * Portable Text `image` block: EmDash's image block, told how wide it's
+ * actually shown.
+ *
+ * EmDash sizes text images by their full original width (sizes="(min-width:
+ * 4676px) 4676px, 100vw" for a big upload), so browsers fetched versions up
+ * to twice the original: multi-MB files for a ~670px column. Setting a
+ * display width makes it emit sizes for that width and versions up to 2x it.
+ *
+ * Widths match the RichText CSS: the text column for normal images, the
+ * --rt-wide breakout (60rem) for wide/full, half the column for left/right.
+ * An image already set smaller in the editor keeps its own width.
+ */
+import { PTImage } from "emdash/ui";
+
+type ImageProps = Parameters<typeof PTImage>[0];
+
+interface Props extends ImageProps {
+	/** Width of the text column this image sits in (px), from RichText. */
+	columnWidth?: number;
+}
+
+const WIDE = 960; // 60rem, the --rt-wide max in RichText.astro
+
+const { columnWidth = 672, ...props } = Astro.props;
+const node = props.node;
+const alignment = node?.alignment;
+const slot = alignment === "wide" || alignment === "full" ? WIDE : alignment === "left" || alignment === "right" ? Math.round(columnWidth / 2) : columnWidth;
+const own = node?.displayWidth ?? node?.width;
+const displayWidth = typeof own === "number" && own > 0 ? Math.min(own, slot) : slot;
+---
+
+<PTImage {...props} node={{ ...node, displayWidth, displayHeight: undefined }} />

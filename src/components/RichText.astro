@@ -6,10 +6,15 @@
  * - A paragraph that is only a YouTube link becomes a video card.
  * - "Recipe card" blocks (and other content cards) render via pt/ContentCard.
  * - Images aligned "wide" or "full" in the editor break out of the text column.
+ * - Images get size hints for the column they sit in (pt/PtImage), so browsers
+ *   don't download multi-MB originals. Pass `column="wide"` where the text runs
+ *   wider than the normal reading column.
  */
 import { PortableText } from "emdash/ui";
 import PtEmbed from "./pt/PtEmbed.astro";
 import PtIframe from "./pt/PtIframe.astro";
+import PtImage from "./pt/PtImage.astro";
+import PtImageWide from "./pt/PtImageWide.astro";
 import ContentCard from "./pt/ContentCard.astro";
 import { CARD_TYPES } from "../plugins/content-cards/card-types";
 import { autoEmbeds } from "../utils/portable-text";
@@ -17,12 +22,15 @@ import { autoEmbeds } from "../utils/portable-text";
 interface Props {
 	value: unknown;
 	class?: string;
+	/** "prose" (42rem reading column, default) or "wide" (recipe story/notes). */
+	column?: "prose" | "wide";
 	[key: string]: unknown;
 }
 
-const { value, class: className, ...rest } = Astro.props;
+const { value, class: className, column = "prose", ...rest } = Astro.props;
 const components = {
 	type: {
+		image: column === "wide" ? PtImageWide : PtImage,
 		embed: PtEmbed,
 		iframe: PtIframe,
 		// One renderer for every content-card block type (recipeCard, …)
