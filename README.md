@@ -1,8 +1,8 @@
 # Life at the Nest
 
-Website for **Life at the Nest** (Audra Chalfant Matlack): a blog, scalable and printable recipes, an affiliate shop, and a few static pages. Built on [EmDash](https://docs.emdashcms.com/) (an Astro-based CMS) and running on Cloudflare Workers.
+Website for **Life at the Nest** (by Audra Chalfant Matlack): a blog, scalable and printable recipes, an affiliate shop, and a few static pages. Built on [EmDash](https://docs.emdashcms.com/) (an Astro-based CMS) and running on Cloudflare Workers.
 
-- **Live (temporary):** https://lifeatthenest.ethan-5da.workers.dev (final domain: lifeatthenest.com, not yet cut over)
+- **Live :** lifeatthenest.com
 - **Admin:** `/_emdash/admin`
 - **Repo:** `main` deploys to production automatically; day-to-day work happens on `dev`.
 
@@ -209,7 +209,7 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 
 - **D1 is matched by name in `wrangler.jsonc`.** Don't add `database_id` there: local dev keys its database file on it and would switch to an empty local database. The production database ID lives in `scripts/deploy-ci.mjs`.
 - **Images are resized and served as WebP on the fly** by Cloudflare's Images binding (originals stay in R2 untouched). Astro only optimizes hosts listed in `SITE_HOSTS` in `astro.config.mjs`. **Add any new domain there**, or that domain silently serves full-size originals. The Images Free plan covers 5,000 unique transformations a month (each photo × each width counts once); past that, new sizes fail to load, so keep an eye on it in the dashboard (Images → Transformations) as the library grows.
-- **Passkeys are bound to the address they were created on.** Admin passkeys created on the workers.dev address stop working after the domain change; use EmDash's **Change domain** flow (Settings → General) to move sign-in.
+- **Converted images are edge-cached for a day** (`src/middleware.ts`, logic in `src/utils/image-cache.ts`). The first request per Cloudflare location converts; later ones come from the Cache API without reading R2 or converting, and browser revalidations get a `304`. Browsers keep EmDash's revalidate-every-time policy, so only the edge holds a copy. **After "Replace original" (crop), the old version can show for up to a day** in places that already cached it; upload as a new image if it must change immediately. The Cache API does nothing on `*.workers.dev` or in `astro dev`.
 
 ---
 
@@ -263,15 +263,6 @@ Notes:
 - [ ] Configure Astro route caching (pages already pass cache hints; dev logs "caching is not enabled").
 - [ ] Plan an EmDash upgrade (newer releases add a staging/"Go live" setting); run migrations through the deploy pipeline.
 
-### Content (production)
-- [ ] Restore original publish dates on the 16 imported blog posts (the seed set them to the setup date).
-- [ ] Real photos: homepage welcome and Meet Audra, About page, product images, post featured images.
-- [ ] Granola recipe: ingredient amounts and oven temperature (currently blank).
-- [ ] Re-enter "Thanksgiving Cauliflower" and "Butternut Squash Soup" from the old site as Recipes.
-- [ ] Fix run-together words in imported posts (e.g. "wellwithin", "15-20minutes").
-- [ ] Descriptions for the Family blog category and the recipe/shop categories.
-- [ ] Remove "Sample:" posts, recipes, and products once real ones exist.
-
 ### Features
 - [ ] Comments: Turnstile on the form, first-time-commenter moderation, email notifications (Cloudflare Email Service).
 - [ ] Newsletter backend behind `/api/newsletter`: Turnstile, store in D1, forward to provider (Buttondown / Kit / MailerLite, TBD) via a small adapter; double opt-in.
@@ -282,25 +273,15 @@ Notes:
 - [ ] Staging: separate D1/R2/KV, a `previews` block in `wrangler.jsonc`, real preview command, branch builds on.
 
 ### Performance (images)
-Images are slow on heavier pages because nothing stores converted images. Every image request runs the Worker: EmDash's image endpoint downloads the original from R2, converts it with the Images binding, and returns it with `Cache-Control: max-age=0, must-revalidate`. Browsers revalidate each time; a "not modified" answer skips the conversion but still runs the Worker and reads R2. EmDash avoids long caching because **Replace original** (crop) keeps the same URL. Cost is fine (each unique photo × width is billed once a month), but first-view latency and Worker requests grow with content. Every image counts against Workers Free's 100,000 requests/day; a 12-tile listing page is about 13 requests.
+Before the edge cache, images were slow on heavier pages because nothing stored converted images. Every image request runs the Worker: EmDash's image endpoint downloads the original from R2, converts it with the Images binding, and returns it with `Cache-Control: max-age=0, must-revalidate`. Browsers revalidate each time; a "not modified" answer skips the conversion but still runs the Worker and reads R2. EmDash avoids long caching because **Replace original** (crop) keeps the same URL. Cost is fine (each unique photo × width is billed once a month), but first-view latency and Worker requests grow with content. Every image counts against Workers Free's 100,000 requests/day; a 12-tile listing page is about 13 requests.
 
 In priority order:
-- [ ] **Edge-cache converted images (at cutover; needs the custom domain).** Wrap the `/_image` endpoint with the Cache API (`caches.default`) so the first request per Cloudflare location converts and later ones are served from cache without running the conversion. The Cache API is a no-op on `*.workers.dev`, so this only helps on lifeatthenest.com. Use a bounded lifetime (for example 1 day) so a **Replace original** crop appears within that window, or purge the URL after replacing. Check whether Astro route caching (Housekeeping) covers this first.
+- [x] **Edge-cache converted images.** `src/middleware.ts` keeps converted images in the Cache API (`caches.default`) for 1 day (`IMAGE_EDGE_TTL`). Astro route caching was considered and not used: it turns on Workers Cache site-wide, and our layout's settings/menu cache hints would make every page cacheable unless every route gets a rule. Revisit it as a whole-site project (it would also skip the Worker entirely on hits, which helps the 100,000 requests/day limit; the Cache API still runs the Worker, just without the R2 read and conversion).
 - [ ] **Generate fewer widths per image.** The `constrained` layout emits 9 widths (640–2400 px), including widths larger than the original, which all return the same bytes but count as separate transformations. Cap at about 1600 px and trim to roughly 4–5 widths (via `widths` on `<Image>` or Astro's `image.breakpoints`). This means fewer conversions, better cache hit rates, and slower growth toward the 5,000/month limit.
 - [ ] **Size each image for its slot.** Check every `<Image>` has accurate `sizes` (tiles vs. heroes) so phones pick the smallest width, and that only the top image on a page uses `priority`; everything else stays lazy-loaded.
 - [ ] **Keep listing pages short.** Blog, recipes, and shop already load in pages via infinite scroll (`PAGE_SIZE`: blog 12, recipes 16, shop 24). Consider trimming recipes and shop to about 12 so the first screen needs fewer image requests.
 - [ ] **Watch the limits monthly:** Cloudflare dashboard → Images → Transformations (5,000 unique/month on the free plan; past that, *new* sizes fail to load) and Workers → requests (100,000/day). If either gets close, trim widths further or move to Workers Paid / Images Paid.
 - [ ] Optional: try `formats={["avif", "webp"]}` on large hero images (smaller files, but doubles transformations for those images).
-
-### Launch / cutover
-- [ ] Map old WordPress URLs and add 301 redirects (posts at `/<slug>/` → `/posts/<slug>`, `/blog/?tx_category=`, recipes, feeds).
-- [ ] Check whether email is hosted at SiteGround; migrate it before DNS changes.
-- [ ] Add lifeatthenest.com to the Worker, run **Change domain**, re-register passkeys on the new domain.
-- [ ] Confirm images on lifeatthenest.com load as `/_image?…f=webp` (the domain must be in `SITE_HOSTS` in `astro.config.mjs`), then add the image edge cache (see Performance).
-- [ ] Create Audra's account with the **Editor** role (after domain + email).
-- [ ] Validate recipes with Google's Rich Results Test; set up Search Console.
-- [ ] **Remove the robots.txt block** (Settings → SEO → robots.txt: delete the `Disallow: /` rules so the default robots.txt returns), then confirm `https://lifeatthenest.com/robots.txt` no longer disallows crawling. Until this is done, search engines won't index the site.
-- [ ] Go live, then cancel SiteGround.
 
 ---
 
