@@ -31,7 +31,7 @@ const COLLECTION = {
 	icon: "leaf",
 	supports: ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
 	urlPattern: "/seasonal/{slug}",
-	admin: { listColumns: ["season"] },
+	admin: { listColumns: ["season", "featured"] },
 };
 
 const TAXONOMY = {
@@ -69,6 +69,12 @@ const FIELDS = [
 		label: "Season",
 		type: "select",
 		validation: { options: ["Spring", "Summer", "Fall", "Winter", "Holidays"] },
+	},
+	{
+		slug: "featured",
+		label: "Feature now (shown at the top of the Seasonal page)",
+		type: "boolean",
+		defaultValue: false,
 	},
 	{ slug: "intro", label: "Intro", type: "portableText", searchable: true },
 	...PICKERS.map((p) => ({
@@ -161,6 +167,23 @@ for (const field of FIELDS) {
 	}
 	step(`add field \`${field.slug}\` (${field.type})`);
 	if (APPLY) await api(`/schema/collections/${COLLECTION.slug}/fields`, "POST", field);
+}
+
+// Keep fields in the order above (new fields are added at the end).
+if (APPLY || existing) {
+	const now = await api(`/schema/collections/${COLLECTION.slug}?includeFields=true`).catch(() => null);
+	const current = ((now?.item ?? now)?.fields ?? []).map((f) => f.slug);
+	const wanted = [...FIELDS.map((f) => f.slug).filter((s) => current.includes(s)), ...current.filter((s) => !FIELDS.some((f) => f.slug === s))];
+	if (current.length && JSON.stringify(current) !== JSON.stringify(wanted)) {
+		step("reorder fields");
+		if (APPLY) await api(`/schema/collections/${COLLECTION.slug}/fields/reorder`, "POST", { fieldSlugs: wanted });
+	}
+}
+
+const wantColumns = COLLECTION.admin.listColumns;
+if (existing && JSON.stringify(existing.admin?.listColumns ?? []) !== JSON.stringify(wantColumns)) {
+	step(`set admin list columns to ${wantColumns.join(", ")}`);
+	if (APPLY) await api(`/schema/collections/${COLLECTION.slug}`, "PUT", { admin: { ...existing.admin, listColumns: wantColumns } });
 }
 
 if (!existing?.titleField) {

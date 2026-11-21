@@ -584,7 +584,8 @@
 			"titleField": "title",
 			"admin": {
 				"listColumns": [
-					"season"
+					"season",
+					"featured"
 				]
 			},
 			"fields": [
@@ -636,6 +637,12 @@
 							"Holidays"
 						]
 					}
+				},
+				{
+					"slug": "featured",
+					"label": "Feature now (shown at the top of the Seasonal page)",
+					"type": "boolean",
+					"defaultValue": false
 				},
 				{
 					"slug": "intro",
@@ -902,6 +909,11 @@
 					"type": "custom",
 					"label": "Recipes",
 					"url": "/recipes"
+				},
+				{
+					"type": "custom",
+					"label": "Seasonal",
+					"url": "/seasonal"
 				},
 				{
 					"type": "custom",

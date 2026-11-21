@@ -744,9 +744,17 @@
             "relation": "seasonal_pinned_posts",
             "relationSide": "parent"
           }
+        },
+        {
+          "slug": "featured",
+          "label": "Feature now (shown at the top of the Seasonal page)",
+          "type": "boolean",
+          "required": false,
+          "unique": false,
+          "defaultValue": false
         }
       ]
     }
   ],
-  "version": "069737c81d1c7417"
+  "version": "6f5dee3e31582332"
 }

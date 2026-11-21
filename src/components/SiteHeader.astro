@@ -324,4 +324,27 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 			min-width: 9rem;
 		}
 	}
+
+	/* 1024–1280px: seven nav items plus search are tight, so trim the link
+	   padding and letter spacing a little to keep the search box full width. */
+	@media (min-width: 64rem) and (max-width: 79.99rem) {
+		.brand-logo {
+			width: 205px;
+		}
+
+		.header-menu,
+		.has-js .header-menu {
+			gap: var(--space-sm);
+		}
+
+		.site-nav a {
+			padding-inline: 0.5rem;
+			letter-spacing: 0.05em;
+		}
+
+		.site-nav a::after {
+			left: 0.5rem;
+			right: 0.5rem;
+		}
+	}
 </style>
