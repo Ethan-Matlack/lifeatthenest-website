@@ -11,6 +11,7 @@
         "revisions"
       ],
       "hidden": false,
+      "sortOrder": 0,
       "fields": [
         {
           "slug": "title",
@@ -99,14 +100,14 @@
             "maxItems": 20,
             "subFields": [
               {
-                "slug": "quote",
                 "label": "Quote",
-                "type": "text",
-                "required": true
+                "required": true,
+                "slug": "quote",
+                "type": "text"
               },
               {
-                "slug": "author",
                 "label": "Who said it",
+                "slug": "author",
                 "type": "string"
               }
             ]
@@ -126,6 +127,7 @@
         "seo"
       ],
       "hidden": false,
+      "sortOrder": 1,
       "fields": [
         {
           "slug": "title",
@@ -170,6 +172,7 @@
         "seo"
       ],
       "hidden": false,
+      "sortOrder": 2,
       "fields": [
         {
           "slug": "title",
@@ -212,25 +215,25 @@
           "required": false,
           "unique": false,
           "validation": {
+            "maxItems": 10,
             "subFields": [
               {
-                "slug": "url",
-                "type": "url",
                 "label": "Video link (YouTube, TikTok, Instagram, Facebook)",
-                "required": true
+                "required": true,
+                "slug": "url",
+                "type": "url"
               },
               {
+                "label": "Title (optional, shown on the card)",
                 "slug": "title",
-                "type": "string",
-                "label": "Title (optional, shown on the card)"
+                "type": "string"
               },
               {
+                "label": "Thumbnail (optional, replaces the automatic one)",
                 "slug": "image",
-                "type": "image",
-                "label": "Thumbnail (optional, replaces the automatic one)"
+                "type": "image"
               }
-            ],
-            "maxItems": 10
+            ]
           }
         },
         {
@@ -240,10 +243,330 @@
           "required": false,
           "unique": false,
           "validation": {
-            "targetCollection": "products",
             "multiple": true,
             "relation": "posts_featured_products",
-            "relationSide": "parent"
+            "relationSide": "parent",
+            "targetCollection": "products"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "recipes",
+      "label": "Recipes",
+      "labelSingular": "Recipe",
+      "description": "Recipes with a scalable, printable recipe card",
+      "icon": "cooking-pot",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "hidden": false,
+      "sortOrder": 3,
+      "fields": [
+        {
+          "slug": "featured",
+          "label": "Feature on homepage",
+          "type": "boolean",
+          "required": false,
+          "unique": false,
+          "defaultValue": false
+        },
+        {
+          "slug": "title",
+          "label": "Recipe name",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "maxLength": 120,
+            "minLength": 1
+          }
+        },
+        {
+          "slug": "summary",
+          "label": "Short description (shows on recipe cards and in Google)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 160
+          },
+          "options": {
+            "rows": 3
+          }
+        },
+        {
+          "slug": "hero_image",
+          "label": "Main photo",
+          "type": "image",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "intro",
+          "label": "Story / intro (shown above the recipe card)",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "servings",
+          "label": "Makes how many",
+          "type": "integer",
+          "required": true,
+          "unique": false,
+          "defaultValue": 4,
+          "validation": {
+            "max": 200,
+            "min": 1
+          }
+        },
+        {
+          "slug": "yield_unit",
+          "label": "Of what (servings, cookies, loaves...)",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "defaultValue": "servings",
+          "validation": {
+            "maxLength": 40
+          }
+        },
+        {
+          "slug": "prep_minutes",
+          "label": "Prep time (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "max": 10000,
+            "min": 0
+          }
+        },
+        {
+          "slug": "cook_minutes",
+          "label": "Cook time (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "max": 10000,
+            "min": 0
+          }
+        },
+        {
+          "slug": "extra_minutes",
+          "label": "Extra time: resting, chilling, rising (minutes)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "max": 10000,
+            "min": 0
+          }
+        },
+        {
+          "slug": "difficulty",
+          "label": "Difficulty",
+          "type": "select",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "options": [
+              "Easy",
+              "Medium",
+              "Involved"
+            ]
+          }
+        },
+        {
+          "slug": "ingredients",
+          "label": "Ingredients",
+          "type": "repeater",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "maxItems": 80,
+            "minItems": 1,
+            "subFields": [
+              {
+                "label": "Group heading (optional, e.g. For the frosting)",
+                "slug": "group",
+                "type": "string"
+              },
+              {
+                "label": "Amount (e.g. 1 1/2, 1/3, 2-3)",
+                "slug": "amount",
+                "type": "string"
+              },
+              {
+                "label": "Unit",
+                "options": [
+                  "tsp",
+                  "tbsp",
+                  "cup",
+                  "fl oz",
+                  "pint",
+                  "quart",
+                  "oz",
+                  "lb",
+                  "g",
+                  "kg",
+                  "ml",
+                  "l",
+                  "pinch",
+                  "dash",
+                  "clove",
+                  "can",
+                  "jar",
+                  "package",
+                  "stick",
+                  "slice",
+                  "sprig",
+                  "bunch"
+                ],
+                "slug": "unit",
+                "type": "select"
+              },
+              {
+                "label": "Ingredient",
+                "required": true,
+                "slug": "item",
+                "type": "string"
+              },
+              {
+                "label": "Note (e.g. softened, finely chopped)",
+                "slug": "note",
+                "type": "string"
+              },
+              {
+                "label": "Don't scale this one (e.g. salt to taste)",
+                "slug": "fixed",
+                "type": "boolean"
+              }
+            ]
+          },
+          "widget": "recipe-editor:ingredients"
+        },
+        {
+          "slug": "steps",
+          "label": "Instructions",
+          "type": "repeater",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "maxItems": 60,
+            "minItems": 1,
+            "subFields": [
+              {
+                "label": "Group heading (optional, e.g. Make the dough)",
+                "slug": "group",
+                "type": "string"
+              },
+              {
+                "label": "Step",
+                "required": true,
+                "slug": "instruction",
+                "type": "text"
+              },
+              {
+                "label": "Step photo (optional)",
+                "slug": "image",
+                "type": "image"
+              }
+            ]
+          },
+          "widget": "recipe-editor:steps"
+        },
+        {
+          "slug": "equipment",
+          "label": "Equipment (one per line, optional)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "options": {
+            "rows": 4
+          }
+        },
+        {
+          "slug": "notes",
+          "label": "Tips, substitutions, and storage",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "calories",
+          "label": "Calories per serving (optional)",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "max": 10000,
+            "min": 0
+          }
+        },
+        {
+          "slug": "credit",
+          "label": "Credit (e.g. Adapted from Grandma's recipe box)",
+          "type": "string",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 160
+          }
+        },
+        {
+          "slug": "videos",
+          "label": "Videos (optional)",
+          "type": "repeater",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxItems": 10,
+            "subFields": [
+              {
+                "label": "Video link (YouTube, TikTok, Instagram, Facebook)",
+                "required": true,
+                "slug": "url",
+                "type": "url"
+              },
+              {
+                "label": "Title (optional, shown on the card)",
+                "slug": "title",
+                "type": "string"
+              },
+              {
+                "label": "Thumbnail (optional, replaces the automatic one)",
+                "slug": "image",
+                "type": "image"
+              }
+            ]
+          }
+        },
+        {
+          "slug": "featured_products",
+          "label": "Products used in this recipe (also shown on the Shop page)",
+          "type": "reference",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "multiple": true,
+            "relation": "recipes_featured_products",
+            "relationSide": "parent",
+            "targetCollection": "products"
           }
         }
       ]
@@ -259,6 +582,7 @@
         "search"
       ],
       "hidden": false,
+      "sortOrder": 4,
       "fields": [
         {
           "slug": "title",
@@ -267,8 +591,8 @@
           "required": true,
           "unique": false,
           "validation": {
-            "minLength": 1,
-            "maxLength": 120
+            "maxLength": 120,
+            "minLength": 1
           }
         },
         {
@@ -319,11 +643,11 @@
       ]
     },
     {
-      "slug": "recipes",
-      "label": "Recipes",
-      "labelSingular": "Recipe",
-      "description": "Recipes with a scalable, printable recipe card",
-      "icon": "cooking-pot",
+      "slug": "seasonal",
+      "label": "Seasonal",
+      "labelSingular": "Seasonal Page",
+      "description": "Seasonal roundups (e.g. Thanksgiving at the Nest): an intro plus hand-picked recipes, posts, and products.",
+      "icon": "leaf",
       "supports": [
         "drafts",
         "revisions",
@@ -336,7 +660,7 @@
       "fields": [
         {
           "slug": "title",
-          "label": "Recipe name",
+          "label": "Title",
           "type": "string",
           "required": true,
           "unique": false,
@@ -347,7 +671,7 @@
         },
         {
           "slug": "summary",
-          "label": "Short description (shows on recipe cards and in Google)",
+          "label": "Short description (shows on cards and in Google)",
           "type": "text",
           "required": false,
           "unique": false,
@@ -362,7 +686,7 @@
           "slug": "hero_image",
           "label": "Main photo",
           "type": "image",
-          "required": true,
+          "required": false,
           "unique": false,
           "validation": {
             "allowedMimeTypes": [
@@ -373,270 +697,69 @@
           }
         },
         {
-          "slug": "intro",
-          "label": "Story / intro (shown above the recipe card)",
-          "type": "portableText",
-          "required": false,
-          "unique": false
-        },
-        {
-          "slug": "servings",
-          "label": "Makes how many",
-          "type": "integer",
-          "required": true,
-          "unique": false,
-          "defaultValue": 4,
-          "validation": {
-            "min": 1,
-            "max": 200
-          }
-        },
-        {
-          "slug": "yield_unit",
-          "label": "Of what (servings, cookies, loaves...)",
-          "type": "string",
-          "required": false,
-          "unique": false,
-          "defaultValue": "servings",
-          "validation": {
-            "maxLength": 40
-          }
-        },
-        {
-          "slug": "prep_minutes",
-          "label": "Prep time (minutes)",
-          "type": "integer",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "min": 0,
-            "max": 10000
-          }
-        },
-        {
-          "slug": "cook_minutes",
-          "label": "Cook time (minutes)",
-          "type": "integer",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "min": 0,
-            "max": 10000
-          }
-        },
-        {
-          "slug": "extra_minutes",
-          "label": "Extra time: resting, chilling, rising (minutes)",
-          "type": "integer",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "min": 0,
-            "max": 10000
-          }
-        },
-        {
-          "slug": "difficulty",
-          "label": "Difficulty",
+          "slug": "season",
+          "label": "Season",
           "type": "select",
           "required": false,
           "unique": false,
           "validation": {
             "options": [
-              "Easy",
-              "Medium",
-              "Involved"
+              "Spring",
+              "Summer",
+              "Fall",
+              "Winter",
+              "Holidays"
             ]
           }
         },
         {
-          "slug": "ingredients",
-          "label": "Ingredients",
-          "type": "repeater",
-          "required": true,
-          "unique": false,
-          "validation": {
-            "subFields": [
-              {
-                "slug": "group",
-                "type": "string",
-                "label": "Group heading (optional, e.g. For the frosting)"
-              },
-              {
-                "slug": "amount",
-                "type": "string",
-                "label": "Amount (e.g. 1 1/2, 1/3, 2-3)"
-              },
-              {
-                "slug": "unit",
-                "type": "select",
-                "label": "Unit",
-                "options": [
-                  "tsp",
-                  "tbsp",
-                  "cup",
-                  "fl oz",
-                  "pint",
-                  "quart",
-                  "oz",
-                  "lb",
-                  "g",
-                  "kg",
-                  "ml",
-                  "l",
-                  "pinch",
-                  "dash",
-                  "clove",
-                  "can",
-                  "jar",
-                  "package",
-                  "stick",
-                  "slice",
-                  "sprig",
-                  "bunch"
-                ]
-              },
-              {
-                "slug": "item",
-                "type": "string",
-                "label": "Ingredient",
-                "required": true
-              },
-              {
-                "slug": "note",
-                "type": "string",
-                "label": "Note (e.g. softened, finely chopped)"
-              },
-              {
-                "slug": "fixed",
-                "type": "boolean",
-                "label": "Don't scale this one (e.g. salt to taste)"
-              }
-            ],
-            "minItems": 1,
-            "maxItems": 80
-          },
-          "widget": "recipe-editor:ingredients"
-        },
-        {
-          "slug": "steps",
-          "label": "Instructions",
-          "type": "repeater",
-          "required": true,
-          "unique": false,
-          "validation": {
-            "subFields": [
-              {
-                "slug": "group",
-                "type": "string",
-                "label": "Group heading (optional, e.g. Make the dough)"
-              },
-              {
-                "slug": "instruction",
-                "type": "text",
-                "label": "Step",
-                "required": true
-              },
-              {
-                "slug": "image",
-                "type": "image",
-                "label": "Step photo (optional)"
-              }
-            ],
-            "minItems": 1,
-            "maxItems": 60
-          },
-          "widget": "recipe-editor:steps"
-        },
-        {
-          "slug": "equipment",
-          "label": "Equipment (one per line, optional)",
-          "type": "text",
-          "required": false,
-          "unique": false,
-          "options": {
-            "rows": 4
-          }
-        },
-        {
-          "slug": "notes",
-          "label": "Tips, substitutions, and storage",
+          "slug": "intro",
+          "label": "Intro",
           "type": "portableText",
           "required": false,
           "unique": false
         },
         {
-          "slug": "calories",
-          "label": "Calories per serving (optional)",
-          "type": "integer",
+          "slug": "recipes",
+          "label": "Recipes on this page",
+          "type": "reference",
           "required": false,
           "unique": false,
           "validation": {
-            "min": 0,
-            "max": 10000
+            "targetCollection": "recipes",
+            "multiple": true,
+            "relation": "seasonal_recipes",
+            "relationSide": "parent"
           }
         },
         {
-          "slug": "credit",
-          "label": "Credit (e.g. Adapted from Grandma's recipe box)",
-          "type": "string",
+          "slug": "posts",
+          "label": "Blog posts on this page",
+          "type": "reference",
           "required": false,
           "unique": false,
           "validation": {
-            "maxLength": 160
+            "targetCollection": "posts",
+            "multiple": true,
+            "relation": "seasonal_posts",
+            "relationSide": "parent"
           }
         },
         {
-          "slug": "videos",
-          "label": "Videos (optional)",
-          "type": "repeater",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "subFields": [
-              {
-                "slug": "url",
-                "type": "url",
-                "label": "Video link (YouTube, TikTok, Instagram, Facebook)",
-                "required": true
-              },
-              {
-                "slug": "title",
-                "type": "string",
-                "label": "Title (optional, shown on the card)"
-              },
-              {
-                "slug": "image",
-                "type": "image",
-                "label": "Thumbnail (optional, replaces the automatic one)"
-              }
-            ],
-            "maxItems": 10
-          }
-        },
-        {
-          "slug": "featured_products",
-          "label": "Products used in this recipe (also shown on the Shop page)",
+          "slug": "products",
+          "label": "Products on this page (also shown on the Shop page)",
           "type": "reference",
           "required": false,
           "unique": false,
           "validation": {
             "targetCollection": "products",
             "multiple": true,
-            "relation": "recipes_featured_products",
+            "relation": "seasonal_products",
             "relationSide": "parent"
           }
-        },
-        {
-          "slug": "featured",
-          "label": "Feature on homepage",
-          "type": "boolean",
-          "required": false,
-          "unique": false,
-          "defaultValue": false
         }
       ]
     }
   ],
-  "version": "6419ee9959d10159"
+  "version": "bfab6c94a81aec8e"
 }

@@ -567,6 +567,112 @@
 			]
 		},
 		{
+			"slug": "seasonal",
+			"label": "Seasonal",
+			"labelSingular": "Seasonal Page",
+			"description": "Seasonal roundups (e.g. Thanksgiving at the Nest): an intro plus hand-picked recipes, posts, and products.",
+			"icon": "leaf",
+			"supports": [
+				"drafts",
+				"revisions",
+				"preview",
+				"scheduling",
+				"search",
+				"seo"
+			],
+			"urlPattern": "/seasonal/{slug}",
+			"titleField": "title",
+			"admin": {
+				"listColumns": [
+					"season"
+				]
+			},
+			"fields": [
+				{
+					"slug": "title",
+					"label": "Title",
+					"type": "string",
+					"required": true,
+					"searchable": true,
+					"validation": {
+						"minLength": 1,
+						"maxLength": 120
+					}
+				},
+				{
+					"slug": "summary",
+					"label": "Short description (shows on cards and in Google)",
+					"type": "text",
+					"searchable": true,
+					"options": {
+						"rows": 3
+					},
+					"validation": {
+						"maxLength": 160
+					}
+				},
+				{
+					"slug": "hero_image",
+					"label": "Main photo",
+					"type": "image",
+					"validation": {
+						"allowedMimeTypes": [
+							"image/jpeg",
+							"image/png",
+							"image/webp"
+						]
+					}
+				},
+				{
+					"slug": "season",
+					"label": "Season",
+					"type": "select",
+					"validation": {
+						"options": [
+							"Spring",
+							"Summer",
+							"Fall",
+							"Winter",
+							"Holidays"
+						]
+					}
+				},
+				{
+					"slug": "intro",
+					"label": "Intro",
+					"type": "portableText",
+					"searchable": true
+				},
+				{
+					"slug": "recipes",
+					"label": "Recipes on this page",
+					"type": "reference",
+					"validation": {
+						"targetCollection": "recipes",
+						"multiple": true
+					}
+				},
+				{
+					"slug": "posts",
+					"label": "Blog posts on this page",
+					"type": "reference",
+					"validation": {
+						"targetCollection": "posts",
+						"multiple": true
+					}
+				},
+				{
+					"slug": "products",
+					"label": "Products on this page (also shown on the Shop page)",
+					"type": "reference",
+					"validation": {
+						"targetCollection": "products",
+						"multiple": true
+					}
+				}
+			]
+		},
+		{
 			"slug": "pages",
 			"label": "Pages",
 			"labelSingular": "Page",
