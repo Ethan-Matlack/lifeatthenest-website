@@ -92,7 +92,7 @@ src/
     pt/                       Rich-text block renderers (video links, iframe, content cards)
     VideoCard.astro           Link-out card for YouTube/TikTok/Instagram/Facebook videos & posts
     RecipeCard.astro          Printable recipe card (scaling, checkboxes, print)
-    ContentTile.astro         Bordered photo tile shared by RecipeTile and PostTile (mixed grids)
+    ContentTile.astro         The site's photo tile (whole tile is one link), shared by RecipeTile and PostTile
     ListingFilters.astro      Shared filter bar (search + chips + dropdown)
     LoadMore.astro            Shared infinite scroll / "Load more"
     ...                       Cards, header/footer, carousel, back-to-top, etc.
