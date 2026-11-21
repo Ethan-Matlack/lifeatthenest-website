@@ -54,7 +54,7 @@ const seo = page.entry
 	canonical={new URL("/seasonal", Astro.url).toString()}
 	image={seo?.ogImage ?? null}
 >
-	<header class="listing-header">
+	<header class="listing-header seasonal-intro">
 		<h1 {...page.entry?.edit.title}>{page.title}</h1>
 		{
 			page.content ? (
@@ -78,7 +78,7 @@ const seo = page.entry
 	{
 		others.length > 0 && (
 			<section class="seasonal-others" aria-label="All seasonal collections">
-				<div class="card-grid">
+				<div class="card-grid seasonal-grid">
 					{others.map((p) => (
 						<SeasonalCard page={p} headingLevel="h2" />
 					))}
@@ -97,6 +97,20 @@ const seo = page.entry
 </Base>
 
 <style>
+	/* Intro runs the full width here (other listings cap it at ~40rem). The
+	   intro may be rich text from the Pages entry, which has its own cap. */
+	.seasonal-intro,
+	.seasonal-intro :global(.prose) {
+		max-width: none;
+	}
+
+	/* Three across on desktop (larger cards than the default 4-up grid). */
+	@media (min-width: 64rem) {
+		.seasonal-grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+
 	.seasonal-featured {
 		display: grid;
 		gap: var(--space-lg);
