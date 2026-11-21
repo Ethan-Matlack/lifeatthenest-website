@@ -697,20 +697,12 @@
           }
         },
         {
-          "slug": "season",
-          "label": "Season",
-          "type": "select",
+          "slug": "featured",
+          "label": "Feature now (shown at the top of the Seasonal page)",
+          "type": "boolean",
           "required": false,
           "unique": false,
-          "validation": {
-            "options": [
-              "Spring",
-              "Summer",
-              "Fall",
-              "Winter",
-              "Holidays"
-            ]
-          }
+          "defaultValue": false
         },
         {
           "slug": "intro",
@@ -744,17 +736,9 @@
             "relation": "seasonal_pinned_posts",
             "relationSide": "parent"
           }
-        },
-        {
-          "slug": "featured",
-          "label": "Feature now (shown at the top of the Seasonal page)",
-          "type": "boolean",
-          "required": false,
-          "unique": false,
-          "defaultValue": false
         }
       ]
     }
   ],
-  "version": "6f5dee3e31582332"
+  "version": "5c180211d8f6a861"
 }

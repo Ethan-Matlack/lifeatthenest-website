@@ -37,7 +37,7 @@ const href = `/seasonal/${page.id}`;
 			}
 		</div>
 		<div class="sc-body">
-			<span class="eyebrow">{featured ? `Featured${d.season ? ` · ${d.season}` : ""}` : (d.season ?? "Seasonal")}</span>
+			{featured && <span class="eyebrow">Featured</span>}
 			<Heading class="sc-title">{d.title}</Heading>
 			{d.summary && <p class="sc-summary">{d.summary}</p>}
 			<span class="sc-cta">

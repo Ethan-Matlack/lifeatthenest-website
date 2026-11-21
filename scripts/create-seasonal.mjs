@@ -31,7 +31,7 @@ const COLLECTION = {
 	icon: "leaf",
 	supports: ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
 	urlPattern: "/seasonal/{slug}",
-	admin: { listColumns: ["season", "featured"] },
+	admin: { listColumns: ["featured"] },
 };
 
 const TAXONOMY = {
@@ -63,12 +63,6 @@ const FIELDS = [
 		label: "Main photo",
 		type: "image",
 		validation: { allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"] },
-	},
-	{
-		slug: "season",
-		label: "Season",
-		type: "select",
-		validation: { options: ["Spring", "Summer", "Fall", "Winter", "Holidays"] },
 	},
 	{
 		slug: "featured",

@@ -111,7 +111,6 @@ export interface Seasonal {
   title: string;
   summary?: string;
   hero_image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
-  season?: "Spring" | "Summer" | "Fall" | "Winter" | "Holidays";
   featured?: boolean;
   intro?: PortableTextBlock[];
   createdAt: Date;
