@@ -17,9 +17,11 @@ interface Props {
 	priority?: boolean;
 	/** Prefix the label with a type, e.g. "Story" in mixed grids. */
 	typeLabel?: string;
+	/** Photo beside text when wide (seasonal mosaic). */
+	adaptive?: boolean;
 }
 
-const { post, headingLevel = "h3", priority = false, typeLabel } = Astro.props;
+const { post, headingLevel = "h3", priority = false, typeLabel, adaptive = false } = Astro.props;
 const d = post.data;
 const eyebrow = [typeLabel, ...(d.terms?.category ?? []).map((c) => c.label)].filter(Boolean).join(" · ");
 const minutes = readingMinutes(d.content);
@@ -38,4 +40,5 @@ const meta = [d.publishedAt ? formatDate(d.publishedAt) : null, minutes ? `${min
 	meta={meta}
 	headingLevel={headingLevel}
 	priority={priority}
+	adaptive={adaptive}
 />

@@ -45,7 +45,7 @@ All pages are server-rendered on request, so published content appears without a
 | `/recipes` | `src/pages/recipes/index.astro` | Recipe grid: category chips, tag dropdown, search, infinite scroll (A–Z) | **Pages** entry with slug `recipes` |
 | `/recipes/[slug]` | `src/pages/recipes/[slug].astro` | Recipe page and printable **RecipeCard** (scaling, checkboxes, print/PDF), Recipe JSON-LD | Recipes |
 | `/seasonal` | `src/pages/seasonal/index.astro` | Seasonal landing: every page with **Feature now** on, as large cards, then one grid of the rest **in the order of their Seasonal Collections tags** (Admin → Seasonal Collections → a tag's … menu → Move up/down), continuing from just after the featured page(s) and wrapping around, so upcoming collections come first (`src/utils/seasonal-order.ts`, tested). Untagged pages last, newest first | **Pages** entry with slug `seasonal` (optional; fallback heading/intro otherwise) |
-| `/seasonal/[slug]` | `src/pages/seasonal/[slug].astro` | Seasonal roundup (e.g. "Thanksgiving at the Nest"): main photo, intro, then one mixed grid of everything tagged with the page's Seasonal Collection ("Recipe" / "Story" tiles, newest first, pinned recipes then pinned posts first), plus tagged products in the shop strip | Seasonal |
+| `/seasonal/[slug]` | `src/pages/seasonal/[slug].astro` | Seasonal roundup (e.g. "Thanksgiving at the Nest"): main photo, intro, then a **mosaic** of the recipes and blog posts tagged with the page's Seasonal Collection: "Recipe" and "Story" tiles in wrapping rows (stories ~2× a recipe's width; a tile that ends up wide switches to photo-beside-text). Pinned recipes, then pinned posts, first; the rest newest first. Tagged products show in the "Shop the season" strip below | Seasonal |
 | `/shop` | `src/pages/shop.astro` | Affiliate products, newest first: category chips, search, infinite scroll | **Pages** entry with slug `shop` |
 | `/contact` | `src/pages/contact.astro` | Social profile cards and newsletter signup | **Pages** entry with slug `contact`; cards from the **Social** menu |
 | `/[slug]` | `src/pages/[slug].astro` | Static pages (e.g. `/about`): optional arched photo + rich text | Pages |
@@ -92,7 +92,8 @@ src/
     pt/                       Rich-text block renderers (video links, iframe, content cards)
     VideoCard.astro           Link-out card for YouTube/TikTok/Instagram/Facebook videos & posts
     RecipeCard.astro          Printable recipe card (scaling, checkboxes, print)
-    ContentTile.astro         The site's photo tile (whole tile is one link), shared by RecipeTile and PostTile
+    ContentTile.astro         The site's photo tile (whole tile is one link), shared by RecipeTile and PostTile;
+                              `adaptive` switches to photo-beside-text when wide (seasonal mosaic)
     ListingFilters.astro      Shared filter bar (search + chips + dropdown)
     LoadMore.astro            Shared infinite scroll / "Load more"
     ...                       Cards, header/footer, carousel, back-to-top, etc.
