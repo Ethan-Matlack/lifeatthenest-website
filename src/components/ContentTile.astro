@@ -21,13 +21,27 @@ interface Props {
 	priority?: boolean;
 	/** Extra class on the root, e.g. "recipe-tile". */
 	class?: string;
+	/** Switch to photo-beside-text when the tile is at least ~30rem wide
+	 *  (used by the seasonal mosaic; off elsewhere). */
+	adaptive?: boolean;
 }
 
-const { href, image, eyebrow, title, summary, meta, headingLevel = "h3", priority = false, class: className } = Astro.props;
+const {
+	href,
+	image,
+	eyebrow,
+	title,
+	summary,
+	meta,
+	headingLevel = "h3",
+	priority = false,
+	class: className,
+	adaptive = false,
+} = Astro.props;
 const Heading = headingLevel;
 ---
 
-<article class:list={["content-tile", className]}>
+<article class:list={["content-tile", className, { "content-tile--adaptive": adaptive }]}>
 	<a class="tile-link" href={href}>
 		<div class="tile-media">
 			{
@@ -131,6 +145,38 @@ const Heading = headingLevel;
 			-webkit-line-clamp: 2;
 			line-clamp: 2;
 			font-size: var(--text-sm);
+		}
+	}
+
+	/* Adaptive tiles (seasonal mosaic): photo beside the text once the tile is
+	   wide enough, so a wide story card reads like a feature, not a tall
+	   column. The photo fills its half at whatever height the row has. */
+	@container (min-width: 30rem) {
+		.content-tile--adaptive .tile-link {
+			flex-direction: row;
+		}
+
+		.content-tile--adaptive .tile-media {
+			position: relative;
+			flex: 0 0 45%;
+			aspect-ratio: auto;
+			min-height: 14rem;
+		}
+
+		.content-tile--adaptive .tile-media :global(img),
+		.content-tile--adaptive .tile-media .photo-placeholder {
+			position: absolute;
+			inset: 0;
+		}
+
+		.content-tile--adaptive .tile-body {
+			justify-content: center;
+			padding: var(--space-md) var(--space-lg);
+		}
+
+		.content-tile--adaptive .tile-summary {
+			-webkit-line-clamp: 5;
+			line-clamp: 5;
 		}
 	}
 

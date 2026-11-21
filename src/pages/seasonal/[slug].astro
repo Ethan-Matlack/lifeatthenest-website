@@ -6,9 +6,13 @@
  * The collection is automatic: the page is tagged with a "Seasonal
  * Collections" term (taxonomy `seasonal`, shared by posts, recipes, products
  * and seasonal pages), and lists every published recipe and blog post with
- * the same term in one mixed grid ("Recipe" / "Story" tiles), newest first,
- * plus products (newest first) in the shop strip. Pinned recipes, then
- * pinned posts, come first in the order Audra arranged them.
+ * the same term in one mosaic ("Recipe" / "Story" tiles), newest first, plus
+ * tagged products (newest first) in the "Shop the season" strip. Pinned
+ * recipes, then pinned posts, come first in the order Audra arranged them.
+ *
+ * The mosaic is a wrapping row layout: each kind has a preferred width
+ * (stories ~2x a recipe), rows stretch to fill, and tiles switch to
+ * photo-beside-text when they end up wide (ContentTile adaptive).
  * Setup: scripts/create-seasonal.mjs, seed/seed.json.
  */
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
@@ -132,14 +136,16 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 			items.length > 0 && (
 				<section class="section" aria-label="Recipes and stories">
 					<div class="container">
-						<div class="card-grid seasonal-grid">
-							{items.map((item) =>
-								item.kind === "recipe" ? (
-									<RecipeTile recipe={item.entry} typeLabel="Recipe" />
-								) : (
-									<PostTile post={item.entry} typeLabel="Story" />
-								),
-							)}
+						<div class="mosaic">
+							{items.map((item) => (
+								<div class={`mosaic-item mosaic-item--${item.kind}`}>
+									{item.kind === "recipe" ? (
+										<RecipeTile recipe={item.entry} typeLabel="Recipe" adaptive />
+									) : (
+										<PostTile post={item.entry} typeLabel="Story" adaptive />
+									)}
+								</div>
+							))}
 						</div>
 					</div>
 				</section>
@@ -199,16 +205,40 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 		padding-bottom: var(--space-lg);
 	}
 
-	/* Same layout as the homepage recipe tiles: two-up on phones. */
-	.seasonal-grid {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: var(--space-sm);
+	/* Mosaic: wrapping rows. Each kind has a preferred width (flex-basis)
+	   and a share of any leftover space (flex-grow); stories prefer ~2x a
+	   recipe, so rows mix naturally and the count per row changes with the
+	   viewport. No max widths: a tile left alone on a row stretches across it
+	   and, being wide, switches to photo-beside-text (adaptive tiles), so
+	   rows never end in a gap. */
+	.mosaic {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-md);
 	}
 
-	@media (min-width: 40rem) {
-		.seasonal-grid {
-			grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-			gap: var(--space-lg) var(--space-md);
+	.mosaic-item {
+		display: flex;
+		min-width: 0;
+	}
+
+	.mosaic-item > :global(*) {
+		flex: 1;
+	}
+
+	.mosaic-item--recipe {
+		flex: 1 1 15rem;
+	}
+
+	.mosaic-item--post {
+		flex: 2 1 30rem;
+	}
+
+	/* Phones: everything full width (stories stack like the others). */
+	@media (max-width: 39.99rem) {
+		.mosaic-item--recipe,
+		.mosaic-item--post {
+			flex-basis: 100%;
 		}
 	}
 </style>
