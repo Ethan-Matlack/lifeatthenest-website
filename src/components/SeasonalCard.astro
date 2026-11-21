@@ -1,0 +1,165 @@
+---
+/**
+ * Card linking to a Seasonal page. `featured` is the large side-by-side
+ * version used at the top of /seasonal (and later the homepage).
+ */
+import { Image } from "emdash/ui";
+import type { ContentEntry } from "emdash";
+import type { Seasonal } from "../../emdash-env";
+
+interface Props {
+	page: ContentEntry<Seasonal>;
+	featured?: boolean;
+	headingLevel?: "h2" | "h3";
+	priority?: boolean;
+}
+
+const { page, featured = false, headingLevel = "h3", priority = false } = Astro.props;
+const d = page.data;
+const Heading = headingLevel;
+const href = `/seasonal/${page.id}`;
+---
+
+<article class:list={["seasonal-card", { "seasonal-card--featured": featured }]}>
+	<a class="sc-link" href={href}>
+		<div class="sc-media">
+			{
+				d.hero_image ? (
+					<Image
+						image={d.hero_image}
+						alt=""
+						sizes={featured ? "(min-width: 48rem) 36rem, 100vw" : "(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"}
+						priority={priority}
+					/>
+				) : (
+					<div class="photo-placeholder" aria-hidden="true" />
+				)
+			}
+		</div>
+		<div class="sc-body">
+			<span class="eyebrow">{featured ? `Featured${d.season ? ` · ${d.season}` : ""}` : (d.season ?? "Seasonal")}</span>
+			<Heading class="sc-title">{d.title}</Heading>
+			{d.summary && <p class="sc-summary">{d.summary}</p>}
+			<span class="sc-cta">
+				Explore the collection <span aria-hidden="true">&rarr;</span>
+			</span>
+		</div>
+	</a>
+</article>
+
+<style>
+	.seasonal-card {
+		height: 100%;
+	}
+
+	.sc-link {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		overflow: hidden;
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-lg);
+		background: var(--color-surface);
+		color: inherit;
+		text-decoration: none;
+		transition:
+			box-shadow 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.sc-link:hover {
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+		color: inherit;
+	}
+
+	.sc-media {
+		aspect-ratio: 3 / 2;
+		overflow: hidden;
+	}
+
+	.sc-media :global(img),
+	.sc-media .photo-placeholder {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.sc-body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		align-items: flex-start;
+		padding: var(--space-sm) var(--space-md) var(--space-md);
+	}
+
+	.sc-body .eyebrow {
+		margin-bottom: var(--space-3xs);
+	}
+
+	.sc-title {
+		margin: 0;
+		font-size: var(--text-xl);
+		line-height: var(--leading-snug);
+	}
+
+	.sc-link:hover .sc-title {
+		color: var(--color-moss);
+	}
+
+	.sc-summary {
+		margin: var(--space-2xs) 0 0;
+		color: var(--color-muted);
+	}
+
+	.sc-cta {
+		margin-top: auto;
+		padding-top: var(--space-sm);
+		font-size: var(--text-sm);
+		font-weight: 600;
+		color: var(--color-link);
+	}
+
+	.sc-link:hover .sc-cta {
+		text-decoration: underline;
+	}
+
+	/* Featured: photo beside the text on wider screens, bigger type. */
+	@media (min-width: 48rem) {
+		.seasonal-card--featured .sc-link {
+			display: grid;
+			grid-template-columns: 1.25fr 1fr;
+		}
+
+		/* The photo fills its column at whatever height the text needs
+		   (min 20rem), instead of setting the card's height itself. */
+		.seasonal-card--featured .sc-media {
+			position: relative;
+			aspect-ratio: auto;
+			min-height: 20rem;
+		}
+
+		.seasonal-card--featured .sc-media :global(img),
+		.seasonal-card--featured .sc-media .photo-placeholder {
+			position: absolute;
+			inset: 0;
+		}
+
+		.seasonal-card--featured .sc-body {
+			justify-content: center;
+			padding: var(--space-xl);
+		}
+
+		.seasonal-card--featured .sc-cta {
+			margin-top: var(--space-md);
+		}
+	}
+
+	.seasonal-card--featured .sc-title {
+		font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+	}
+
+	.seasonal-card--featured .sc-summary {
+		font-size: var(--text-lg);
+	}
+</style>

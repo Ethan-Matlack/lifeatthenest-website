@@ -104,12 +104,35 @@ export interface Product {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Seasonal {
+  id: string;
+  slug: string | null;
+  status: string;
+  title: string;
+  summary?: string;
+  hero_image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  season?: "Spring" | "Summer" | "Fall" | "Winter" | "Holidays";
+  featured?: boolean;
+  intro?: PortableTextBlock[];
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface PostReferences {
   featured_products: ReferencePage<Product>;
 }
 
 export interface RecipeReferences {
   featured_products: ReferencePage<Product>;
+}
+
+export interface SeasonalReferences {
+  pinned_recipes: ReferencePage<Recipe>;
+  pinned_posts: ReferencePage<Post>;
 }
 
 declare module "emdash" {
@@ -119,9 +142,11 @@ declare module "emdash" {
     posts: Post;
     recipes: Recipe;
     products: Product;
+    seasonal: Seasonal;
   }
   interface EmDashCollectionReferences {
     posts: PostReferences;
     recipes: RecipeReferences;
+    seasonal: SeasonalReferences;
   }
 }

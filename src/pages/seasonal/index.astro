@@ -1,0 +1,110 @@
+---
+/**
+ * /seasonal: the Seasonal landing page.
+ *
+ *  - Featured: the page with "Feature now" on (newest published if several).
+ *  - Then every other seasonal page grouped by its Season, starting with the
+ *    current season and continuing through the calendar (src/utils/seasons.ts),
+ *    newest first within a group. Pages without a season come last.
+ *
+ * Heading and intro come from the Pages entry with slug "seasonal" (fallback
+ * text below if it doesn't exist), like the Blog/Recipes/Shop listings.
+ */
+import { getEmDashCollection, getSeoMeta } from "emdash";
+import Base from "../../layouts/Base.astro";
+import RichText from "../../components/RichText.astro";
+import SeasonalCard from "../../components/SeasonalCard.astro";
+import { getListingPage } from "../../utils/listing-page";
+import { isSeason, seasonsFrom } from "../../utils/seasons";
+
+const [page, { entries, cacheHint }] = await Promise.all([
+	getListingPage("seasonal", {
+		title: "Seasonal",
+		intro: "Recipes, projects, and stories gathered for each season and holiday at the Nest.",
+	}),
+	getEmDashCollection("seasonal", { orderBy: { published_at: "desc" }, limit: 100 }),
+]);
+if (Astro.cache?.enabled) {
+	Astro.cache.set(cacheHint);
+	if (page.cacheHint) Astro.cache.set(page.cacheHint);
+}
+
+const featured = entries.find((e) => e.data.featured) ?? null;
+const rest = entries.filter((e) => e !== featured);
+
+const groups: { season: string; pages: typeof rest }[] = seasonsFrom(new Date())
+	.map((season) => ({ season, pages: rest.filter((e) => e.data.season === season) }))
+	.filter((g) => g.pages.length > 0);
+const unsorted = rest.filter((e) => !isSeason(e.data.season));
+if (unsorted.length) groups.push({ season: "More", pages: unsorted });
+
+const seo = page.entry
+	? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/seasonal" })
+	: null;
+---
+
+<Base
+	title={page.title}
+	description={seo?.description ?? page.introText}
+	canonical={new URL("/seasonal", Astro.url).toString()}
+	image={seo?.ogImage ?? null}
+>
+	<header class="listing-header">
+		<h1 {...page.entry?.edit.title}>{page.title}</h1>
+		{
+			page.content ? (
+				<RichText value={page.content} class="listing-intro" {...page.entry?.edit.content} />
+			) : (
+				<p class="listing-intro">{page.fallbackIntro}</p>
+			)
+		}
+	</header>
+
+	{
+		featured && (
+			<section class="seasonal-featured" aria-label="Featured">
+				<SeasonalCard page={featured} featured headingLevel="h2" priority />
+			</section>
+		)
+	}
+
+	{
+		groups.map((g) => (
+			<section class="seasonal-group" aria-labelledby={`season-${g.season.toLowerCase()}`}>
+				<h2 id={`season-${g.season.toLowerCase()}`} class="seasonal-group-title">
+					{g.season}
+				</h2>
+				<div class="card-grid">
+					{g.pages.map((p) => (
+						<SeasonalCard page={p} />
+					))}
+				</div>
+			</section>
+		))
+	}
+
+	{
+		entries.length === 0 && (
+			<div class="listing-empty">
+				<p>Seasonal collections are coming soon. Check back!</p>
+			</div>
+		)
+	}
+</Base>
+
+<style>
+	.seasonal-featured {
+		margin-bottom: var(--space-2xl);
+	}
+
+	.seasonal-group + .seasonal-group {
+		margin-top: var(--space-2xl);
+	}
+
+	.seasonal-group-title {
+		margin-bottom: var(--space-md);
+		padding-bottom: var(--space-2xs);
+		border-bottom: 1px solid var(--color-border);
+		font-size: var(--text-2xl);
+	}
+</style>
