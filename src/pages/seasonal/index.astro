@@ -2,10 +2,12 @@
 /**
  * /seasonal: the Seasonal landing page.
  *
- *  - Featured: the page with "Feature now" on (newest published if several).
- *  - Then one grid of every other seasonal page, in the order of their
- *    Seasonal Collections tags (Admin -> Seasonal Collections -> a tag's ...
- *    menu -> Move up / Move down). Untagged pages come last, newest first.
+ *  - Featured: every page with "Feature now" on, as large cards.
+ *  - Then one grid of the other seasonal pages in the order of their Seasonal
+ *    Collections tags (Admin -> Seasonal Collections -> a tag's ... menu ->
+ *    Move up / Move down), continuing from just after the featured page(s)
+ *    and wrapping around, so upcoming collections come first.
+ *    Untagged pages come last, newest first. See src/utils/seasonal-order.ts.
  *
  * Heading and intro come from the Pages entry with slug "seasonal" (fallback
  * text below if it doesn't exist), like the Blog/Recipes/Shop listings.
@@ -15,6 +17,7 @@ import Base from "../../layouts/Base.astro";
 import RichText from "../../components/RichText.astro";
 import SeasonalCard from "../../components/SeasonalCard.astro";
 import { getListingPage } from "../../utils/listing-page";
+import { orderSeasonal } from "../../utils/seasonal-order";
 
 const [page, { entries, cacheHint }, termsResult] = await Promise.all([
 	getListingPage("seasonal", {
@@ -30,15 +33,15 @@ if (Astro.cache?.enabled) {
 	if (page.cacheHint) Astro.cache.set(page.cacheHint);
 }
 
-const featured = entries.find((e) => e.data.featured) ?? null;
-const rest = entries.filter((e) => e !== featured);
-
-// Position of each tag in the admin's manual order; a page sorts by its
-// earliest tag. Ties and untagged pages keep newest-first (stable sort).
+// Each page sits at its (earliest) tag's position in the admin order.
 const position = new Map(termsResult.data.map((t, i) => [t.slug, i]));
-const rank = (e: (typeof rest)[number]) =>
-	Math.min(...(e.data.terms?.seasonal ?? []).map((t) => position.get(t.slug) ?? Infinity), Infinity);
-const others = [...rest].sort((a, b) => rank(a) - rank(b));
+const pages = entries.map((entry) => {
+	const positions = (entry.data.terms?.seasonal ?? []).map((t) => position.get(t.slug)).filter((p) => p !== undefined);
+	return { entry, featured: Boolean(entry.data.featured), position: positions.length ? Math.min(...positions) : null };
+});
+const ordered = orderSeasonal(pages, termsResult.data.length);
+const featured = ordered.featured.map((p) => p.entry);
+const others = ordered.others.map((p) => p.entry);
 
 const seo = page.entry
 	? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/seasonal" })
@@ -63,9 +66,11 @@ const seo = page.entry
 	</header>
 
 	{
-		featured && (
+		featured.length > 0 && (
 			<section class="seasonal-featured" aria-label="Featured">
-				<SeasonalCard page={featured} featured headingLevel="h2" priority />
+				{featured.map((p, i) => (
+					<SeasonalCard page={p} featured headingLevel="h2" priority={i === 0} />
+				))}
 			</section>
 		)
 	}
@@ -93,6 +98,8 @@ const seo = page.entry
 
 <style>
 	.seasonal-featured {
+		display: grid;
+		gap: var(--space-lg);
 		margin-bottom: var(--space-2xl);
 	}
 
