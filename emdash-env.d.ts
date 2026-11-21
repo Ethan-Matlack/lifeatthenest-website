@@ -130,9 +130,8 @@ export interface RecipeReferences {
 }
 
 export interface SeasonalReferences {
-  recipes: ReferencePage<Recipe>;
-  posts: ReferencePage<Post>;
-  products: ReferencePage<Product>;
+  pinned_recipes: ReferencePage<Recipe>;
+  pinned_posts: ReferencePage<Post>;
 }
 
 declare module "emdash" {

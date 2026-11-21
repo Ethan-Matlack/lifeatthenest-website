@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 /**
  * Create the "Seasonal" content type (seasonal roundup pages at
- * /seasonal/<slug>) on an EmDash site. Mirrors the `seasonal` collection in
- * seed/seed.json, which only applies to brand-new sites.
+ * /seasonal/<slug>) and the shared flat "Seasonal Collections" taxonomy
+ * (`seasonal`) on an EmDash site. Mirrors seed/seed.json, which only applies
+ * to brand-new sites.
+ *
+ * How it fits together: tag recipes, blog posts, and products with a
+ * Seasonal Collections term (e.g. "Thanksgiving"); tag a Seasonal page with
+ * the same term and it lists everything tagged with it. Its two pickers pin
+ * recipes/posts to the top.
  *
  *   node scripts/create-seasonal.mjs                      # local dev site, dry run
  *   node scripts/create-seasonal.mjs --apply              # local, do it
@@ -21,18 +27,25 @@ const COLLECTION = {
 	slug: "seasonal",
 	label: "Seasonal",
 	labelSingular: "Seasonal Page",
-	description: "Seasonal roundups (e.g. Thanksgiving at the Nest): an intro plus hand-picked recipes, posts, and products.",
+	description: "Seasonal roundups (e.g. Thanksgiving at the Nest). Tag it with a Seasonal Collection; everything with that tag appears automatically.",
 	icon: "leaf",
 	supports: ["drafts", "revisions", "preview", "scheduling", "search", "seo"],
 	urlPattern: "/seasonal/{slug}",
 	admin: { listColumns: ["season"] },
 };
 
-/** Picker fields: one relation each, Seasonal page -> picked entries. */
+const TAXONOMY = {
+	name: "seasonal",
+	label: "Seasonal Collections",
+	labelSingular: "Seasonal Collection",
+	hierarchical: false,
+	collections: ["posts", "recipes", "products", "seasonal"],
+};
+
+/** Pin pickers: one relation each, Seasonal page -> pinned entries. */
 const PICKERS = [
-	{ field: "recipes", target: "recipes", label: "Recipes on this page", singular: "Recipe" },
-	{ field: "posts", target: "posts", label: "Blog posts on this page", singular: "Blog Post" },
-	{ field: "products", target: "products", label: "Products on this page (also shown on the Shop page)", singular: "Product" },
+	{ field: "pinned_recipes", target: "recipes", label: "Pinned recipes (shown first; everything tagged appears automatically)", singular: "Recipe" },
+	{ field: "pinned_posts", target: "posts", label: "Pinned blog posts (shown first; everything tagged appears automatically)", singular: "Blog Post" },
 ];
 
 const FIELDS = [
@@ -101,6 +114,22 @@ if (existing) step("collection `seasonal` already exists");
 else {
 	step("create collection `seasonal`");
 	if (APPLY) await api("/schema/collections", "POST", COLLECTION);
+}
+
+const taxonomies = await api("/taxonomies");
+const taxList = taxonomies.taxonomies ?? taxonomies.items ?? taxonomies ?? [];
+const taxonomy = (Array.isArray(taxList) ? taxList : []).find((t) => t.name === TAXONOMY.name);
+if (!taxonomy) {
+	step(`create taxonomy \`${TAXONOMY.name}\` (${TAXONOMY.collections.join(", ")})`);
+	if (APPLY) await api("/taxonomies", "POST", TAXONOMY);
+} else {
+	const missing = TAXONOMY.collections.filter((c) => !(taxonomy.collections ?? []).includes(c));
+	if (missing.length) {
+		step(`add taxonomy \`${TAXONOMY.name}\` to ${missing.join(", ")}`);
+		if (APPLY) await api(`/taxonomies/${TAXONOMY.name}`, "PUT", { collections: [...(taxonomy.collections ?? []), ...missing] });
+	} else {
+		step(`taxonomy \`${TAXONOMY.name}\` already exists`);
+	}
 }
 
 const relations = (await api("/relations")).relations ?? [];

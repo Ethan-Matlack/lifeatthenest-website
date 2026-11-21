@@ -570,7 +570,7 @@
 			"slug": "seasonal",
 			"label": "Seasonal",
 			"labelSingular": "Seasonal Page",
-			"description": "Seasonal roundups (e.g. Thanksgiving at the Nest): an intro plus hand-picked recipes, posts, and products.",
+			"description": "Seasonal roundups (e.g. Thanksgiving at the Nest). Tag it with a Seasonal Collection; everything with that tag appears automatically.",
 			"icon": "leaf",
 			"supports": [
 				"drafts",
@@ -644,8 +644,8 @@
 					"searchable": true
 				},
 				{
-					"slug": "recipes",
-					"label": "Recipes on this page",
+					"slug": "pinned_recipes",
+					"label": "Pinned recipes (shown first; everything tagged appears automatically)",
 					"type": "reference",
 					"validation": {
 						"targetCollection": "recipes",
@@ -653,20 +653,11 @@
 					}
 				},
 				{
-					"slug": "posts",
-					"label": "Blog posts on this page",
+					"slug": "pinned_posts",
+					"label": "Pinned blog posts (shown first; everything tagged appears automatically)",
 					"type": "reference",
 					"validation": {
 						"targetCollection": "posts",
-						"multiple": true
-					}
-				},
-				{
-					"slug": "products",
-					"label": "Products on this page (also shown on the Shop page)",
-					"type": "reference",
-					"validation": {
-						"targetCollection": "products",
 						"multiple": true
 					}
 				}
@@ -870,6 +861,24 @@
 				{
 					"slug": "canning",
 					"label": "Canning & Preserving"
+				}
+			]
+		},
+		{
+			"name": "seasonal",
+			"label": "Seasonal Collections",
+			"labelSingular": "Seasonal Collection",
+			"hierarchical": false,
+			"collections": [
+				"posts",
+				"recipes",
+				"products",
+				"seasonal"
+			],
+			"terms": [
+				{
+					"slug": "thanksgiving",
+					"label": "Thanksgiving"
 				}
 			]
 		}

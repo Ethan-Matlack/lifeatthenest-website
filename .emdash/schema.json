@@ -646,7 +646,7 @@
       "slug": "seasonal",
       "label": "Seasonal",
       "labelSingular": "Seasonal Page",
-      "description": "Seasonal roundups (e.g. Thanksgiving at the Nest): an intro plus hand-picked recipes, posts, and products.",
+      "description": "Seasonal roundups (e.g. Thanksgiving at the Nest). Tag it with a Seasonal Collection; everything with that tag appears automatically.",
       "icon": "leaf",
       "supports": [
         "drafts",
@@ -720,46 +720,33 @@
           "unique": false
         },
         {
-          "slug": "recipes",
-          "label": "Recipes on this page",
+          "slug": "pinned_recipes",
+          "label": "Pinned recipes (shown first; everything tagged appears automatically)",
           "type": "reference",
           "required": false,
           "unique": false,
           "validation": {
             "targetCollection": "recipes",
             "multiple": true,
-            "relation": "seasonal_recipes",
+            "relation": "seasonal_pinned_recipes",
             "relationSide": "parent"
           }
         },
         {
-          "slug": "posts",
-          "label": "Blog posts on this page",
+          "slug": "pinned_posts",
+          "label": "Pinned blog posts (shown first; everything tagged appears automatically)",
           "type": "reference",
           "required": false,
           "unique": false,
           "validation": {
             "targetCollection": "posts",
             "multiple": true,
-            "relation": "seasonal_posts",
-            "relationSide": "parent"
-          }
-        },
-        {
-          "slug": "products",
-          "label": "Products on this page (also shown on the Shop page)",
-          "type": "reference",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "targetCollection": "products",
-            "multiple": true,
-            "relation": "seasonal_products",
+            "relation": "seasonal_pinned_posts",
             "relationSide": "parent"
           }
         }
       ]
     }
   ],
-  "version": "bfab6c94a81aec8e"
+  "version": "069737c81d1c7417"
 }

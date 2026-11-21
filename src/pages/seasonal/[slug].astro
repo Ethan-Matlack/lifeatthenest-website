@@ -1,9 +1,14 @@
 ---
 /**
  * One seasonal roundup page (e.g. "Thanksgiving at the Nest"): title,
- * season, short description, main photo, intro, then the recipes, blog
- * posts, and products Audra picked, in the order she arranged them.
- * Content type: Seasonal (scripts/create-seasonal.mjs, seed/seed.json).
+ * season, short description, main photo, intro, then its collection.
+ *
+ * The collection is automatic: the page is tagged with a "Seasonal
+ * Collections" term (taxonomy `seasonal`, shared by posts, recipes, products
+ * and seasonal pages), and lists every published recipe (A-Z), blog post
+ * (newest first), and product (newest first) with the same term. Pinned
+ * recipes/posts come first, in the order Audra arranged them.
+ * Setup: scripts/create-seasonal.mjs, seed/seed.json.
  */
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
@@ -21,31 +26,56 @@ const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
 
 const [{ entry: page, cacheHint }, settings] = await Promise.all([
-	getEmDashEntry("seasonal", slug, { references: { recipes: true, posts: true, products: true } }),
+	getEmDashEntry("seasonal", slug, { references: { pinned_recipes: true, pinned_posts: true } }),
 	getSiteSettings(),
 ]);
 if (!page) return Astro.rewrite("/404");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const d = page.data;
-const refs = page.references;
+
+const term = d.terms?.seasonal?.[0]?.slug;
+const LIMIT = 100;
+const cache = (hint: unknown) => {
+	if (Astro.cache?.enabled && hint) Astro.cache.set(hint as Parameters<typeof Astro.cache.set>[0]);
+};
 
 /**
- * Picked entries come back without taxonomy terms, which the cards show
- * (category labels). Re-load them in one query per type, keeping the
- * editor's order. Products have no terms on their cards, so they're used as is.
+ * Pinned entries come back without taxonomy terms, which the cards show
+ * (category labels), so re-load them in one query, keeping the pin order.
  */
-async function withTerms<C extends "recipes" | "posts">(collection: C, picked: { id: string }[] | undefined) {
-	const slugs = (picked ?? []).map((e) => e.id);
+async function loadPinned<C extends "recipes" | "posts">(collection: C, pinned: { id: string }[] | undefined) {
+	const slugs = (pinned ?? []).map((e) => e.id);
 	if (!slugs.length) return [];
 	const { entries, cacheHint: hint } = await getEmDashCollection(collection, { where: { slug: slugs }, limit: slugs.length });
-	if (Astro.cache?.enabled) Astro.cache.set(hint);
+	cache(hint);
 	const byId = new Map(entries.map((e) => [e.id, e]));
 	return slugs.flatMap((s) => byId.get(s) ?? []);
 }
 
-const [recipes, posts] = await Promise.all([withTerms("recipes", refs?.recipes?.entries), withTerms("posts", refs?.posts?.entries)]);
-const products = refs?.products?.entries ?? [];
+/** Everything tagged with this page's collection term. */
+async function loadTagged<C extends "recipes" | "posts" | "products">(collection: C, orderBy: Record<string, "asc" | "desc">) {
+	if (!term) return [];
+	const { entries, cacheHint: hint } = await getEmDashCollection(collection, { where: { seasonal: term }, orderBy, limit: LIMIT });
+	cache(hint);
+	return entries;
+}
+
+/** Pins first, then the rest without repeats. */
+const merge = <T extends { id: string }>(pinned: T[], tagged: T[]) => {
+	const seen = new Set(pinned.map((e) => e.id));
+	return [...pinned, ...tagged.filter((e) => !seen.has(e.id))];
+};
+
+const [pinnedRecipes, pinnedPosts, taggedRecipes, taggedPosts, products] = await Promise.all([
+	loadPinned("recipes", page.references?.pinned_recipes?.entries),
+	loadPinned("posts", page.references?.pinned_posts?.entries),
+	loadTagged("recipes", { title: "asc" }),
+	loadTagged("posts", { published_at: "desc" }),
+	loadTagged("products", { created_at: "desc" }),
+]);
+const recipes = merge(pinnedRecipes, taggedRecipes);
+const posts = merge(pinnedPosts, taggedPosts);
 
 const { siteTitle } = resolveStarterSiteIdentity(settings);
 const seo = entrySeo(page, {

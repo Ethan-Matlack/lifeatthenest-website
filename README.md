@@ -44,7 +44,7 @@ All pages are server-rendered on request, so published content appears without a
 | `/posts/[slug]` | `src/pages/posts/[slug].astro` | Blog post: rich text, video and recipe cards, "Shop this post", prev/next, comments | Blog Posts |
 | `/recipes` | `src/pages/recipes/index.astro` | Recipe grid: category chips, tag dropdown, search, infinite scroll (A–Z) | **Pages** entry with slug `recipes` |
 | `/recipes/[slug]` | `src/pages/recipes/[slug].astro` | Recipe page and printable **RecipeCard** (scaling, checkboxes, print/PDF), Recipe JSON-LD | Recipes |
-| `/seasonal/[slug]` | `src/pages/seasonal/[slug].astro` | Seasonal roundup (e.g. "Thanksgiving at the Nest"): main photo, intro, then the picked recipes, blog posts, and products, in the editor's order | Seasonal |
+| `/seasonal/[slug]` | `src/pages/seasonal/[slug].astro` | Seasonal roundup (e.g. "Thanksgiving at the Nest"): main photo, intro, then everything tagged with the page's Seasonal Collection: recipes (A–Z), blog posts and products (newest first), with pinned recipes/posts first | Seasonal |
 | `/shop` | `src/pages/shop.astro` | Affiliate products, newest first: category chips, search, infinite scroll | **Pages** entry with slug `shop` |
 | `/contact` | `src/pages/contact.astro` | Social profile cards and newsletter signup | **Pages** entry with slug `contact`; cards from the **Social** menu |
 | `/[slug]` | `src/pages/[slug].astro` | Static pages (e.g. `/about`): optional arched photo + rich text | Pages |
@@ -62,7 +62,7 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 | Recipes (`recipes`) | Title, short description (max 160), main photo, then structured fields: yield, times, difficulty, ingredient/step repeaters (with group headings), notes, videos list, credit, "Products used" picker. Comments on. |
 | Shop Products (`products`) | Name, photo, link, store, "Why you love it" blurb (max 100). Not routable (no product pages). |
 | Pages (`pages`) | Title, optional page photo, rich text. |
-| Seasonal (`seasonal`) | Seasonal roundup pages at `/seasonal/<slug>`: title, short description (max 160), main photo, season (Spring/Summer/Fall/Winter/Holidays), intro, and pickers for recipes, posts, and products. Created on an existing site with `scripts/create-seasonal.mjs` (dry run by default; `--apply`; `--url` + `EMDASH_TOKEN` with schema read/write for live). Not yet linked from the nav, homepage, or a `/seasonal` listing (next steps). |
+| Seasonal (`seasonal`) | Seasonal roundup pages at `/seasonal/<slug>`: title, short description (max 160), main photo, season (Spring/Summer/Fall/Winter/Holidays), intro, and pins for recipes and blog posts. **The page's collection comes from the Seasonal Collections taxonomy:** tag the page and any recipes, posts, or products with the same term (e.g. Thanksgiving) and they appear automatically. Created on an existing site with `scripts/create-seasonal.mjs` (dry run by default; `--apply`; `--url` + `EMDASH_TOKEN` with schema read/write for live). Not yet linked from the nav, homepage, or a `/seasonal` listing. |
 | Homepage (`homepage`) | One entry: welcome text and photo, Meet Audra, quotes. Not routable. |
 
 | Taxonomy | Used by |
@@ -72,6 +72,7 @@ Listing pages read their heading/intro from a **Pages** entry whose slug matches
 | Recipe Categories (`course`) | Recipes (`/recipes?category=`) |
 | Recipe Tags (`recipe_tag`) | Recipes (`/recipes?tag=`) |
 | Shop Categories (`shop_category`) | Products (`/shop?category=`) |
+| Seasonal Collections (`seasonal`) | Posts, recipes, products, and Seasonal pages (flat; e.g. Thanksgiving). Drives what each Seasonal page lists |
 
 **Video links** (the "Videos" list on posts and recipes, where each row has a link, an optional card title, and an optional uploaded thumbnail; an Embed block; or a paragraph that's just a link) render as a `VideoCard` that opens the video on its platform. YouTube cards show the thumbnail, title, and channel (YouTube oEmbed, no key). TikTok, Instagram, and Facebook cards show a branded panel, generic wording, and the creator handle from the URL: Instagram/Facebook oEmbed needs a Meta app token, and TikTok's oEmbed currently returns no title or thumbnail (used automatically if it does). An uploaded thumbnail replaces the automatic one (YouTube) or the branded panel (others). Unrecognised links fall back to a plain "Watch the video" link. `scripts/migrate-videos.mjs` moved the old single `video_url` field into the list (dry run by default; `--apply`; `--url` + `EMDASH_TOKEN` for live).
 
