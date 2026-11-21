@@ -1,0 +1,35 @@
+---
+/**
+ * Blog post as a tile matching RecipeTile (via ContentTile), for grids that
+ * mix recipes and posts (seasonal pages). The blog itself uses PostCard.
+ */
+import type { ContentEntry } from "emdash";
+import type { Post } from "../../emdash-env";
+import ContentTile from "./ContentTile.astro";
+import { readingMinutes } from "../utils/portable-text";
+
+interface Props {
+	post: ContentEntry<Post>;
+	headingLevel?: "h2" | "h3";
+	priority?: boolean;
+	/** Prefix the label with a type, e.g. "Story" in mixed grids. */
+	typeLabel?: string;
+}
+
+const { post, headingLevel = "h3", priority = false, typeLabel } = Astro.props;
+const d = post.data;
+const eyebrow = [typeLabel, ...(d.terms?.category ?? []).map((c) => c.label)].filter(Boolean).join(" · ");
+const minutes = readingMinutes(d.content);
+---
+
+<ContentTile
+	class="post-tile"
+	href={`/posts/${post.id}`}
+	image={d.featured_image}
+	eyebrow={eyebrow}
+	title={d.title}
+	summary={d.excerpt}
+	meta={minutes ? `${minutes} min read` : null}
+	headingLevel={headingLevel}
+	priority={priority}
+/>

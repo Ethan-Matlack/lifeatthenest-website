@@ -1,11 +1,12 @@
 ---
 /**
  * Photo card linking to a recipe. Used on the homepage, recipe index,
- * and filtered views. (The full printable card is RecipeCard.)
+ * filtered views, and seasonal pages. (The full printable card is
+ * RecipeCard.) The look is shared with PostTile via ContentTile.
  */
-import { Image } from "emdash/ui";
 import type { ContentEntry } from "emdash";
 import type { Recipe } from "../../emdash-env";
+import ContentTile from "./ContentTile.astro";
 import { formatMinutes, totalMinutes } from "../utils/format";
 
 interface Props {
@@ -13,132 +14,24 @@ interface Props {
 	/** Heading level for the title, so the card fits the page outline */
 	headingLevel?: "h2" | "h3";
 	priority?: boolean;
+	/** Prefix the label with a type, e.g. "Recipe" in mixed grids. */
+	typeLabel?: string;
 }
 
-const { recipe, headingLevel = "h3", priority = false } = Astro.props;
+const { recipe, headingLevel = "h3", priority = false, typeLabel } = Astro.props;
 const d = recipe.data;
-const Heading = headingLevel;
-const courses = (d.terms?.course ?? []).map((c) => c.label).join(" · ");
+const eyebrow = [typeLabel, ...(d.terms?.course ?? []).map((c) => c.label)].filter(Boolean).join(" · ");
 const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_minutes));
 ---
 
-<article class="recipe-tile">
-	<a class="tile-link" href={`/recipes/${recipe.id}`}>
-		<div class="tile-media">
-			{
-				d.hero_image ? (
-					<Image
-						image={d.hero_image}
-						alt=""
-						sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"
-						priority={priority}
-					/>
-				) : (
-					<div class="photo-placeholder" aria-hidden="true" />
-				)
-			}
-		</div>
-		<div class="tile-body">
-			{courses && <span class="eyebrow">{courses}</span>}
-			<Heading class="tile-title">{d.title}</Heading>
-			{d.summary && <p class="tile-summary">{d.summary}</p>}
-			{time && <p class="tile-meta">{time}</p>}
-		</div>
-	</a>
-</article>
-
-<style>
-	.recipe-tile {
-		height: 100%;
-		container-type: inline-size;
-	}
-
-	.tile-link {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-		overflow: hidden;
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-lg);
-		background: var(--color-surface);
-		color: inherit;
-		text-decoration: none;
-		transition:
-			box-shadow 0.2s ease,
-			transform 0.2s ease;
-	}
-
-	.tile-link:hover {
-		box-shadow: var(--shadow-md);
-		transform: translateY(-2px);
-		color: inherit;
-	}
-
-	.tile-media {
-		aspect-ratio: 4 / 3;
-		overflow: hidden;
-	}
-
-	.tile-media :global(img),
-	.tile-media .photo-placeholder {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.tile-body {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		align-items: flex-start;
-		padding: var(--space-xs) var(--space-sm) var(--space-sm);
-	}
-
-	@media (min-width: 40rem) {
-		.tile-body {
-			padding: var(--space-sm) var(--space-md) var(--space-md);
-		}
-	}
-
-	.tile-body .eyebrow {
-		margin-bottom: var(--space-3xs);
-	}
-
-	.tile-title {
-		margin: 0;
-		font-size: clamp(1.05rem, 0.9rem + 0.8vw, 1.6rem);
-		line-height: var(--leading-snug);
-	}
-
-	.tile-link:hover .tile-title {
-		color: var(--color-moss);
-	}
-
-	/* Short description, like the blog cards: muted, cut off after 3 lines
-	   (2 in the narrow two-up tiles on phones). */
-	.tile-summary {
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		margin: var(--space-2xs) 0 0;
-		color: var(--color-muted);
-	}
-
-	@container (max-width: 14rem) {
-		.tile-summary {
-			-webkit-line-clamp: 2;
-			line-clamp: 2;
-			font-size: var(--text-sm);
-		}
-	}
-
-	/* Pinned to the bottom so times line up across a row. */
-	.tile-meta {
-		margin: auto 0 0;
-		padding-top: var(--space-2xs);
-		font-size: var(--text-sm);
-		color: var(--color-muted);
-	}
-</style>
+<ContentTile
+	class="recipe-tile"
+	href={`/recipes/${recipe.id}`}
+	image={d.hero_image}
+	eyebrow={eyebrow}
+	title={d.title}
+	summary={d.summary}
+	meta={time}
+	headingLevel={headingLevel}
+	priority={priority}
+/>
