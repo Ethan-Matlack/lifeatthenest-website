@@ -11,7 +11,7 @@ import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import ListingFilters from "../../components/ListingFilters.astro";
 import LoadMore from "../../components/LoadMore.astro";
-import PostCard from "../../components/PostCard.astro";
+import PostTile from "../../components/PostTile.astro";
 import { listingUrl, param, sortBySlugRank } from "../../utils/listing";
 import { getListingPage } from "../../utils/listing-page";
 import RichText from "../../components/RichText.astro";
@@ -177,7 +177,7 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 		posts.length > 0 ? (
 			<div class="card-grid post-grid" id="post-grid">
 				{posts.map((post) => (
-					<PostCard post={post} headingLevel="h2" />
+					<PostTile post={post} headingLevel="h2" />
 				))}
 			</div>
 		) : (

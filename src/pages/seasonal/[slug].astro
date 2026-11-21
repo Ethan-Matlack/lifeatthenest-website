@@ -5,9 +5,10 @@
  *
  * The collection is automatic: the page is tagged with a "Seasonal
  * Collections" term (taxonomy `seasonal`, shared by posts, recipes, products
- * and seasonal pages), and lists every published recipe (A-Z), blog post
- * (newest first), and product (newest first) with the same term. Pinned
- * recipes/posts come first, in the order Audra arranged them.
+ * and seasonal pages), and lists every published recipe and blog post with
+ * the same term in one mixed grid ("Recipe" / "Story" tiles), newest first,
+ * plus products (newest first) in the shop strip. Pinned recipes, then
+ * pinned posts, come first in the order Audra arranged them.
  * Setup: scripts/create-seasonal.mjs, seed/seed.json.
  */
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
@@ -15,7 +16,7 @@ import { Image } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import NewsletterCta from "../../components/NewsletterCta.astro";
-import PostCard from "../../components/PostCard.astro";
+import PostTile from "../../components/PostTile.astro";
 import RecipeTile from "../../components/RecipeTile.astro";
 import RichText from "../../components/RichText.astro";
 import ShopThis from "../../components/ShopThis.astro";
@@ -61,21 +62,28 @@ async function loadTagged<C extends "recipes" | "posts" | "products">(collection
 	return entries;
 }
 
-/** Pins first, then the rest without repeats. */
-const merge = <T extends { id: string }>(pinned: T[], tagged: T[]) => {
-	const seen = new Set(pinned.map((e) => e.id));
-	return [...pinned, ...tagged.filter((e) => !seen.has(e.id))];
-};
-
 const [pinnedRecipes, pinnedPosts, taggedRecipes, taggedPosts, products] = await Promise.all([
 	loadPinned("recipes", page.references?.pinned_recipes?.entries),
 	loadPinned("posts", page.references?.pinned_posts?.entries),
-	loadTagged("recipes", { title: "asc" }),
+	loadTagged("recipes", { published_at: "desc" }),
 	loadTagged("posts", { published_at: "desc" }),
 	loadTagged("products", { created_at: "desc" }),
 ]);
-const recipes = merge(pinnedRecipes, taggedRecipes);
-const posts = merge(pinnedPosts, taggedPosts);
+// One mixed grid: pins first (recipes, then posts, each in pin order), then
+// everything else tagged, newest first.
+type Item =
+	| { kind: "recipe"; entry: (typeof taggedRecipes)[number] }
+	| { kind: "post"; entry: (typeof taggedPosts)[number] };
+const pinnedIds = new Set([...pinnedRecipes, ...pinnedPosts].map((e) => e.id));
+const published = (i: Item) => i.entry.data.publishedAt?.getTime() ?? 0;
+const items: Item[] = [
+	...pinnedRecipes.map((entry) => ({ kind: "recipe" as const, entry })),
+	...pinnedPosts.map((entry) => ({ kind: "post" as const, entry })),
+	...[
+		...taggedRecipes.filter((e) => !pinnedIds.has(e.id)).map((entry) => ({ kind: "recipe" as const, entry })),
+		...taggedPosts.filter((e) => !pinnedIds.has(e.id)).map((entry) => ({ kind: "post" as const, entry })),
+	].sort((a, b) => published(b) - published(a)),
+];
 
 const { siteTitle } = resolveStarterSiteIdentity(settings);
 const seo = entrySeo(page, {
@@ -121,33 +129,17 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 		}
 
 		{
-			recipes.length > 0 && (
-				<section class="section" aria-labelledby="seasonal-recipes">
+			items.length > 0 && (
+				<section class="section" aria-label="Recipes and stories">
 					<div class="container">
-						<div class="section-heading">
-							<h2 id="seasonal-recipes">Recipes</h2>
-						</div>
-						<div class="card-grid seasonal-recipes">
-							{recipes.map((recipe) => (
-								<RecipeTile recipe={recipe} />
-							))}
-						</div>
-					</div>
-				</section>
-			)
-		}
-
-		{
-			posts.length > 0 && (
-				<section class="section" aria-labelledby="seasonal-posts">
-					<div class="container">
-						<div class="section-heading">
-							<h2 id="seasonal-posts">From the Blog</h2>
-						</div>
-						<div class="card-grid seasonal-posts">
-							{posts.map((post) => (
-								<PostCard post={post} />
-							))}
+						<div class="card-grid seasonal-grid">
+							{items.map((item) =>
+								item.kind === "recipe" ? (
+									<RecipeTile recipe={item.entry} typeLabel="Recipe" />
+								) : (
+									<PostTile post={item.entry} typeLabel="Story" />
+								),
+							)}
 						</div>
 					</div>
 				</section>
@@ -207,20 +199,16 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 		padding-bottom: var(--space-lg);
 	}
 
-	/* Same layouts as the homepage: two-up recipe tiles on phones. */
-	.seasonal-recipes {
+	/* Same layout as the homepage recipe tiles: two-up on phones. */
+	.seasonal-grid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: var(--space-sm);
 	}
 
 	@media (min-width: 40rem) {
-		.seasonal-recipes {
+		.seasonal-grid {
 			grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
 			gap: var(--space-lg) var(--space-md);
 		}
-	}
-
-	.seasonal-posts {
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
 	}
 </style>

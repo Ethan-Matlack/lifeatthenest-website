@@ -3,7 +3,7 @@ import { getEmDashCollection } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
 import NewsletterCta from "../components/NewsletterCta.astro";
-import PostCard from "../components/PostCard.astro";
+import PostTile from "../components/PostTile.astro";
 import QuoteCarousel from "../components/QuoteCarousel.astro";
 import RecipeTile from "../components/RecipeTile.astro";
 
@@ -91,7 +91,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 					</div>
 					<div class="card-grid card-grid--posts">
 						{posts.map((post) => (
-							<PostCard post={post} />
+							<PostTile post={post} />
 						))}
 					</div>
 				</div>
