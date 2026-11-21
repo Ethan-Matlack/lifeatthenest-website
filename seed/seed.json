@@ -584,7 +584,6 @@
 			"titleField": "title",
 			"admin": {
 				"listColumns": [
-					"season",
 					"featured"
 				]
 			},
@@ -621,20 +620,6 @@
 							"image/jpeg",
 							"image/png",
 							"image/webp"
-						]
-					}
-				},
-				{
-					"slug": "season",
-					"label": "Season",
-					"type": "select",
-					"validation": {
-						"options": [
-							"Spring",
-							"Summer",
-							"Fall",
-							"Winter",
-							"Holidays"
 						]
 					}
 				},

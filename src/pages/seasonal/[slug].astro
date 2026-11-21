@@ -1,7 +1,7 @@
 ---
 /**
  * One seasonal roundup page (e.g. "Thanksgiving at the Nest"): title,
- * season, short description, main photo, intro, then its collection.
+ * short description, main photo, intro, then its collection.
  *
  * The collection is automatic: the page is tagged with a "Seasonal
  * Collections" term (taxonomy `seasonal`, shared by posts, recipes, products
@@ -99,7 +99,7 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 >
 	<article class="seasonal">
 		<header class="container container--prose seasonal-header">
-			<span class="eyebrow" {...page.edit.season}>{d.season ?? "Seasonal"}</span>
+			<a class="eyebrow seasonal-eyebrow" href="/seasonal">Seasonal</a>
 			<h1 {...page.edit.title}>{d.title}</h1>
 			{d.summary && <p class="seasonal-summary" {...page.edit.summary}>{d.summary}</p>}
 		</header>
@@ -166,6 +166,10 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 	.seasonal-header {
 		padding-block: var(--space-xl) var(--space-lg);
 		text-align: center;
+	}
+
+	.seasonal-eyebrow {
+		text-decoration: none;
 	}
 
 	.seasonal-header h1 {

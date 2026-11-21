@@ -3,40 +3,42 @@
  * /seasonal: the Seasonal landing page.
  *
  *  - Featured: the page with "Feature now" on (newest published if several).
- *  - Then every other seasonal page grouped by its Season, starting with the
- *    current season and continuing through the calendar (src/utils/seasons.ts),
- *    newest first within a group. Pages without a season come last.
+ *  - Then one grid of every other seasonal page, in the order of their
+ *    Seasonal Collections tags (Admin -> Seasonal Collections -> a tag's ...
+ *    menu -> Move up / Move down). Untagged pages come last, newest first.
  *
  * Heading and intro come from the Pages entry with slug "seasonal" (fallback
  * text below if it doesn't exist), like the Blog/Recipes/Shop listings.
  */
-import { getEmDashCollection, getSeoMeta } from "emdash";
+import { getEmDashCollection, getSeoMeta, getTaxonomyTermsWithCacheHint } from "emdash";
 import Base from "../../layouts/Base.astro";
 import RichText from "../../components/RichText.astro";
 import SeasonalCard from "../../components/SeasonalCard.astro";
 import { getListingPage } from "../../utils/listing-page";
-import { isSeason, seasonsFrom } from "../../utils/seasons";
 
-const [page, { entries, cacheHint }] = await Promise.all([
+const [page, { entries, cacheHint }, termsResult] = await Promise.all([
 	getListingPage("seasonal", {
 		title: "Seasonal",
 		intro: "Recipes, projects, and stories gathered for each season and holiday at the Nest.",
 	}),
 	getEmDashCollection("seasonal", { orderBy: { published_at: "desc" }, limit: 100 }),
+	getTaxonomyTermsWithCacheHint("seasonal"),
 ]);
 if (Astro.cache?.enabled) {
 	Astro.cache.set(cacheHint);
+	Astro.cache.set(termsResult.cacheHint);
 	if (page.cacheHint) Astro.cache.set(page.cacheHint);
 }
 
 const featured = entries.find((e) => e.data.featured) ?? null;
 const rest = entries.filter((e) => e !== featured);
 
-const groups: { season: string; pages: typeof rest }[] = seasonsFrom(new Date())
-	.map((season) => ({ season, pages: rest.filter((e) => e.data.season === season) }))
-	.filter((g) => g.pages.length > 0);
-const unsorted = rest.filter((e) => !isSeason(e.data.season));
-if (unsorted.length) groups.push({ season: "More", pages: unsorted });
+// Position of each tag in the admin's manual order; a page sorts by its
+// earliest tag. Ties and untagged pages keep newest-first (stable sort).
+const position = new Map(termsResult.data.map((t, i) => [t.slug, i]));
+const rank = (e: (typeof rest)[number]) =>
+	Math.min(...(e.data.terms?.seasonal ?? []).map((t) => position.get(t.slug) ?? Infinity), Infinity);
+const others = [...rest].sort((a, b) => rank(a) - rank(b));
 
 const seo = page.entry
 	? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/seasonal" })
@@ -69,18 +71,15 @@ const seo = page.entry
 	}
 
 	{
-		groups.map((g) => (
-			<section class="seasonal-group" aria-labelledby={`season-${g.season.toLowerCase()}`}>
-				<h2 id={`season-${g.season.toLowerCase()}`} class="seasonal-group-title">
-					{g.season}
-				</h2>
+		others.length > 0 && (
+			<section class="seasonal-others" aria-label="All seasonal collections">
 				<div class="card-grid">
-					{g.pages.map((p) => (
-						<SeasonalCard page={p} />
+					{others.map((p) => (
+						<SeasonalCard page={p} headingLevel="h2" />
 					))}
 				</div>
 			</section>
-		))
+		)
 	}
 
 	{
@@ -97,14 +96,4 @@ const seo = page.entry
 		margin-bottom: var(--space-2xl);
 	}
 
-	.seasonal-group + .seasonal-group {
-		margin-top: var(--space-2xl);
-	}
-
-	.seasonal-group-title {
-		margin-bottom: var(--space-md);
-		padding-bottom: var(--space-2xs);
-		border-bottom: 1px solid var(--color-border);
-		font-size: var(--text-2xl);
-	}
 </style>
