@@ -13,7 +13,7 @@
 	--color-olive: #3f5037;
 	--color-mint: #d6e3d7;
 	--color-cream: #fefcf8;
-	--color-linen: #efebe4; /* brand #e9e4db, softened 30% toward cream */
+	--color-linen: #f2ebdf; /* brand #e9e4db, lighter and a touch warmer */
 
 	/* Roles */
 	--color-bg: var(--color-cream);
