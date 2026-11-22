@@ -70,17 +70,17 @@ const year = new Date().getFullYear();
 <style>
 	.site-footer {
 		margin-top: auto;
-		background: var(--color-olive);
-		color: #e9ede6;
+		background: var(--color-footer-bg);
+		color: var(--color-footer-text);
 		font-size: var(--text-sm);
 	}
 
 	.site-footer a {
-		color: var(--color-accent-contrast);
+		color: var(--color-footer-text);
 	}
 
 	.site-footer a:hover {
-		color: var(--color-linen);
+		color: var(--color-footer-accent);
 	}
 
 	.footer-grid {
@@ -110,7 +110,7 @@ const year = new Date().getFullYear();
 		display: block;
 		width: 210px;
 		aspect-ratio: 341 / 89.6;
-		background-color: var(--color-cream);
+		background-color: var(--color-footer-text);
 		-webkit-mask: url("/images/logo.svg") center / contain no-repeat;
 		mask: url("/images/logo.svg") center / contain no-repeat;
 	}
@@ -148,7 +148,7 @@ const year = new Date().getFullYear();
 		font-weight: 600;
 		letter-spacing: 0.16em;
 		text-transform: uppercase;
-		color: var(--color-linen);
+		color: var(--color-footer-accent);
 	}
 
 	.footer-blurb {
@@ -176,7 +176,7 @@ const year = new Date().getFullYear();
 		font-family: var(--font-display);
 		font-size: var(--text-lg);
 		font-weight: 400;
-		color: var(--color-accent-contrast);
+		color: var(--color-footer-text);
 	}
 
 	.social-list {
@@ -196,7 +196,7 @@ const year = new Date().getFullYear();
 		place-items: center;
 		width: 2.75rem;
 		height: 2.75rem;
-		border: 1px solid rgb(255 255 255 / 0.35);
+		border: 1px solid var(--color-footer-line-strong);
 		border-radius: 50%;
 		transition:
 			background-color 0.15s ease,
@@ -204,22 +204,22 @@ const year = new Date().getFullYear();
 	}
 
 	.social-list a:hover {
-		background: var(--color-cream);
-		color: var(--color-olive);
+		background: var(--color-footer-text);
+		color: var(--color-footer-bg);
 	}
 
 
 
 
 	.footer-btn {
-		background: var(--color-cream);
-		border-color: var(--color-accent-contrast);
-		color: var(--color-olive) !important;
+		background: var(--color-footer-text);
+		border-color: var(--color-footer-text);
+		color: var(--color-footer-bg) !important;
 	}
 
 	.footer-btn:hover {
-		background: var(--color-linen);
-		border-color: var(--color-linen);
+		background: var(--color-footer-accent);
+		border-color: var(--color-footer-accent);
 	}
 
 	.footer-legal {
@@ -229,11 +229,11 @@ const year = new Date().getFullYear();
 		gap: var(--space-2xs) var(--space-lg);
 		padding-block: var(--space-md);
 		font-size: var(--text-xs);
-		color: #cfd8cb;
+		color: var(--color-footer-muted);
 	}
 
 	.footer-bottom {
-		border-top: 1px solid rgb(255 255 255 / 0.18);
+		border-top: 1px solid var(--color-footer-line);
 	}
 
 	.footer-legal p {
@@ -241,6 +241,6 @@ const year = new Date().getFullYear();
 	}
 
 	.site-footer :focus-visible {
-		outline-color: var(--color-accent-contrast);
+		outline-color: var(--color-footer-text);
 	}
 </style>
