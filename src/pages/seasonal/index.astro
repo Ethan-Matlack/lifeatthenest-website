@@ -12,12 +12,13 @@
  * Heading and intro come from the Pages entry with slug "seasonal" (fallback
  * text below if it doesn't exist), like the Blog/Recipes/Shop listings.
  */
-import { getEmDashCollection, getSeoMeta, getTaxonomyTermsWithCacheHint } from "emdash";
+import { getEmDashCollection, getEmDashEntry, getSeoMeta, getTaxonomyTermsWithCacheHint } from "emdash";
 import Base from "../../layouts/Base.astro";
 import RichText from "../../components/RichText.astro";
 import SeasonalCard from "../../components/SeasonalCard.astro";
 import { getListingPage } from "../../utils/listing-page";
 import { orderSeasonal } from "../../utils/seasonal-order";
+import { seoImageValue } from "../../utils/seo-text";
 
 const [page, { entries, cacheHint }, termsResult] = await Promise.all([
 	getListingPage("seasonal", {
@@ -42,6 +43,25 @@ const pages = entries.map((entry) => {
 const ordered = orderSeasonal(pages, termsResult.data.length);
 const featured = ordered.featured.map((p) => p.entry);
 const others = ordered.others.map((p) => p.entry);
+
+// Card photo: the Main photo, else the page's SEO image. List queries don't
+// include SEO data, so load it (one entry each) only for pages without a
+// Main photo.
+const seoImages = new Map(
+	await Promise.all(
+		entries
+			.filter((e) => !e.data.hero_image)
+			.map(async (e) => {
+				const { entry, cacheHint: hint } = await getEmDashEntry("seasonal", e.id);
+				if (Astro.cache?.enabled && hint) Astro.cache.set(hint);
+				const seo = (entry as { data?: { seo?: { image?: string | null } } } | null)?.data?.seo;
+				// No stored dimensions for SEO images: give the card's 3:2 shape so
+				// it gets resized and cropped like a Main photo, not sent full size.
+				const image = seoImageValue(seo?.image);
+				return [e.id, image ? { ...image, width: 1200, height: 800 } : null] as const;
+			}),
+	),
+);
 
 const seo = page.entry
 	? getSeoMeta(page.entry, { siteTitle: "Life at the Nest", siteUrl: Astro.url.origin, path: "/seasonal" })
@@ -69,7 +89,7 @@ const seo = page.entry
 		featured.length > 0 && (
 			<section class="seasonal-featured" aria-label="Featured">
 				{featured.map((p, i) => (
-					<SeasonalCard page={p} featured headingLevel="h2" priority={i === 0} />
+					<SeasonalCard page={p} featured headingLevel="h2" priority={i === 0} image={seoImages.get(p.id)} />
 				))}
 			</section>
 		)
@@ -80,7 +100,7 @@ const seo = page.entry
 			<section class="seasonal-others" aria-label="All seasonal collections">
 				<div class="card-grid seasonal-grid">
 					{others.map((p) => (
-						<SeasonalCard page={p} headingLevel="h2" />
+						<SeasonalCard page={p} headingLevel="h2" image={seoImages.get(p.id)} />
 					))}
 				</div>
 			</section>

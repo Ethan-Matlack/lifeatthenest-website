@@ -1,7 +1,7 @@
 // Run with: npm test
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { clampText } from "./seo-text.ts";
+import { clampText, seoImageValue } from "./seo-text.ts";
 
 test("short text is returned trimmed, empty becomes null", () => {
 	assert.equal(clampText("  Crisp granola.  "), "Crisp granola.");
@@ -23,4 +23,12 @@ test("trailing punctuation before the cut is dropped", () => {
 
 test("whitespace and newlines collapse", () => {
 	assert.equal(clampText("a\n\n b\t c"), "a b c");
+});
+
+test("seoImageValue resolves media IDs, paths, and URLs", () => {
+	assert.deepEqual(seoImageValue("01KABC"), { id: "01KABC", src: "/_emdash/api/media/file/01KABC" });
+	assert.deepEqual(seoImageValue("/_emdash/api/media/file/x.jpg"), { id: "/_emdash/api/media/file/x.jpg", src: "/_emdash/api/media/file/x.jpg" });
+	assert.deepEqual(seoImageValue("https://example.com/a.jpg"), { id: "https://example.com/a.jpg", src: "https://example.com/a.jpg" });
+	assert.equal(seoImageValue(""), null);
+	assert.equal(seoImageValue(null), null);
 });
