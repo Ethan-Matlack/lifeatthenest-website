@@ -2,6 +2,8 @@
 /**
  * Card linking to a Seasonal page. `featured` is the large side-by-side
  * version used at the top of /seasonal (and later the homepage).
+ * The photo is the page's Main photo, or `image` when the caller supplies a
+ * fallback (the page's SEO image).
  */
 import { Image } from "emdash/ui";
 import type { ContentEntry } from "emdash";
@@ -12,10 +14,15 @@ interface Props {
 	featured?: boolean;
 	headingLevel?: "h2" | "h3";
 	priority?: boolean;
+	/** Used when the page has no Main photo (e.g. its SEO image). */
+	image?: ImageValue | null;
 }
 
-const { page, featured = false, headingLevel = "h3", priority = false } = Astro.props;
+type ImageValue = Parameters<typeof Image>[0]["image"];
+
+const { page, featured = false, headingLevel = "h3", priority = false, image: fallbackImage } = Astro.props;
 const d = page.data;
+const photo = d.hero_image ?? fallbackImage ?? null;
 const Heading = headingLevel;
 const href = `/seasonal/${page.id}`;
 ---
@@ -24,9 +31,9 @@ const href = `/seasonal/${page.id}`;
 	<a class="sc-link" href={href}>
 		<div class="sc-media">
 			{
-				d.hero_image ? (
+				photo ? (
 					<Image
-						image={d.hero_image}
+						image={photo}
 						alt=""
 						sizes={featured ? "(min-width: 48rem) 36rem, 100vw" : "(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"}
 						priority={priority}
