@@ -11,9 +11,8 @@
 	--color-sage: #819585;
 	--color-moss: #637658;
 	--color-olive: #3f5037;
-	--color-mint: #d6e3d7;
 	--color-cream: #fefcf8;
-	--color-linen: #f2ebdf; /* brand #e9e4db, lighter and a touch warmer */
+	--color-linen: #f2ebdf;
 
 	/* Roles */
 	--color-bg: var(--color-cream);
@@ -246,6 +245,13 @@ hr {
 	padding-block: var(--space-2xl);
 }
 
+/* Plain sections (no background of their own) in a row share one gap
+   instead of stacking two paddings, so every gap between blocks is the same
+   --space-2xl, whether it's to the next plain section or to a coloured band. */
+.section--plain + .section--plain {
+	padding-top: 0;
+}
+
 .stack > * + * {
 	margin-top: var(--space-md);
 }
@@ -463,7 +469,7 @@ hr {
 }
 
 .comments-section .ec-comment .ec-comment-replies {
-	border-left: 2px solid var(--color-mint);
+	border-left: 2px solid var(--color-sage);
 }
 
 .comments-section .ec-comment-form .ec-comment-form-field {

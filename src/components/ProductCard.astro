@@ -1,5 +1,5 @@
 ---
-/** Affiliate product card. Used in "Shop this post/recipe" and on the Shop page. */
+/** Affiliate product card (one link to the store). Used in "Shop this post/recipe" and on the Shop page. */
 import { Image } from "emdash/ui";
 import type { ContentEntry } from "emdash";
 import type { Product } from "../../emdash-env";
@@ -16,27 +16,35 @@ const store = d.store?.trim() || "the store";
 ---
 
 <article class="product-card">
-	<a class="product-media" href={d.link} target="_blank" rel="sponsored noopener" tabindex="-1" aria-hidden="true">
-		{
-			d.image ? (
-				<Image image={d.image} alt="" sizes="(min-width: 48rem) 14rem, 45vw" />
-			) : (
-				<div class="photo-placeholder" />
-			)
-		}
+	<a class="product-link" href={d.link} target="_blank" rel="sponsored noopener">
+		<div class="product-media">
+			{
+				d.image ? (
+					<Image image={d.image} alt="" sizes="(min-width: 48rem) 14rem, 45vw" />
+				) : (
+					<div class="photo-placeholder" aria-hidden="true" />
+				)
+			}
+		</div>
+		<div class="product-body">
+			<Heading class="product-title">{d.title}</Heading>
+			{d.blurb && <p class="product-blurb">{d.blurb}</p>}
+			<span class="btn product-btn">
+				Shop on {store}
+				<span class="visually-hidden">(opens in a new tab)</span>
+			</span>
+		</div>
 	</a>
-	<div class="product-body">
-		<Heading class="product-title">{d.title}</Heading>
-		{d.blurb && <p class="product-blurb">{d.blurb}</p>}
-		<a class="btn product-btn" href={d.link} target="_blank" rel="sponsored noopener">
-			Shop on {store}
-			<span class="visually-hidden">: {d.title} (opens in a new tab)</span>
-		</a>
-	</div>
 </article>
 
 <style>
+	/* The whole card is one link, like the recipe/post/seasonal tiles, with
+	   the same hover lift. "Shop on …" is styled as a button inside it. */
 	.product-card {
+		height: 100%;
+	}
+
+	.product-link {
 		display: flex;
 		flex-direction: column;
 		height: 100%;
@@ -44,6 +52,26 @@ const store = d.store?.trim() || "the store";
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-lg);
 		background: var(--color-surface);
+		color: inherit;
+		text-decoration: none;
+		transition:
+			box-shadow 0.2s ease,
+			transform 0.2s ease;
+	}
+
+	.product-link:hover {
+		box-shadow: var(--shadow-md);
+		transform: translateY(-2px);
+		color: inherit;
+	}
+
+	.product-link:hover .product-title {
+		color: var(--color-moss);
+	}
+
+	.product-link:hover .product-btn {
+		background: var(--color-moss);
+		border-color: var(--color-moss);
 	}
 
 	.product-media {

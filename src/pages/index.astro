@@ -80,7 +80,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 	<!-- Latest posts -->
 	{
 		posts.length > 0 && (
-			<section class="section section--alt" aria-labelledby="posts-heading">
+			<section class="section section--plain" aria-labelledby="posts-heading">
 				<div class="container">
 					<div class="section-heading">
 						<div>
@@ -102,7 +102,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 	<!-- Featured recipes -->
 	{
 		recipes.length > 0 && (
-			<section class="section" aria-labelledby="recipes-heading">
+			<section class="section section--plain" aria-labelledby="recipes-heading">
 				<div class="container">
 					<div class="section-heading">
 						<div>
@@ -126,7 +126,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 	<!-- Meet Audra -->
 	{
 		h && (h.about_text?.length || h.about_image) && (
-			<section class="section about" aria-labelledby="about-heading">
+			<section class="section section--plain about" aria-labelledby="about-heading">
 				<div class="container about-inner">
 					<div class="about-media arch" {...home?.edit.about_image}>
 						{h.about_image ? (
@@ -248,12 +248,6 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 	}
 
 	/* ---------- Sections ---------- */
-	/* Latest posts: ruled off from the recipes below, like the welcome block
-	   above (the page and surface are both cream now, so no colour change). */
-	.section--alt {
-		border-bottom: 1px solid var(--color-border);
-	}
-
 	/* Two compact columns on phones; fill the row on wider screens. */
 	.card-grid--recipes {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
