@@ -171,7 +171,13 @@ const { previous, next, label = "More posts", allHref = "/posts", allLabel = "Br
 	/* "End of the line" card: a quieter sibling of the real links. */
 	.post-nav-end {
 		border-style: dashed;
+		border-color: var(--color-border-strong);
 		background: var(--color-surface-alt);
+	}
+
+	/* Moss is too light for small text on linen. */
+	.post-nav-end .post-nav-dir {
+		color: var(--color-olive);
 	}
 
 	.post-nav-end-icon {

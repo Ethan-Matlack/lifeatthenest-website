@@ -2,34 +2,33 @@
  * Life at the Nest — design tokens and global styles.
  *
  * Palette comes from the existing brand (logo + WordPress theme).
- * Sage is decorative only: it does not meet text contrast on white,
- * so text and links use olive, moss, teal, or ink.
+ * Sage is decorative only: it does not meet text contrast on cream,
+ * so text and links use olive, moss, or ink.
  */
 
 :root {
 	/* Brand */
-	--color-sage: #819685;
-	--color-moss: #637657;
-	--color-olive: #3e4f37;
-	--color-teal: #1d4354;
-	--color-aqua: #cadedd;
-	--color-cream: #fdfbf8;
-	--color-linen: #f4f0e8;
+	--color-sage: #819585;
+	--color-moss: #637658;
+	--color-olive: #3f5037;
+	--color-mint: #d6e3d7;
+	--color-cream: #fefcf8;
+	--color-linen: #f2ebdf; /* brand #e9e4db, lighter and a touch warmer */
 
 	/* Roles */
 	--color-bg: var(--color-cream);
-	--color-surface: #ffffff;
+	--color-surface: var(--color-cream); /* no pure white anywhere */
 	--color-surface-alt: var(--color-linen);
 	--color-text: #263022;
 	--color-muted: #5b6556;
 	--color-heading: var(--color-olive);
-	--color-link: var(--color-teal);
+	--color-link: var(--color-olive);
 	--color-link-hover: var(--color-moss);
 	--color-border: #e2ddd2;
 	--color-border-strong: #c9c3b6;
 	--color-accent: var(--color-olive);
-	--color-accent-contrast: #ffffff;
-	--color-focus: var(--color-teal);
+	--color-accent-contrast: var(--color-cream);
+	--color-focus: var(--color-olive);
 
 	/* Type — --font-display (Fraunces) and --font-body (Source Sans 3)
 	   are defined by Astro's <Font> component; see astro.config.mjs. */
@@ -326,7 +325,7 @@ hr {
 .chip[aria-current="page"] {
 	background: var(--color-olive);
 	border-color: var(--color-olive);
-	color: #fff;
+	color: var(--color-accent-contrast);
 }
 
 /* Stand-in for a missing photo: soft linen with a faint sage dot grid. */
@@ -414,14 +413,14 @@ hr {
 	z-index: 100;
 	padding: var(--space-2xs) var(--space-sm);
 	background: var(--color-olive);
-	color: #fff;
+	color: var(--color-accent-contrast);
 	border-radius: var(--radius-sm);
 	font-weight: 600;
 }
 
 .skip-link:focus {
 	top: var(--space-sm);
-	color: #fff;
+	color: var(--color-accent-contrast);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -464,7 +463,7 @@ hr {
 }
 
 .comments-section .ec-comment .ec-comment-replies {
-	border-left: 2px solid var(--color-aqua);
+	border-left: 2px solid var(--color-mint);
 }
 
 .comments-section .ec-comment-form .ec-comment-form-field {
@@ -503,7 +502,7 @@ hr {
 	border: 0;
 	border-radius: var(--radius-pill);
 	background: var(--color-olive);
-	color: #fff;
+	color: var(--color-accent-contrast);
 	font-weight: 600;
 	font-size: var(--text-sm);
 	letter-spacing: 0.02em;

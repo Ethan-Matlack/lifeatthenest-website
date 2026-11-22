@@ -46,6 +46,11 @@ const { products, eyebrow, heading = "Things I Used & Love" } = Astro.props;
 		border-block: 1px solid var(--color-border);
 	}
 
+	/* Moss is too light for small text on linen. */
+	.shop-this .eyebrow {
+		color: var(--color-olive);
+	}
+
 	.shop-this .section-heading h2 {
 		font-size: var(--text-2xl);
 	}

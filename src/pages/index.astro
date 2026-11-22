@@ -66,7 +66,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 					h?.welcome_image ? (
 						<Image
 							image={h.welcome_image}
-							sizes="(min-width: 56rem) 34rem, (min-width: 44rem) 45vw, 100vw"
+							sizes="(min-width: 56rem) 23rem, (min-width: 44rem) 45vw, 100vw"
 							priority
 						/>
 					) : (
@@ -169,7 +169,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 <style>
 	/* ---------- Welcome ---------- */
 	.hero {
-		background: var(--color-bg);
+		background: var(--color-linen);
 		border-bottom: 1px solid var(--color-border);
 	}
 
@@ -197,10 +197,15 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 		margin-top: var(--space-lg);
 	}
 
-	/* Farmhouse arched-window frame */
+	/* Farmhouse arched-window frame: a half-circle top (radius = half the
+	   width, i.e. 40% of the height in a 4:5 box) and the cards' --radius-lg
+	   at the bottom. Exact radii, not 999px: oversized radii make the browser
+	   scale every corner down, which flattened the bottom ones to ~2px. */
 	.arch {
 		overflow: hidden;
-		border-radius: 999px 999px var(--radius-lg) var(--radius-lg);
+		border-radius:
+			50% 50% var(--radius-lg) var(--radius-lg) /
+			40% 40% var(--radius-lg) var(--radius-lg);
 	}
 
 	.hero-media {
@@ -236,11 +241,17 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 			gap: var(--space-2xl);
 			padding-block: var(--space-2xl);
 		}
+
+		.hero-media {
+			width: min(100%, 23rem);
+		}
 	}
 
 	/* ---------- Sections ---------- */
+	/* Latest posts: ruled off from the recipes below, like the welcome block
+	   above (the page and surface are both cream now, so no colour change). */
 	.section--alt {
-		background: var(--color-surface);
+		border-bottom: 1px solid var(--color-border);
 	}
 
 	/* Two compact columns on phones; fill the row on wider screens. */

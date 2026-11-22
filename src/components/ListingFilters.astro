@@ -236,7 +236,7 @@ const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
 	.lf-toggle[aria-expanded="true"] {
 		border-color: var(--color-olive);
 		background: var(--color-olive);
-		color: #fff;
+		color: var(--color-accent-contrast);
 	}
 
 	.lf-toggle svg {
@@ -253,14 +253,14 @@ const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
 		height: 1.25rem;
 		padding: 0 0.3rem;
 		border-radius: var(--radius-pill);
-		background: var(--color-teal);
-		color: #fff;
+		background: var(--color-olive);
+		color: var(--color-accent-contrast);
 		font-size: 0.75rem;
 		line-height: 1;
 	}
 
 	.lf-toggle[aria-expanded="true"] .lf-count {
-		background: #fff;
+		background: var(--color-cream);
 		color: var(--color-olive);
 	}
 
@@ -305,7 +305,7 @@ const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
 		border: 0;
 		border-radius: 50%;
 		background: var(--color-olive);
-		color: #fff;
+		color: var(--color-accent-contrast);
 		cursor: pointer;
 	}
 
@@ -412,8 +412,8 @@ const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
 		min-height: 2rem;
 		padding: 0.15rem 0.5rem 0.15rem 0.85rem;
 		border-radius: var(--radius-pill);
-		background: var(--color-aqua);
-		color: var(--color-teal);
+		background: var(--color-mint);
+		color: var(--color-olive);
 		font-size: var(--text-sm);
 		font-weight: 600;
 		text-decoration: none;
@@ -430,12 +430,12 @@ const uid = action.replace(/[^a-z0-9]/gi, "") || "list";
 	}
 
 	.lf-pill:hover {
-		color: var(--color-teal);
+		color: var(--color-olive);
 	}
 
 	.lf-pill:hover span {
-		background: var(--color-teal);
-		color: #fff;
+		background: var(--color-olive);
+		color: var(--color-accent-contrast);
 	}
 
 	.lf-clear {
