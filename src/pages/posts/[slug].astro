@@ -153,6 +153,11 @@ const videos = videoEntries(d);
 	<ShopThis products={products} eyebrow="Shop this post" />
 
 	<div class="container post-end">
+		<p class="post-back">
+			<a class="btn btn--outline" href="/posts" data-back-to-list>
+				<span aria-hidden="true">&larr;</span> Back to the blog
+			</a>
+		</p>
 		<PostNav previous={previous} next={next} />
 	</div>
 
@@ -169,6 +174,34 @@ const videos = videoEntries(d);
 
 	<BackToTop />
 </Base>
+
+<script>
+	// "Back to the blog" returns to the list the reader came from, filters
+	// included (saved by /posts). If they came straight from that list, step
+	// back in history instead, so they land where they were scrolled to.
+	const link = document.querySelector<HTMLAnchorElement>("[data-back-to-list]");
+	let saved: string | null = null;
+	try {
+		saved = sessionStorage.getItem("blog:list");
+	} catch {}
+	if (link && saved?.startsWith("/posts")) {
+		link.href = saved;
+		link.addEventListener("click", (e) => {
+			if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+			let from: URL | null = null;
+			try {
+				from = new URL(document.referrer);
+			} catch {}
+			if (from && from.origin === location.origin && from.pathname === "/posts" && history.length > 1) {
+				from.searchParams.delete("cursor");
+				if (from.pathname + from.search === saved) {
+					e.preventDefault();
+					history.back();
+				}
+			}
+		});
+	}
+</script>
 
 <style>
 	.post-header {
@@ -246,6 +279,11 @@ const videos = videoEntries(d);
 	.post-end {
 		max-width: calc(60rem + var(--gutter) * 2);
 		padding-block: var(--space-xl);
+	}
+
+	.post-back {
+		margin: 0 0 var(--space-md);
+		text-align: center;
 	}
 
 	.post-comments {

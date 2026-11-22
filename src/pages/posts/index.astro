@@ -208,6 +208,16 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 	<BackToTop />
 </Base>
 
+<script>
+	// Remember this list (with its filters) for the "Back to the blog" button
+	// on post pages. The cursor is dropped so it returns to the top of the list.
+	const url = new URL(location.href);
+	url.searchParams.delete("cursor");
+	try {
+		sessionStorage.setItem("blog:list", url.pathname + url.search);
+	} catch {}
+</script>
+
 <style>
 	.post-grid {
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
