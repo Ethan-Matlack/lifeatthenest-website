@@ -613,7 +613,7 @@
 				},
 				{
 					"slug": "hero_image",
-					"label": "Main photo",
+					"label": "Main photo (shown on the card on /seasonal and when shared)",
 					"type": "image",
 					"validation": {
 						"allowedMimeTypes": [
@@ -681,18 +681,6 @@
 					"label": "Content",
 					"type": "portableText",
 					"searchable": true
-				},
-				{
-					"slug": "photo",
-					"label": "Page photo (optional, shown beside the title)",
-					"type": "image",
-					"validation": {
-						"allowedMimeTypes": [
-							"image/jpeg",
-							"image/png",
-							"image/webp"
-						]
-					}
 				}
 			]
 		}

@@ -142,20 +142,6 @@
           "type": "portableText",
           "required": false,
           "unique": false
-        },
-        {
-          "slug": "photo",
-          "label": "Page photo (optional, shown beside the title)",
-          "type": "image",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "allowedMimeTypes": [
-              "image/jpeg",
-              "image/png",
-              "image/webp"
-            ]
-          }
         }
       ]
     },
@@ -168,8 +154,7 @@
         "revisions",
         "preview",
         "scheduling",
-        "search",
-        "seo"
+        "search"
       ],
       "hidden": false,
       "sortOrder": 2,
@@ -262,8 +247,7 @@
         "revisions",
         "preview",
         "scheduling",
-        "search",
-        "seo"
+        "search"
       ],
       "hidden": false,
       "sortOrder": 3,
@@ -572,6 +556,104 @@
       ]
     },
     {
+      "slug": "seasonal",
+      "label": "Seasonal",
+      "labelSingular": "Seasonal Page",
+      "description": "Seasonal roundups (e.g. Thanksgiving at the Nest). Tag it with a Seasonal Collection; everything with that tag appears automatically.",
+      "icon": "leaf",
+      "supports": [
+        "drafts",
+        "revisions",
+        "preview",
+        "scheduling",
+        "search",
+        "seo"
+      ],
+      "hidden": false,
+      "sortOrder": 4,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "unique": false,
+          "validation": {
+            "maxLength": 120,
+            "minLength": 1
+          }
+        },
+        {
+          "slug": "summary",
+          "label": "Short description (shows on cards and in Google)",
+          "type": "text",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "maxLength": 160
+          },
+          "options": {
+            "rows": 3
+          }
+        },
+        {
+          "slug": "hero_image",
+          "label": "Main photo (shown on the card on /seasonal and when shared)",
+          "type": "image",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "allowedMimeTypes": [
+              "image/jpeg",
+              "image/png",
+              "image/webp"
+            ]
+          }
+        },
+        {
+          "slug": "featured",
+          "label": "Feature now (shown at the top of the Seasonal page)",
+          "type": "boolean",
+          "required": false,
+          "unique": false,
+          "defaultValue": false
+        },
+        {
+          "slug": "intro",
+          "label": "Intro",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "pinned_recipes",
+          "label": "Pinned recipes (shown first; everything tagged appears automatically)",
+          "type": "reference",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "multiple": true,
+            "relation": "seasonal_pinned_recipes",
+            "relationSide": "parent",
+            "targetCollection": "recipes"
+          }
+        },
+        {
+          "slug": "pinned_posts",
+          "label": "Pinned blog posts (shown first; everything tagged appears automatically)",
+          "type": "reference",
+          "required": false,
+          "unique": false,
+          "validation": {
+            "multiple": true,
+            "relation": "seasonal_pinned_posts",
+            "relationSide": "parent",
+            "targetCollection": "posts"
+          }
+        }
+      ]
+    },
+    {
       "slug": "products",
       "label": "Shop Products",
       "labelSingular": "Shop Product",
@@ -582,7 +664,7 @@
         "search"
       ],
       "hidden": false,
-      "sortOrder": 4,
+      "sortOrder": 5,
       "fields": [
         {
           "slug": "title",
@@ -641,104 +723,7 @@
           }
         }
       ]
-    },
-    {
-      "slug": "seasonal",
-      "label": "Seasonal",
-      "labelSingular": "Seasonal Page",
-      "description": "Seasonal roundups (e.g. Thanksgiving at the Nest). Tag it with a Seasonal Collection; everything with that tag appears automatically.",
-      "icon": "leaf",
-      "supports": [
-        "drafts",
-        "revisions",
-        "preview",
-        "scheduling",
-        "search",
-        "seo"
-      ],
-      "hidden": false,
-      "fields": [
-        {
-          "slug": "title",
-          "label": "Title",
-          "type": "string",
-          "required": true,
-          "unique": false,
-          "validation": {
-            "minLength": 1,
-            "maxLength": 120
-          }
-        },
-        {
-          "slug": "summary",
-          "label": "Short description (shows on cards and in Google)",
-          "type": "text",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "maxLength": 160
-          },
-          "options": {
-            "rows": 3
-          }
-        },
-        {
-          "slug": "hero_image",
-          "label": "Main photo",
-          "type": "image",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "allowedMimeTypes": [
-              "image/jpeg",
-              "image/png",
-              "image/webp"
-            ]
-          }
-        },
-        {
-          "slug": "featured",
-          "label": "Feature now (shown at the top of the Seasonal page)",
-          "type": "boolean",
-          "required": false,
-          "unique": false,
-          "defaultValue": false
-        },
-        {
-          "slug": "intro",
-          "label": "Intro",
-          "type": "portableText",
-          "required": false,
-          "unique": false
-        },
-        {
-          "slug": "pinned_recipes",
-          "label": "Pinned recipes (shown first; everything tagged appears automatically)",
-          "type": "reference",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "targetCollection": "recipes",
-            "multiple": true,
-            "relation": "seasonal_pinned_recipes",
-            "relationSide": "parent"
-          }
-        },
-        {
-          "slug": "pinned_posts",
-          "label": "Pinned blog posts (shown first; everything tagged appears automatically)",
-          "type": "reference",
-          "required": false,
-          "unique": false,
-          "validation": {
-            "targetCollection": "posts",
-            "multiple": true,
-            "relation": "seasonal_pinned_posts",
-            "relationSide": "parent"
-          }
-        }
-      ]
     }
   ],
-  "version": "5c180211d8f6a861"
+  "version": "7c040de9801d03c9"
 }
