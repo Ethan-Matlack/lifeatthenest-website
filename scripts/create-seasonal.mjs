@@ -60,7 +60,7 @@ const FIELDS = [
 	},
 	{
 		slug: "hero_image",
-		label: "Main photo",
+		label: "Main photo (shown on the card on /seasonal and when shared)",
 		type: "image",
 		validation: { allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"] },
 	},

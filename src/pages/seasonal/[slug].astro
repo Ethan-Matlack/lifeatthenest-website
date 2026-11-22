@@ -1,7 +1,8 @@
 ---
 /**
  * One seasonal roundup page (e.g. "Thanksgiving at the Nest"): title,
- * short description, main photo, intro, then its collection.
+ * short description, intro, then its collection. (The main photo appears
+ * only on the page's card on /seasonal and as its share image.)
  *
  * The collection is automatic: the page is tagged with a "Seasonal
  * Collections" term (taxonomy `seasonal`, shared by posts, recipes, products
@@ -16,7 +17,6 @@
  * Setup: scripts/create-seasonal.mjs, seed/seed.json.
  */
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
-import { Image } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
 import BackToTop from "../../components/BackToTop.astro";
 import NewsletterCta from "../../components/NewsletterCta.astro";
@@ -90,6 +90,8 @@ const items: Item[] = [
 ];
 
 const { siteTitle } = resolveStarterSiteIdentity(settings);
+// The main photo isn't shown on the page itself (only on its /seasonal
+// card), but it's still the share image when the link is posted.
 const seo = entrySeo(page, {
 	siteTitle,
 	url: Astro.url,
@@ -115,14 +117,6 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 			<h1 {...page.edit.title}>{d.title}</h1>
 			{d.summary && <p class="seasonal-summary" {...page.edit.summary}>{d.summary}</p>}
 		</header>
-
-		{
-			d.hero_image && (
-				<div class="seasonal-hero" {...page.edit.hero_image}>
-					<Image image={d.hero_image} sizes="(min-width: 64rem) 60rem, 100vw" priority />
-				</div>
-			)
-		}
 
 		{
 			hasIntro && (
@@ -180,25 +174,6 @@ const hasIntro = Array.isArray(d.intro) && d.intro.length > 0;
 		margin: 0 auto;
 		font-size: var(--text-lg);
 		color: var(--color-muted);
-	}
-
-	.seasonal-hero {
-		width: min(60rem, 100%);
-		aspect-ratio: 16 / 9;
-		margin: 0 auto var(--space-xl);
-		overflow: hidden;
-	}
-
-	.seasonal-hero :global(img) {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	@media (min-width: 60rem) {
-		.seasonal-hero {
-			border-radius: var(--radius-lg);
-		}
 	}
 
 	.seasonal-intro {
