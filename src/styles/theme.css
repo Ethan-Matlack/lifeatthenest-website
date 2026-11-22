@@ -11,9 +11,8 @@
 	--color-sage: #819585;
 	--color-moss: #637658;
 	--color-olive: #3f5037;
-	--color-mint: #d6e3d7;
 	--color-cream: #fefcf8;
-	--color-linen: #f2ebdf; /* brand #e9e4db, lighter and a touch warmer */
+	--color-linen: #f2ebdf;
 
 	/* Roles */
 	--color-bg: var(--color-cream);
@@ -463,7 +462,7 @@ hr {
 }
 
 .comments-section .ec-comment .ec-comment-replies {
-	border-left: 2px solid var(--color-mint);
+	border-left: 2px solid var(--color-sage);
 }
 
 .comments-section .ec-comment-form .ec-comment-form-field {

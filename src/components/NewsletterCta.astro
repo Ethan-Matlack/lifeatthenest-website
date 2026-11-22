@@ -15,18 +15,22 @@ const {
 ---
 
 <section class="newsletter" aria-labelledby="newsletter-heading">
-	<div class="container newsletter-inner">
-		<div class="newsletter-copy">
-			<h2 id="newsletter-heading">{heading}</h2>
-			<p>{text}</p>
+	<div class="container">
+		<div class="newsletter-panel newsletter-inner">
+			<div class="newsletter-copy">
+				<h2 id="newsletter-heading">{heading}</h2>
+				<p>{text}</p>
+			</div>
+			<a class="btn" href="/contact#newsletter">Sign up for the newsletter</a>
 		</div>
-		<a class="btn" href="/contact#newsletter">Sign up for the newsletter</a>
 	</div>
 </section>
 
 <style>
+	/* A framed linen panel inside the page width (not a full-bleed band), so
+	   it stands out by shape and sits cleanly above the footer too. */
 	.newsletter {
-		background: var(--color-mint);
+		padding-block: var(--space-xl);
 		color: var(--color-olive);
 	}
 
@@ -36,7 +40,19 @@ const {
 		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-md) var(--space-xl);
-		padding-block: var(--space-xl);
+	}
+
+	.newsletter-panel {
+		padding: var(--space-lg);
+		border: 1px solid var(--color-sage);
+		border-radius: var(--radius-lg);
+		background: var(--color-linen);
+	}
+
+	@media (min-width: 40rem) {
+		.newsletter-panel {
+			padding: var(--space-xl);
+		}
 	}
 
 	.newsletter-copy {
