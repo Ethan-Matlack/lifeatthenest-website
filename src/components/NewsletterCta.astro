@@ -14,7 +14,7 @@ const {
 } = Astro.props;
 ---
 
-<section class="newsletter" aria-labelledby="newsletter-heading">
+<section class="section section--plain newsletter" aria-labelledby="newsletter-heading">
 	<div class="container">
 		<div class="newsletter-panel newsletter-inner">
 			<div class="newsletter-copy">
@@ -29,8 +29,8 @@ const {
 <style>
 	/* A framed linen panel inside the page width (not a full-bleed band), so
 	   it stands out by shape and sits cleanly above the footer too. */
+	/* Spacing comes from .section / .section--plain (theme.css). */
 	.newsletter {
-		padding-block: var(--space-xl);
 		color: var(--color-olive);
 	}
 

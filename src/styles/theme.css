@@ -245,6 +245,13 @@ hr {
 	padding-block: var(--space-2xl);
 }
 
+/* Plain sections (no background of their own) in a row share one gap
+   instead of stacking two paddings, so every gap between blocks is the same
+   --space-2xl, whether it's to the next plain section or to a coloured band. */
+.section--plain + .section--plain {
+	padding-top: 0;
+}
+
 .stack > * + * {
 	margin-top: var(--space-md);
 }
