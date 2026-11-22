@@ -128,22 +128,22 @@ const Heading = headingLevel;
 		color: var(--color-moss);
 	}
 
-	/* Short description: muted, cut off after 3 lines (2 in the narrow
-	   two-up tiles on phones). */
+	/* Short description, shown in full: the field is capped at 160
+	   characters, so it's at most ~5 lines in a normal tile, and tiles in a
+	   row share a height anyway. Only the narrow two-up tiles on phones
+	   (where 160 characters would be ~9 lines) cut it off, after 3 lines. */
 	.tile-summary {
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
 		margin: var(--space-2xs) 0 0;
 		color: var(--color-muted);
 	}
 
 	@container (max-width: 14rem) {
 		.tile-summary {
-			-webkit-line-clamp: 2;
-			line-clamp: 2;
+			display: -webkit-box;
+			-webkit-line-clamp: 3;
+			line-clamp: 3;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
 			font-size: var(--text-sm);
 		}
 	}
@@ -172,11 +172,6 @@ const Heading = headingLevel;
 		.content-tile--adaptive .tile-body {
 			justify-content: center;
 			padding: var(--space-md) var(--space-lg);
-		}
-
-		.content-tile--adaptive .tile-summary {
-			-webkit-line-clamp: 5;
-			line-clamp: 5;
 		}
 	}
 
