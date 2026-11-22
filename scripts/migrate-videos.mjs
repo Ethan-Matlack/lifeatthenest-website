@@ -7,7 +7,7 @@
  *
  *   node scripts/migrate-videos.mjs                       # local dev site, dry run
  *   node scripts/migrate-videos.mjs --apply               # local, do it
- *   EMDASH_TOKEN=... node scripts/migrate-videos.mjs --url https://lifeatthenest.ethan-5da.workers.dev --apply
+ *   EMDASH_TOKEN=... node scripts/migrate-videos.mjs --url https://lifeatthenest.com --apply
  *
  * Steps, per collection (each is skipped if already done, so re-running is safe):
  *   1. Add the `videos` repeater right where `video_url` sits, or, if it

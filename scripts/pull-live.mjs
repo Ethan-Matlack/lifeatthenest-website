@@ -28,7 +28,7 @@ import { existsSync, mkdirSync, renameSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline";
 
-const LIVE_URL = "https://lifeatthenest.ethan-5da.workers.dev";
+const LIVE_URL = "https://lifeatthenest.com";
 const ROOT = resolve(import.meta.dirname, "..");
 const SYNC_DIR = resolve(ROOT, ".local-sync");
 const STATE_DIR = resolve(ROOT, ".wrangler/state");
