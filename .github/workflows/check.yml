@@ -3,10 +3,10 @@
 # On a push to dev, once that passes, it also deploys the dev branch to
 # staging.lifeatthenest.com and runs Lighthouse against it.
 # Production deploys stay with Cloudflare Workers Builds (main only).
-# "Test & build" is the required status check on main (branch rule), so
+# "Test & Build" is the required status check on main (branch rule), so
 # renaming that job means updating the rule. lighthouse.yml finds runs of
 # this workflow by its file name, check.yml, so keep the file name too.
-name: CI and staging
+name: CI and Staging
 
 on:
   pull_request:
