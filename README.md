@@ -266,7 +266,7 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 
 **Staging** (staging.lifeatthenest.com) is the `dev` branch running against the **live** database and media, so design and code changes can be seen with real content before they reach `main`.
 
-- **Deployed by GitHub Actions** (the "CI and staging" workflow, `.github/workflows/check.yml`): every push to `dev` runs the `check` job, then, if it passes, builds with `CLOUDFLARE_ENV=staging` and deploys the `lifeatthenest-staging` Worker (`env.staging` in `wrangler.jsonc`). Cloudflare's own builds still only deploy `main`.
+- **Deployed by GitHub Actions** (the "CI and staging" workflow, `.github/workflows/check.yml`): every push to `dev` runs the "Test & build" job, then, if it passes, builds with `CLOUDFLARE_ENV=staging` and deploys the `lifeatthenest-staging` Worker (`env.staging` in `wrangler.jsonc`). Cloudflare's own builds still only deploy `main`.
 - **Read-only.** `src/worker.ts` + `src/utils/staging.ts` run before anything else when `SITE_ENV=staging`: the admin redirects to the live admin, sign-in/setup and every non-GET request get 403, and every response is `noindex`. Edit content on the live site; staging shows it immediately.
 - **Never migrates the live database** (`EMDASH_MIGRATIONS_MODE=check`). If `dev` includes an EmDash upgrade with migrations, staging answers 503 until production is deployed and migrated. Expected; it comes back after the `main` deploy.
 - **No cron** (production already runs scheduled publishing).
