@@ -1,0 +1,40 @@
+# Dependabot version updates: weekly pull requests to keep dependencies current.
+# Security-fix pull requests are separate (enable "Dependabot security updates"
+# in repo Settings) and always target the default branch (main).
+# Every pull request is checked by .github/workflows/check.yml.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+    groups:
+      # EmDash is built on Astro, so these move together.
+      emdash-astro:
+        patterns: ["emdash", "@emdash-cms/*", "astro", "@astrojs/*"]
+        update-types: [minor, patch]
+      # wrangler and workers-types publish almost daily; one PR a week.
+      cloudflare:
+        patterns: ["wrangler", "@cloudflare/*"]
+        update-types: [minor, patch]
+      react:
+        patterns: ["react", "react-dom"]
+        update-types: [minor, patch]
+    # Major versions aren't grouped: each arrives as its own PR to review.
+
+  # Keeps the actions used in .github/workflows up to date.
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns: ["*"]
