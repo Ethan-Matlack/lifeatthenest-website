@@ -47,5 +47,52 @@
       "enabled": false,
       "invocation_logs": true
     }
-  }
+  },
+	// Staging: the `dev` branch on staging.lifeatthenest.com, reading the LIVE
+	// database and media. Deployed by .github/workflows/check.yml on every push
+	// to dev, built with CLOUDFLARE_ENV=staging (the Cloudflare Vite plugin picks
+	// the environment at build time, not via `wrangler deploy --env`).
+	// Read-only: src/worker.ts refuses the admin, sign-in, and any write request
+	// when SITE_ENV is "staging". Bindings and vars aren't inherited from the
+	// top level, so they're repeated here.
+	"env": {
+		"staging": {
+			"name": "lifeatthenest-staging",
+			"routes": [{ "pattern": "staging.lifeatthenest.com", "custom_domain": true }],
+			"workers_dev": false,
+			"preview_urls": false,
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "lifeatthenest-db",
+					// Fine here (unlike above): local dev never uses this environment.
+					"database_id": "6a4529a3-33d1-4ac8-9167-8b7d7d1df823",
+				},
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "lifeatthenest-media",
+				},
+			],
+			"kv_namespaces": [
+				{
+					"binding": "SESSION",
+					"id": "9906a222ff754af6a75f2e9ea67db62e",
+				},
+			],
+			"vars": {
+				"KIT_FORM_ID": "10233970",
+				"TURNSTILE_SITE_KEY": "0x4AAAAAAGK62fQc9mpsoW-Z",
+				"SITE_ENV": "staging",
+				// Never migrate the live database from staging: answer 503 instead
+				// while production hasn't applied this build's migrations yet.
+				"EMDASH_MIGRATIONS_MODE": "check",
+			},
+			// No cron: production already runs scheduled publishing every minute.
+			"triggers": {
+				"crons": [],
+			},
+		},
+	},
 }

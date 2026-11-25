@@ -3,8 +3,14 @@
 Website for **Life at the Nest** (by Audra Chalfant Matlack): a blog, scalable and printable recipes, an affiliate shop, and a few static pages. Built on [EmDash](https://docs.emdashcms.com/) (an Astro-based CMS) and running on Cloudflare Workers.
 
 - **Live :** lifeatthenest.com
+- **Staging:** staging.lifeatthenest.com (the `dev` branch with live content, read-only; see [Staging and Lighthouse](#staging-and-lighthouse))
 - **Admin:** `/_emdash/admin`
 - **Repo:** `main` deploys to production automatically; day-to-day work happens on `dev`.
+
+[![Performance](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/GIST_ID/raw/lighthouse-performance.json)](https://github.com/Ethan-Matlack/lifeatthenest-website/actions/workflows/lighthouse-production.yml)
+[![Accessibility](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/GIST_ID/raw/lighthouse-accessibility.json)](https://github.com/Ethan-Matlack/lifeatthenest-website/actions/workflows/lighthouse-production.yml)
+[![Best Practices](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/GIST_ID/raw/lighthouse-best-practices.json)](https://github.com/Ethan-Matlack/lifeatthenest-website/actions/workflows/lighthouse-production.yml)
+[![SEO](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/GIST_ID/raw/lighthouse-seo.json)](https://github.com/Ethan-Matlack/lifeatthenest-website/actions/workflows/lighthouse-production.yml)
 
 Agent and contributor notes live in [`AGENTS.md`](AGENTS.md) and `.agents/skills/` (EmDash site, plugin, and CLI guides).
 
@@ -218,7 +224,7 @@ Merging to **`main`** triggers Cloudflare Workers Builds:
 |---|---|
 | Build command | `npm run build` |
 | Deploy command | `npm run deploy:ci`: `scripts/deploy-ci.mjs` |
-| Non-production branch builds | **Off** (preview command is a guard that exits with an error until a staging database exists) |
+| Non-production branch builds | **Off** (preview command is a guard that exits with an error until a staging database exists). Staging is deployed by GitHub Actions instead; see [Staging and Lighthouse](#staging-and-lighthouse). |
 | Build variables | `EMDASH_MIGRATE_TOKEN` (secret, D1 Edit token), `EMDASH_TARGET_FINGERPRINT` (from `emdash migrate --status`) |
 
 `deploy-ci.mjs` does:
@@ -253,6 +259,25 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
   - WebP is sent to browsers that accept it; opening an image URL directly in the address bar returns JPEG, which is expected.
   - **After "Replace original" (crop)**, the old version can show for up to ~4 hours. To clear it right away: dashboard → Caching → Configuration → Purge Everything.
   - The free plan covers 5,000 unique transformations a month (each photo × each width counts once); past that, new sizes fall back to originals. Check Images → Transformations now and then.
+
+---
+
+## Staging and Lighthouse
+
+**Staging** (staging.lifeatthenest.com) is the `dev` branch running against the **live** database and media, so design and code changes can be seen with real content before they reach `main`.
+
+- **Deployed by GitHub Actions** (the "CI and staging" workflow, `.github/workflows/check.yml`): every push to `dev` runs the `check` job, then, if it passes, builds with `CLOUDFLARE_ENV=staging` and deploys the `lifeatthenest-staging` Worker (`env.staging` in `wrangler.jsonc`). Cloudflare's own builds still only deploy `main`.
+- **Read-only.** `src/worker.ts` + `src/utils/staging.ts` run before anything else when `SITE_ENV=staging`: the admin redirects to the live admin, sign-in/setup and every non-GET request get 403, and every response is `noindex`. Edit content on the live site; staging shows it immediately.
+- **Never migrates the live database** (`EMDASH_MIGRATIONS_MODE=check`). If `dev` includes an EmDash upgrade with migrations, staging answers 503 until production is deployed and migrated. Expected; it comes back after the `main` deploy.
+- **No cron** (production already runs scheduled publishing).
+
+**Lighthouse** runs after each staging deploy, and when a `dev` → `main` PR is opened, on `/`, `/posts`, `/shop`, and `/recipes/homemade-granola` (mobile, median of 3 runs). Results go to the run summary and to one sticky comment on the open `dev` → `main` PR. After each production deploy, `.github/workflows/lighthouse-production.yml` audits the live homepage and updates the README badges. Report formatting: `.github/lighthouse/report.mjs`; badges: `.github/lighthouse/badges.mjs`.
+
+### One-time setup
+
+1. **Cloudflare deploy token.** Cloudflare → My Profile → API Tokens → Create Token → template **Edit Cloudflare Workers**; limit Account Resources to this account and Zone Resources to `lifeatthenest.com`. Save it in GitHub → Settings → Secrets and variables → Actions as the secret **`CLOUDFLARE_API_TOKEN`**. (Until it exists, "Deploy staging" skips itself with a warning.) The first deploy creates the `staging.lifeatthenest.com` DNS record. If it fails on permissions, Wrangler names the missing one.
+2. **Turnstile.** Add `staging.lifeatthenest.com` to the Turnstile widget's hostnames, so the comment form's widget loads there without console errors (which would cost Best Practices points). Comments still can't be posted from staging.
+3. **Badges (optional).** Create a public Gist at gist.github.com with any placeholder file. Create a token that can write gists (classic token with the `gist` scope, or fine-grained with Gists: read and write) and save it as the secret **`LIGHTHOUSE_GIST_TOKEN`**; save the Gist's ID (the last part of its URL) as the Actions **variable** **`LIGHTHOUSE_GIST_ID`**. Then uncomment the badges at the top of this README and replace `GIST_ID`.
 
 ---
 

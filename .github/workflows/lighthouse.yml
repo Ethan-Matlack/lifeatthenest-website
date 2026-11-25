@@ -1,0 +1,110 @@
+# Lighthouse on staging (the dev branch on staging.lifeatthenest.com).
+#
+# Runs:
+#  - after every staging deploy (called by check.yml on a push to dev), and
+#  - when a dev -> main PR is opened or reopened, so a new PR gets a report
+#    without waiting for the next push.
+# Results go to the run's summary and, if a dev -> main PR is open, to one
+# sticky comment on it that's updated in place.
+#
+# Opening a PR right after pushing is the common case: the push's own
+# "CI and staging" run is still deploying, and its Lighthouse job will
+# comment on the PR when it finishes. So the PR-triggered run steps aside
+# while that push run is in progress, and only audits when it's done (or
+# missing). Runs queue rather than cancel each other.
+name: Lighthouse (staging)
+
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  actions: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse (staging)
+    # Staging only ever shows dev, so other PRs into main are skipped.
+    if: github.event_name != 'pull_request' || github.head_ref == 'dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: lighthouse-staging
+      cancel-in-progress: false
+    steps:
+      # PR opened: is the push run for this commit still deploying? Then
+      # it will audit and comment itself; don't duplicate it.
+      - name: Check whether a staging deploy is in progress
+        id: decide
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha;
+            const short = sha.slice(0, 7);
+            const { data } = await github.rest.actions.listWorkflowRuns({
+              ...context.repo, workflow_id: "check.yml", head_sha: sha, event: "push",
+            });
+            const run = data.workflow_runs[0];
+            if (run && run.status !== "completed") {
+              core.notice(`"CI and staging" #${run.run_number} is still deploying ${short} to staging; its Lighthouse job will comment on this PR.`);
+              return core.setOutput("audit", "false");
+            }
+            if (!run) core.warning(`No "CI and staging" push run found for ${short}; auditing whatever staging has now.`);
+            else if (run.conclusion !== "success") core.warning(`"CI and staging" for ${short} ended "${run.conclusion}"; auditing whatever staging has now.`);
+            core.setOutput("audit", "true");
+
+      - uses: actions/checkout@v7
+        if: steps.decide.outputs.audit != 'false'
+
+      # Median of 3 runs per page: single runs swing several points.
+      # lighthouserc.staging.json skips "is-crawlable" (staging is noindex).
+      - name: Run Lighthouse
+        id: lighthouse
+        if: steps.decide.outputs.audit != 'false'
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://staging.lifeatthenest.com/
+            https://staging.lifeatthenest.com/posts
+            https://staging.lifeatthenest.com/shop
+            https://staging.lifeatthenest.com/recipes/homemade-granola
+          runs: 3
+          configPath: ./.github/lighthouse/lighthouserc.staging.json
+          uploadArtifacts: false
+          temporaryPublicStorage: true
+
+      - name: Write the report
+        if: steps.decide.outputs.audit != 'false'
+        env:
+          LIGHTHOUSE_LINKS: ${{ steps.lighthouse.outputs.links }}
+          RESULTS: ${{ steps.lighthouse.outputs.resultsPath }}
+        run: |
+          node .github/lighthouse/report.mjs "$RESULTS" "🔦 Lighthouse report (staging)" > "$RUNNER_TEMP/lighthouse.md"
+          cat "$RUNNER_TEMP/lighthouse.md" >> "$GITHUB_STEP_SUMMARY"
+
+      # Looked up at the end, not the start, so a PR opened while the audit
+      # was running still gets the comment.
+      - name: Find the open dev → main PR
+        id: pr
+        if: steps.decide.outputs.audit != 'false'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            if (context.payload.pull_request) return core.setOutput("number", String(context.payload.pull_request.number));
+            const { data } = await github.rest.pulls.list({
+              ...context.repo, state: "open", base: "main", head: `${context.repo.owner}:dev`,
+            });
+            core.setOutput("number", data[0] ? String(data[0].number) : "");
+
+      - name: Update the PR comment
+        if: steps.decide.outputs.audit != 'false' && steps.pr.outputs.number != ''
+        uses: marocchino/sticky-pull-request-comment@v3
+        with:
+          header: lighthouse
+          number: ${{ steps.pr.outputs.number }}
+          path: ${{ runner.temp }}/lighthouse.md
