@@ -4,7 +4,7 @@
  * has to paste a link into the "social" menu in the admin.
  * Icon paths live in ../utils/brand-icons.ts (shared with VideoCard).
  */
-import { BRAND_ICONS, FALLBACK_ICON } from "../utils/brand-icons";
+import { BRAND_ICONS, FALLBACK_ICON, detectBrand } from "../utils/brand-icons";
 interface Props {
 	url: string;
 	size?: number;
@@ -12,22 +12,7 @@ interface Props {
 
 const { url, size = 22 } = Astro.props;
 
-function detect(href: string): string | null {
-	let host = "";
-	try {
-		host = new URL(href).hostname.replace(/^www\./, "");
-	} catch {
-		return null;
-	}
-	if (host.endsWith("facebook.com") || host === "fb.com") return "facebook";
-	if (host.endsWith("instagram.com")) return "instagram";
-	if (host.endsWith("tiktok.com")) return "tiktok";
-	if (host.endsWith("youtube.com") || host === "youtu.be") return "youtube";
-	if (host.includes("pinterest.") || host === "pin.it") return "pinterest";
-	return null;
-}
-
-const key = detect(url);
+const key = detectBrand(url);
 const d = (key && BRAND_ICONS[key]) || FALLBACK_ICON;
 ---
 
