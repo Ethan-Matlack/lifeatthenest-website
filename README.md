@@ -7,12 +7,12 @@ Website for **Life at the Nest** (by Audra Chalfant Matlack): a blog, scalable a
 - **Admin:** `/_emdash/admin`
 - **Repo:** `main` deploys to production automatically; day-to-day work happens on `dev`.
 
+Agent and contributor notes live in [`AGENTS.md`](AGENTS.md) and `.agents/skills/` (EmDash site, plugin, and CLI guides).
+
 ![Performance](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/e40c170c440afc8429f34992e70ca70a/raw/lighthouse-performance.json)
 ![Accessibility](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/e40c170c440afc8429f34992e70ca70a/raw/lighthouse-accessibility.json)
 ![Best Practices](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/e40c170c440afc8429f34992e70ca70a/raw/lighthouse-best-practices.json)
 ![SEO](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Ethan-Matlack/e40c170c440afc8429f34992e70ca70a/raw/lighthouse-seo.json)
-
-Agent and contributor notes live in [`AGENTS.md`](AGENTS.md) and `.agents/skills/` (EmDash site, plugin, and CLI guides).
 
 ---
 
