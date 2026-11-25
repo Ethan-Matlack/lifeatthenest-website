@@ -6,6 +6,7 @@
  * the full list, so the row stays balanced.
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 
 interface NavEntry {
 	href: string;
@@ -31,7 +32,7 @@ const { previous, next, label = "More posts", allHref = "/posts", allLabel = "Br
 			{previous ? (
 				<a class="post-nav-link post-nav-link--prev" href={previous.href} rel="prev">
 					{previous.image ? (
-						<Image image={previous.image} alt="" class="post-nav-thumb" sizes="5rem" />
+						<Image image={previous.image} alt="" class="post-nav-thumb" {...slotProps(previous.image, SLOTS.postNavThumb)} />
 					) : (
 						<span class="post-nav-thumb photo-placeholder" aria-hidden="true" />
 					)}
@@ -65,7 +66,7 @@ const { previous, next, label = "More posts", allHref = "/posts", allLabel = "Br
 						<span class="post-nav-title">{next.title}</span>
 					</span>
 					{next.image ? (
-						<Image image={next.image} alt="" class="post-nav-thumb" sizes="5rem" />
+						<Image image={next.image} alt="" class="post-nav-thumb" {...slotProps(next.image, SLOTS.postNavThumb)} />
 					) : (
 						<span class="post-nav-thumb photo-placeholder" aria-hidden="true" />
 					)}

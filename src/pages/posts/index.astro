@@ -176,8 +176,8 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 	{
 		posts.length > 0 ? (
 			<div class="card-grid post-grid" id="post-grid">
-				{posts.map((post) => (
-					<PostTile post={post} headingLevel="h2" />
+				{posts.map((post, i) => (
+					<PostTile post={post} headingLevel="h2" priority={i === 0} />
 				))}
 			</div>
 		) : (

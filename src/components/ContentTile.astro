@@ -5,6 +5,7 @@
  * Presentational only: callers supply the link, image, and text.
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps, type Slot } from "../utils/image-slots";
 
 type ImageValue = Parameters<typeof Image>[0]["image"];
 
@@ -24,6 +25,8 @@ interface Props {
 	/** Switch to photo-beside-text when the tile is at least ~30rem wide
 	 *  (used by the seasonal mosaic; off elsewhere). */
 	adaptive?: boolean;
+	/** Image shape, size, and `sizes` for where the tile sits (src/utils/image-slots.ts). */
+	imageSlot?: Slot;
 }
 
 const {
@@ -37,6 +40,7 @@ const {
 	priority = false,
 	class: className,
 	adaptive = false,
+	imageSlot = SLOTS.postTile,
 } = Astro.props;
 const Heading = headingLevel;
 ---
@@ -46,7 +50,7 @@ const Heading = headingLevel;
 		<div class="tile-media">
 			{
 				image ? (
-					<Image image={image} alt="" sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw" priority={priority} />
+					<Image image={image} alt="" {...slotProps(image, imageSlot)} priority={priority} />
 				) : (
 					<div class="photo-placeholder" aria-hidden="true" />
 				)

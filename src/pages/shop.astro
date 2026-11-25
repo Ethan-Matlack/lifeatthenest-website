@@ -20,7 +20,8 @@ import SocialIcon from "../components/SocialIcon.astro";
 import { detectBrand } from "../utils/brand-icons";
 
 const BASE = "/shop";
-const PAGE_SIZE = 24;
+// 12 fills whole rows on phones and tablets (2-4 columns); fewer images up front.
+const PAGE_SIZE = 12;
 const SEARCH_LIMIT = 60;
 
 const params = Astro.url.searchParams;
