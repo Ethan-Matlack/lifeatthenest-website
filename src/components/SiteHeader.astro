@@ -46,7 +46,6 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 			type="button"
 			aria-expanded="false"
 			aria-controls="site-menu"
-			hidden
 		>
 			<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
 				<path class="icon-open" d="M3 6h18M3 12h18M3 18h18" />
@@ -88,11 +87,12 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 
 <script>
 	// Progressive enhancement: without JS the menu is simply always visible.
+	// The collapsed layout and the Menu button come from the `js` class on
+	// <html> (set inline in Base.astro before first paint), not from here,
+	// so the header doesn't jump when this bundled script runs later.
 	const header = document.querySelector<HTMLElement>(".site-header");
 	const toggle = header?.querySelector<HTMLButtonElement>(".nav-toggle");
 	if (header && toggle) {
-		header.classList.add("has-js");
-		toggle.hidden = false;
 		const setOpen = (open: boolean) => {
 			toggle.setAttribute("aria-expanded", String(open));
 			header.classList.toggle("is-open", open);
@@ -156,8 +156,9 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 		color: var(--color-moss);
 	}
 
+	/* Hidden without JS (the menu is simply always shown then). */
 	.nav-toggle {
-		display: inline-flex;
+		display: none;
 		align-items: center;
 		gap: var(--space-2xs);
 		min-height: 2.75rem;
@@ -171,8 +172,8 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 		cursor: pointer;
 	}
 
-	.nav-toggle[hidden] {
-		display: none;
+	:global(html.js) .nav-toggle {
+		display: inline-flex;
 	}
 
 	.nav-toggle svg {
@@ -200,11 +201,11 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 		padding-bottom: var(--space-sm);
 	}
 
-	.has-js .header-menu {
+	:global(html.js) .header-menu {
 		display: none;
 	}
 
-	.has-js.is-open .header-menu {
+	:global(html.js) .site-header.is-open .header-menu {
 		display: flex;
 	}
 
@@ -260,13 +261,12 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 			padding-block: var(--space-sm);
 		}
 
-		.nav-toggle,
-		.nav-toggle:not([hidden]) {
+		:global(html.js) .nav-toggle {
 			display: none;
 		}
 
 		.header-menu,
-		.has-js .header-menu {
+		:global(html.js) .header-menu {
 			flex: 1 1 auto;
 			justify-content: flex-end;
 			min-width: 0;
@@ -333,7 +333,7 @@ const logoSrc = logo?.url ?? "/images/logo.svg";
 		}
 
 		.header-menu,
-		.has-js .header-menu {
+		:global(html.js) .header-menu {
 			gap: var(--space-sm);
 		}
 

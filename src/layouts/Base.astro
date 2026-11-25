@@ -78,6 +78,10 @@ const pageCtx = createPublicPageContext({
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Marks "JavaScript runs" before the first paint, so script-enhanced
+		     layouts (collapsed mobile menu, filter panel) are right from the
+		     first frame instead of jumping when the bundled scripts load. -->
+		<script is:inline>document.documentElement.classList.add("js");</script>
 		<meta name="theme-color" content="#fefcf8" />
 		<title>{fullTitle}</title>
 		<Font cssVariable="--font-display" preload />
