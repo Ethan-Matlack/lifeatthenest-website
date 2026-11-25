@@ -1,0 +1,75 @@
+# Lighthouse on the live site after each production deploy, feeding the
+# README badges. Runs on every push to main (a PR merge or a direct push) once
+# Cloudflare's "Workers Builds" deploy has finished, and on demand.
+#
+# Scores are written to a GitHub Gist (see .github/lighthouse/badges.mjs and
+# README > Lighthouse), never committed here, so updating the badges can't
+# trigger another workflow run. Without the Gist secret/variable it still
+# runs and reports to the summary, it just skips the badge update.
+name: Lighthouse (production)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: read
+
+concurrency:
+  group: lighthouse-production
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse (production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      # Cloudflare deploys main on its own; audit only after that finishes.
+      - name: Wait for the production deploy
+        if: github.event_name == 'push'
+        id: wait
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const checkName = "Workers Builds: lifeatthenest";
+            const deadline = Date.now() + 15 * 60 * 1000;
+            while (Date.now() < deadline) {
+              const { data } = await github.rest.checks.listForRef({
+                ...context.repo, ref: context.sha, check_name: checkName,
+              });
+              const run = data.check_runs[0];
+              if (run?.status === "completed") {
+                if (run.conclusion !== "success") core.setFailed(`"${checkName}" ended "${run.conclusion}"; not auditing.`);
+                return;
+              }
+              await new Promise((r) => setTimeout(r, 15000));
+            }
+            core.setFailed(`Timed out waiting for "${checkName}".`);
+
+      # The real domain, so every audit runs (including is-crawlable).
+      - name: Run Lighthouse
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: https://lifeatthenest.com/
+          runs: 3
+          uploadArtifacts: false
+          temporaryPublicStorage: true
+
+      - name: Write the report
+        env:
+          LIGHTHOUSE_LINKS: ${{ steps.lighthouse.outputs.links }}
+          RESULTS: ${{ steps.lighthouse.outputs.resultsPath }}
+        run: node .github/lighthouse/report.mjs "$RESULTS" "🔦 Lighthouse report (production)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Update the badges
+        env:
+          LIGHTHOUSE_GIST_TOKEN: ${{ secrets.LIGHTHOUSE_GIST_TOKEN }}
+          LIGHTHOUSE_GIST_ID: ${{ vars.LIGHTHOUSE_GIST_ID }}
+          RESULTS: ${{ steps.lighthouse.outputs.resultsPath }}
+        run: node .github/lighthouse/badges.mjs "$RESULTS"

@@ -1,7 +1,8 @@
 # Checks every pull request (including Dependabot's) before it's merged:
 # types, unit tests, a production build, and packaging the Worker.
-# Needs no secrets and deploys nothing; production deploys stay with
-# Cloudflare Workers Builds.
+# On a push to dev, once that passes, it also deploys the dev branch to
+# staging.lifeatthenest.com and runs Lighthouse against it.
+# Production deploys stay with Cloudflare Workers Builds (main only).
 name: Check
 
 on:
@@ -51,3 +52,65 @@ jobs:
       # anything or needing Cloudflare credentials.
       - name: Package Worker (dry run)
         run: npx wrangler deploy --dry-run --outdir "$RUNNER_TEMP/worker"
+
+  # The dev branch on staging.lifeatthenest.com, reading the live database
+  # (read-only; see src/utils/staging.ts and wrangler.jsonc env.staging).
+  # Needs the CLOUDFLARE_API_TOKEN secret; until it's set this job skips
+  # itself with a warning instead of failing.
+  deploy-staging:
+    name: Deploy staging
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: staging
+      url: https://staging.lifeatthenest.com
+    outputs:
+      deployed: ${{ steps.deploy.outcome == 'success' }}
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: 5dae3c6cfd1e52fbd1cc35ceaba70321
+    steps:
+      - name: Check for the deploy token
+        id: token
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ]; then echo "ok=true" >> "$GITHUB_OUTPUT"
+          else echo "::warning::CLOUDFLARE_API_TOKEN isn't set, so staging wasn't deployed. See README > Staging."; fi
+
+      - uses: actions/checkout@v7
+        if: steps.token.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v7
+        if: steps.token.outputs.ok == 'true'
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install
+        if: steps.token.outputs.ok == 'true'
+        run: npm ci
+
+      # The Cloudflare Vite plugin picks the Wrangler environment at build
+      # time; `wrangler deploy` then deploys what was built.
+      - name: Build for staging
+        if: steps.token.outputs.ok == 'true'
+        run: npm run build
+        env:
+          CLOUDFLARE_ENV: staging
+          EMDASH_MIGRATIONS_MODE: check
+
+      - name: Deploy
+        id: deploy
+        if: steps.token.outputs.ok == 'true'
+        run: npx wrangler deploy
+
+  lighthouse:
+    name: Lighthouse
+    needs: deploy-staging
+    if: needs.deploy-staging.outputs.deployed == 'true'
+    uses: ./.github/workflows/lighthouse.yml
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: read

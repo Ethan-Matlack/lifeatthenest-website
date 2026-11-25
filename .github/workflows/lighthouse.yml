@@ -1,0 +1,106 @@
+# Lighthouse on staging (the dev branch on staging.lifeatthenest.com).
+#
+# Runs:
+#  - after every staging deploy (called by check.yml on a push to dev), and
+#  - when a dev -> main PR is opened or reopened, so a new PR gets a report
+#    without waiting for the next push.
+# Results go to the run's summary and, if a dev -> main PR is open, to one
+# sticky comment on it that's updated in place.
+#
+# Staging is deployed by this repo's own workflow (not Cloudflare's preview
+# builds), so after a deploy there's nothing to wait for. Only the
+# "PR opened" path checks that staging already has the PR's commit.
+name: Lighthouse (staging)
+
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: read
+
+jobs:
+  lighthouse:
+    name: Lighthouse (staging)
+    # Staging only ever shows dev, so other PRs into main are skipped.
+    if: github.event_name != 'pull_request' || github.head_ref == 'dev'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    concurrency:
+      group: lighthouse-staging
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+
+      # Opening a PR right after pushing to dev can beat the staging deploy.
+      # Wait (up to 10 min) for "Deploy staging" on the PR's head commit.
+      - name: Wait for staging to have this commit
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const sha = context.payload.pull_request.head.sha;
+            const deadline = Date.now() + 10 * 60 * 1000;
+            while (Date.now() < deadline) {
+              const { data } = await github.rest.checks.listForRef({
+                ...context.repo, ref: sha, check_name: "Deploy staging",
+              });
+              const run = data.check_runs[0];
+              if (run?.status === "completed") {
+                if (run.conclusion !== "success") core.warning(`Staging deploy for ${sha.slice(0, 7)} ended "${run.conclusion}"; auditing whatever staging has now.`);
+                return;
+              }
+              if (!run && Date.now() > deadline - 9 * 60 * 1000) {
+                core.warning(`No staging deploy found for ${sha.slice(0, 7)}; auditing whatever staging has now.`);
+                return;
+              }
+              await new Promise((r) => setTimeout(r, 15000));
+            }
+            core.warning("Timed out waiting for the staging deploy; auditing whatever staging has now.");
+
+      - name: Find the open dev → main PR
+        id: pr
+        uses: actions/github-script@v9
+        with:
+          script: |
+            if (context.payload.pull_request) return core.setOutput("number", String(context.payload.pull_request.number));
+            const { data } = await github.rest.pulls.list({
+              ...context.repo, state: "open", base: "main", head: `${context.repo.owner}:dev`,
+            });
+            core.setOutput("number", data[0] ? String(data[0].number) : "");
+
+      # Median of 3 runs per page: single runs swing several points.
+      # lighthouserc.staging.json skips "is-crawlable" (staging is noindex).
+      - name: Run Lighthouse
+        id: lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: |
+            https://staging.lifeatthenest.com/
+            https://staging.lifeatthenest.com/posts
+            https://staging.lifeatthenest.com/shop
+            https://staging.lifeatthenest.com/recipes/homemade-granola
+          runs: 3
+          configPath: ./.github/lighthouse/lighthouserc.staging.json
+          uploadArtifacts: false
+          temporaryPublicStorage: true
+
+      - name: Write the report
+        env:
+          LIGHTHOUSE_LINKS: ${{ steps.lighthouse.outputs.links }}
+          RESULTS: ${{ steps.lighthouse.outputs.resultsPath }}
+        run: |
+          node .github/lighthouse/report.mjs "$RESULTS" "🔦 Lighthouse report (staging)" > "$RUNNER_TEMP/lighthouse.md"
+          cat "$RUNNER_TEMP/lighthouse.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Update the PR comment
+        if: steps.pr.outputs.number != ''
+        uses: marocchino/sticky-pull-request-comment@v3
+        with:
+          header: lighthouse
+          number: ${{ steps.pr.outputs.number }}
+          path: ${{ runner.temp }}/lighthouse.md

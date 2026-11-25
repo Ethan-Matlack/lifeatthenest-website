@@ -14,7 +14,12 @@ import { recipeEditorPlugin } from "./src/plugins/recipe-editor/descriptor.mjs";
 // only when it knows the site URL at build time, which we don't set. Without
 // this, production serves full-size originals. Add any new domain here
 // (it must be a Cloudflare zone with Image Transformations enabled).
-const SITE_HOSTS = ["lifeatthenest.ethan-5da.workers.dev", "lifeatthenest.com", "www.lifeatthenest.com"];
+const SITE_HOSTS = [
+	"lifeatthenest.ethan-5da.workers.dev",
+	"lifeatthenest.com",
+	"www.lifeatthenest.com",
+	"staging.lifeatthenest.com", // the dev branch (wrangler.jsonc env.staging)
+];
 
 export default defineConfig({
 	output: "server",
