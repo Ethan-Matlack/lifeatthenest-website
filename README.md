@@ -271,7 +271,7 @@ EMDASH_MIGRATE_TOKEN=... npm run deploy:check   # reports pending migrations + w
 - **Never migrates the live database** (`EMDASH_MIGRATIONS_MODE=check`). If `dev` includes an EmDash upgrade with migrations, staging answers 503 until production is deployed and migrated. Expected; it comes back after the `main` deploy.
 - **No cron** (production already runs scheduled publishing).
 
-**Lighthouse** runs after each staging deploy, and when a `dev` → `main` PR is opened, on `/`, `/posts`, `/shop`, and `/recipes/homemade-granola` (mobile, median of 3 runs). Results go to the run summary and to one sticky comment on the open `dev` → `main` PR. After each production deploy, `.github/workflows/lighthouse-production.yml` audits the live homepage and updates the README badges. Report formatting: `.github/lighthouse/report.mjs`; badges: `.github/lighthouse/badges.mjs`.
+**Lighthouse** runs after each staging deploy, and when a `dev` → `main` PR is opened, on `/`, `/posts`, `/shop`, and `/recipes/homemade-granola` (mobile, median of 2 runs). Results go to the run summary and to one sticky comment on the open `dev` → `main` PR. After each production deploy, `.github/workflows/lighthouse-production.yml` audits the live homepage and updates the README badges. Report formatting: `.github/lighthouse/report.mjs`; badges: `.github/lighthouse/badges.mjs`.
 
 ### One-time setup
 
