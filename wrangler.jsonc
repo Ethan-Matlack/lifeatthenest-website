@@ -32,7 +32,7 @@
 	// plain variables set in the dashboard. Secrets (KIT_API_KEY,
 	// TURNSTILE_SECRET_KEY) are set in the dashboard only. See README > Newsletter.
 	"vars": {
-		"KIT_FORM_ID": "10220575",
+		"KIT_FORM_ID": "10233970",
 		"TURNSTILE_SITE_KEY": "0x4AAAAAAGK62fQc9mpsoW-Z",
 	},
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:

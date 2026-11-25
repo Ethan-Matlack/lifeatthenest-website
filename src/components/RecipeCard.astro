@@ -440,8 +440,44 @@ const multipliers = [
 			pointer-events: auto;
 			display: block;
 			flex: none;
-			width: 1.75in;
+			width: 3.5in;
 			height: auto;
+		}
+
+		/* Title and logo side by side (the title wraps before the logo with
+		   clear space), then the summary below at full width so it takes
+		   fewer lines. No "Recipe" eyebrow: on paper it's self-evident. */
+		.rc-head {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr) auto;
+			grid-template-areas:
+				"title   logo"
+				"summary summary";
+			gap: 0 0.45in;
+		}
+
+		.rc-titles {
+			display: contents;
+		}
+
+		.rc-titles .eyebrow {
+			display: none;
+		}
+
+		.rc-head h2 {
+			grid-area: title;
+			align-self: center;
+			margin: 0;
+		}
+
+		.rc-print-logo {
+			grid-area: logo;
+			align-self: center;
+		}
+
+		.rc-summary {
+			grid-area: summary;
+			margin-top: 12pt;
 		}
 	}
 

@@ -928,6 +928,11 @@
 					"type": "custom",
 					"label": "YouTube",
 					"url": "https://www.youtube.com/@LifeAtTheNest"
+				},
+				{
+					"type": "custom",
+					"label": "Amazon storefront",
+					"url": "https://www.amazon.com/shop/audrachalfantmatlack"
 				}
 			]
 		}

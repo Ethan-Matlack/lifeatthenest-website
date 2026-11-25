@@ -29,6 +29,14 @@
 	--color-accent-contrast: var(--color-cream);
 	--color-focus: var(--color-olive);
 
+	/* Footer (dark band): everything derives from the brand colours above. */
+	--color-footer-bg: var(--color-olive);
+	--color-footer-text: var(--color-cream);
+	--color-footer-muted: color-mix(in srgb, var(--color-cream) 80%, var(--color-olive));
+	--color-footer-accent: var(--color-linen);
+	--color-footer-line: color-mix(in srgb, var(--color-cream) 18%, transparent);
+	--color-footer-line-strong: color-mix(in srgb, var(--color-cream) 35%, transparent);
+
 	/* Type — --font-display (Fraunces) and --font-body (Source Sans 3)
 	   are defined by Astro's <Font> component; see astro.config.mjs. */
 	--text-xs: 0.8125rem;

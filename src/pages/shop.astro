@@ -5,7 +5,7 @@
  * Products appear here as soon as they're published (including ones
  * created while picking "Products in this post" on a post or recipe).
  */
-import { getEmDashCollection, getSeoMeta, getTaxonomyTermsWithCacheHint, search } from "emdash";
+import { getEmDashCollection, getMenuWithCacheHint, getSeoMeta, getTaxonomyTermsWithCacheHint, search } from "emdash";
 import type { ContentEntry, WhereValue } from "emdash";
 import type { Product } from "../../emdash-env";
 import Base from "../layouts/Base.astro";
@@ -16,6 +16,8 @@ import ProductCard from "../components/ProductCard.astro";
 import { listingUrl, param, sortBySlugRank } from "../utils/listing";
 import { getListingPage } from "../utils/listing-page";
 import RichText from "../components/RichText.astro";
+import SocialIcon from "../components/SocialIcon.astro";
+import { detectBrand } from "../utils/brand-icons";
 
 const BASE = "/shop";
 const PAGE_SIZE = 24;
@@ -26,7 +28,15 @@ const categorySlug = param(params, "category");
 const q = param(params, "q", 100);
 const cursor = param(params, "cursor", 500) || undefined;
 
-const categoriesResult = await getTaxonomyTermsWithCacheHint("shop_category");
+const [categoriesResult, socialResult] = await Promise.all([
+	getTaxonomyTermsWithCacheHint("shop_category"),
+	getMenuWithCacheHint("social"),
+]);
+if (Astro.cache?.enabled) Astro.cache.set(socialResult.cacheHint);
+
+// The Amazon storefront link lives in the "social" menu (it's also a footer
+// icon), so it's edited in one place. No Amazon link there, no button.
+const storefrontUrl = (socialResult.data?.items ?? []).find((item) => detectBrand(item.url) === "amazon")?.url ?? null;
 const categories = categoriesResult.data.filter((t) => !t.parentId);
 const activeCategory = categories.find((c) => c.slug === categorySlug) ?? null;
 
@@ -111,6 +121,15 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 				<p class="listing-intro">{page.fallbackIntro}</p>
 			)
 		}
+		{
+			storefrontUrl && (
+				<a class="btn btn--outline shop-storefront" href={storefrontUrl} target="_blank" rel="sponsored noopener">
+					<SocialIcon url={storefrontUrl} size={18} />
+					Shop my full Amazon storefront
+					<span class="visually-hidden">(opens in a new tab)</span>
+				</a>
+			)
+		}
 		<p class="shop-disclosure">
 			Some links are affiliate links. As an Amazon Associate, I earn from qualifying purchases, at no
 			extra cost to you.
@@ -181,8 +200,12 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 </Base>
 
 <style>
+	.shop-storefront {
+		margin-top: var(--space-sm);
+	}
+
 	.shop-disclosure {
-		margin: var(--space-2xs) 0 0;
+		margin: var(--space-sm) 0 0;
 		font-size: var(--text-xs);
 		color: var(--color-muted);
 	}
