@@ -45,7 +45,12 @@ console.log(`Scores for ${run.url}:`, Object.fromEntries(Object.entries(run.summ
 const token = process.env.LIGHTHOUSE_GIST_TOKEN;
 const gistId = process.env.LIGHTHOUSE_GIST_ID;
 if (dryRun || !token || !gistId) {
-	if (!dryRun) console.log("LIGHTHOUSE_GIST_TOKEN or LIGHTHOUSE_GIST_ID isn't set; skipping the badge update.");
+	if (!dryRun) {
+		const missing = [!token && "secret LIGHTHOUSE_GIST_TOKEN", !gistId && "variable LIGHTHOUSE_GIST_ID"].filter(Boolean).join(" and ");
+		// A GitHub Actions warning annotation: shows on the run and its summary
+		// instead of passing silently.
+		console.log(`::warning title=Badges not updated::Missing ${missing} (Settings → Secrets and variables → Actions). See README > Staging and Lighthouse.`);
+	}
 	console.log(JSON.stringify(files, null, 2));
 	process.exit(0);
 }
