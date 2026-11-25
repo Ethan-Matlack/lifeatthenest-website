@@ -73,7 +73,7 @@ jobs:
             https://staging.lifeatthenest.com/posts
             https://staging.lifeatthenest.com/shop
             https://staging.lifeatthenest.com/recipes/homemade-granola
-          runs: 3
+          runs: 2
           configPath: ./.github/lighthouse/lighthouserc.staging.json
           uploadArtifacts: false
           temporaryPublicStorage: true

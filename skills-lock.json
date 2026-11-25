@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "skills": {
+    "building-emdash-site": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/building-emdash-site/SKILL.md",
+      "computedHash": "49f92c7fc3be95d78d4271eddd3356f51a6659d59cc9d94ede6228b8777e10a6"
+    },
+    "creating-plugins": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/creating-plugins/SKILL.md",
+      "computedHash": "68dd0366f443445d5992211ef87164627269331388f0bbe1b8aec7e6af31d696"
+    },
+    "emdash-cli": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/emdash-cli/SKILL.md",
+      "computedHash": "6b99a168816b696ef750b9bd2067c03c6f439a83bb95e425e8ab732f82722f0d"
+    },
+    "upgrading-emdash": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/upgrading-emdash/SKILL.md",
+      "computedHash": "49600bfd83609a8caa40501ed511dac5c0731138bcff51eb5257281dfe3ac8fb"
+    },
+    "wordpress-plugin-to-emdash": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/wordpress-plugin-to-emdash/SKILL.md",
+      "computedHash": "4fd76aa05baad0372561d8a8e80fb0bf837d6300e4b96f09e7735fabd6670b02"
+    },
+    "wordpress-theme-to-emdash": {
+      "source": "emdash-cms/skills",
+      "sourceType": "github",
+      "skillPath": "skills/wordpress-theme-to-emdash/SKILL.md",
+      "computedHash": "4d1a6b9e3a28456755674555359698b240836cfca60a8651288d1371c5708879"
+    }
+  }
+}

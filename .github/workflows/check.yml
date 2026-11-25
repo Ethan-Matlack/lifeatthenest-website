@@ -3,8 +3,9 @@
 # On a push to dev, once that passes, it also deploys the dev branch to
 # staging.lifeatthenest.com and runs Lighthouse against it.
 # Production deploys stay with Cloudflare Workers Builds (main only).
-# Job names matter elsewhere: "check" is the required status on main, and
-# lighthouse.yml waits for "Deploy staging". Rename jobs with care.
+# "Test & build" is the required status check on main (branch rule), so
+# renaming that job means updating the rule. lighthouse.yml finds runs of
+# this workflow by its file name, check.yml, so keep the file name too.
 name: CI and staging
 
 on:
@@ -22,7 +23,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
+  # Typecheck, unit tests, production build, and Worker packaging.
+  test-and-build:
+    name: Test & Build
     # A dev -> main PR's head commit was already checked when dev was
     # pushed, and that result shows on the PR, so don't run it twice.
     # PRs into main from anywhere else (e.g. Dependabot security fixes) and
@@ -60,8 +63,8 @@ jobs:
   # Needs the CLOUDFLARE_API_TOKEN secret; until it's set this job skips
   # itself with a warning instead of failing.
   deploy-staging:
-    name: Deploy staging
-    needs: check
+    name: Deploy Staging
+    needs: test-and-build
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     timeout-minutes: 15
