@@ -18,7 +18,8 @@ import { getListingPage } from "../../utils/listing-page";
 import RichText from "../../components/RichText.astro";
 
 const BASE = "/recipes";
-const PAGE_SIZE = 16;
+// 12 fills whole rows at 2, 3, and 4 columns (phones to desktop).
+const PAGE_SIZE = 12;
 const SEARCH_LIMIT = 50;
 
 const params = Astro.url.searchParams;
