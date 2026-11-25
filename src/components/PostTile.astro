@@ -8,6 +8,7 @@
 import type { ContentEntry } from "emdash";
 import type { Post } from "../../emdash-env";
 import ContentTile from "./ContentTile.astro";
+import { SLOTS } from "../utils/image-slots";
 import { formatDate } from "../utils/format";
 import { readingMinutes } from "../utils/portable-text";
 
@@ -41,4 +42,5 @@ const meta = [d.publishedAt ? formatDate(d.publishedAt) : null, minutes ? `${min
 	headingLevel={headingLevel}
 	priority={priority}
 	adaptive={adaptive}
+	imageSlot={adaptive ? SLOTS.mosaicPost : SLOTS.postTile}
 />

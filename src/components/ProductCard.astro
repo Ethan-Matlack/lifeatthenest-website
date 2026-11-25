@@ -1,6 +1,7 @@
 ---
 /** Affiliate product card (one link to the store). Used in "Shop this post/recipe" and on the Shop page. */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import type { ContentEntry } from "emdash";
 import type { Product } from "../../emdash-env";
 
@@ -20,7 +21,7 @@ const store = d.store?.trim() || "the store";
 		<div class="product-media">
 			{
 				d.image ? (
-					<Image image={d.image} alt="" sizes="(min-width: 48rem) 14rem, 45vw" />
+					<Image image={d.image} alt="" {...slotProps(d.image, SLOTS.product)} />
 				) : (
 					<div class="photo-placeholder" aria-hidden="true" />
 				)

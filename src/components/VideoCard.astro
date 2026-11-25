@@ -16,6 +16,7 @@
  * should render as a plain link instead.
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import { BRAND_ICONS } from "../utils/brand-icons";
 import { PLATFORM_NAMES, parseVideoLink, type VideoThumbnail } from "../utils/video";
 
@@ -85,7 +86,7 @@ const icon = BRAND_ICONS[platform];
 					{image || thumbnail ? (
 						<>
 							{image ? (
-								<Image image={image as ImageValue} alt="" sizes="(min-width: 40rem) 18rem, 40vw" />
+								<Image image={image as ImageValue} alt="" {...slotProps(image as ImageValue, SLOTS.videoThumb)} />
 							) : (
 								<img
 									src={thumbnail}

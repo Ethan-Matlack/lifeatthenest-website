@@ -6,6 +6,7 @@
  * fallback (the page's SEO image).
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import type { ContentEntry } from "emdash";
 import type { Seasonal } from "../../emdash-env";
 
@@ -35,7 +36,7 @@ const href = `/seasonal/${page.id}`;
 					<Image
 						image={photo}
 						alt=""
-						sizes={featured ? "(min-width: 48rem) 36rem, 100vw" : "(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 100vw"}
+						{...slotProps(photo, featured ? SLOTS.seasonalFeatured : SLOTS.seasonalCard)}
 						priority={priority}
 					/>
 				) : (

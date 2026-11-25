@@ -1,6 +1,7 @@
 ---
 import { getEmDashCollection } from "emdash";
 import { Image, PortableText } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import Base from "../layouts/Base.astro";
 import NewsletterCta from "../components/NewsletterCta.astro";
 import PostTile from "../components/PostTile.astro";
@@ -66,7 +67,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 					h?.welcome_image ? (
 						<Image
 							image={h.welcome_image}
-							sizes="(min-width: 56rem) 23rem, (min-width: 44rem) 45vw, 100vw"
+							{...slotProps(h.welcome_image, SLOTS.homeHero)}
 							priority
 						/>
 					) : (
@@ -130,7 +131,7 @@ const welcomeHeading = h?.welcome_heading ?? "Welcome to Life at the Nest";
 				<div class="container about-inner">
 					<div class="about-media arch" {...home?.edit.about_image}>
 						{h.about_image ? (
-							<Image image={h.about_image} sizes="(min-width: 56rem) 26rem, (min-width: 44rem) 40vw, 100vw" />
+							<Image image={h.about_image} {...slotProps(h.about_image, SLOTS.homeAbout)} />
 						) : (
 							<div class="photo-placeholder" aria-hidden="true" />
 						)}

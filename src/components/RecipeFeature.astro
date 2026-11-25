@@ -5,6 +5,7 @@
  * recipes picked in a post's "Recipes in this post" field.
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import type { ContentEntry } from "emdash";
 import type { Recipe } from "../../emdash-env";
 
@@ -22,7 +23,7 @@ const href = `/recipes/${recipe.id}`;
 	<a class="rf-media" href={href} tabindex="-1" aria-hidden="true">
 		{
 			d.hero_image ? (
-				<Image image={d.hero_image} alt="" sizes="(min-width: 40rem) 11rem, 32vw" />
+				<Image image={d.hero_image} alt="" {...slotProps(d.hero_image, SLOTS.recipeFeature)} />
 			) : (
 				<div class="photo-placeholder" />
 			)

@@ -7,6 +7,7 @@
 import type { ContentEntry } from "emdash";
 import type { Recipe } from "../../emdash-env";
 import ContentTile from "./ContentTile.astro";
+import { SLOTS } from "../utils/image-slots";
 import { formatMinutes, totalMinutes } from "../utils/format";
 
 interface Props {
@@ -37,4 +38,5 @@ const time = formatMinutes(totalMinutes(d.prep_minutes, d.cook_minutes, d.extra_
 	headingLevel={headingLevel}
 	priority={priority}
 	adaptive={adaptive}
+	imageSlot={adaptive ? SLOTS.mosaicRecipe : SLOTS.recipeTile}
 />

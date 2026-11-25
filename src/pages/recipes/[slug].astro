@@ -6,6 +6,7 @@
  */
 import { decodeSlug, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../../utils/image-slots";
 import { Comments, CommentForm } from "emdash/ui/comments";
 import { env } from "cloudflare:workers";
 import Base from "../../layouts/Base.astro";
@@ -115,7 +116,7 @@ const jsonLd = recipeJsonLd({
 			<div class="recipe-hero" {...recipe.edit.hero_image}>
 				{
 					d.hero_image ? (
-						<Image image={d.hero_image} sizes="(min-width: 48rem) 30rem, 100vw" priority />
+						<Image image={d.hero_image} {...slotProps(d.hero_image, SLOTS.recipeHero)} priority />
 					) : (
 						<div class="photo-placeholder" aria-hidden="true" />
 					)

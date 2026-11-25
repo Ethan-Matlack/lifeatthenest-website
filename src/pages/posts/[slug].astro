@@ -1,6 +1,7 @@
 ---
 import { decodeSlug, getEmDashCollection, getEmDashEntry, getSiteSettings } from "emdash";
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../../utils/image-slots";
 import { Comments, CommentForm } from "emdash/ui/comments";
 import { env } from "cloudflare:workers";
 import Base from "../../layouts/Base.astro";
@@ -113,7 +114,7 @@ const videos = videoEntries(d);
 				<div class="post-hero" {...post.edit.featured_image}>
 					<Image
 						image={d.featured_image}
-						sizes="(min-width: 64rem) 60rem, 100vw"
+						{...slotProps(d.featured_image, SLOTS.postHero)}
 						priority
 					/>
 				</div>

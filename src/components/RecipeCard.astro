@@ -10,6 +10,7 @@
  * - Print styles live on the recipe page so only this card prints.
  */
 import { Image } from "emdash/ui";
+import { SLOTS, slotProps } from "../utils/image-slots";
 import type { ContentEntry } from "emdash";
 import type { Recipe } from "../../emdash-env";
 import RichText from "./RichText.astro";
@@ -208,7 +209,7 @@ const multipliers = [
 										<span class="rc-text"><span class="rc-num" aria-hidden="true">{index + 1}.</span> {row.instruction?.trim()}</span>
 									</label>
 									{row.image && (
-										<Image image={row.image} class="rc-step-img no-print" sizes="16rem" />
+										<Image image={row.image} class="rc-step-img no-print" {...slotProps(row.image, SLOTS.stepImage)} />
 									)}
 								</li>
 							))}
