@@ -20,6 +20,11 @@ concurrency:
 
 jobs:
   check:
+    # A dev -> main PR's head commit was already checked when dev was
+    # pushed, and that result shows on the PR, so don't run it twice.
+    # PRs into main from anywhere else (e.g. Dependabot security fixes) and
+    # all PRs into dev still run.
+    if: github.event_name != 'pull_request' || github.head_ref != 'dev'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
