@@ -23,6 +23,10 @@ const SITE_HOSTS = [
 
 export default defineConfig({
 	output: "server",
+	// Put each page's CSS in the HTML instead of separate files. The site's
+	// CSS is small and split per component, so 3-4 extra requests were
+	// blocking the first paint (~0.5s on mobile in Lighthouse).
+	build: { inlineStylesheets: "always" },
 	// Images are resized by Cloudflare's CDN (/cdn-cgi/image/... URLs), which
 	// caches the result, so image requests never run the Worker (no cold
 	// starts). Needs Images -> Transformations enabled on the zone. `astro dev`

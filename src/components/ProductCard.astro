@@ -8,9 +8,11 @@ import type { Product } from "../../emdash-env";
 interface Props {
 	product: ContentEntry<Product>;
 	headingLevel?: "h2" | "h3" | "h4";
+	/** Load the photo first (top of the Shop page). */
+	priority?: boolean;
 }
 
-const { product, headingLevel = "h3" } = Astro.props;
+const { product, headingLevel = "h3", priority = false } = Astro.props;
 const d = product.data;
 const Heading = headingLevel;
 const store = d.store?.trim() || "the store";
@@ -21,7 +23,7 @@ const store = d.store?.trim() || "the store";
 		<div class="product-media">
 			{
 				d.image ? (
-					<Image image={d.image} alt="" {...slotProps(d.image, SLOTS.product)} />
+					<Image image={d.image} alt="" {...slotProps(d.image, SLOTS.product)} priority={priority} />
 				) : (
 					<div class="photo-placeholder" aria-hidden="true" />
 				)

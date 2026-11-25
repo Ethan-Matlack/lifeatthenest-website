@@ -168,8 +168,8 @@ const canonical = new URL(url({ q: null }), Astro.url).toString();
 	{
 		products.length > 0 ? (
 			<div class="product-grid" id="product-grid">
-				{products.map((product) => (
-					<ProductCard product={product} headingLevel="h2" />
+				{products.map((product, i) => (
+					<ProductCard product={product} headingLevel="h2" priority={i < 2} />
 				))}
 			</div>
 		) : (
