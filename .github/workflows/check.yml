@@ -3,7 +3,9 @@
 # On a push to dev, once that passes, it also deploys the dev branch to
 # staging.lifeatthenest.com and runs Lighthouse against it.
 # Production deploys stay with Cloudflare Workers Builds (main only).
-name: Check
+# Job names matter elsewhere: "check" is the required status on main, and
+# lighthouse.yml waits for "Deploy staging". Rename jobs with care.
+name: CI and staging
 
 on:
   pull_request:
