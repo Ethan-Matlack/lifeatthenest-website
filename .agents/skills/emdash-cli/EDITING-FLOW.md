@@ -16,7 +16,7 @@ The CLI detects which fields need conversion by fetching the collection's field 
 
 ### Supported Markdown Syntax
 
-Standard blocks (lossless round-trip):
+Standard blocks:
 
 | Markdown                     | PT block                                   |
 | ---------------------------- | ------------------------------------------ |
@@ -26,7 +26,12 @@ Standard blocks (lossless round-trip):
 | `- item` / `* item`          | bullet list (nesting via 2-space indent)   |
 | `1. item`                    | numbered list (nesting via 2-space indent) |
 | ` ``` ```lang``` `           | code block with language                   |
+| `~~~` fence                  | code block, like a backtick fence          |
 | `![alt](url)`                | image block                                |
+
+Lines inside a paragraph join with a space, so separate paragraphs with a blank line. To keep a line break, end the line with two spaces or a backslash. A backslash before a punctuation character, as in `\*` or `\#`, keeps that character as text.
+
+On read, the CLI ends each internal paragraph line with a backslash and escapes literal Markdown syntax, such as `*`, `_`, or a `#` at the start of a line. List items and quotes can contain hard breaks. Headings with line breaks are written as opaque fences to keep their content intact. Newlines inside inline code become spaces. Markdown conversion can normalize whitespace and span boundaries; use raw mode when you need the exact Portable Text structure.
 
 Inline marks:
 
@@ -34,6 +39,7 @@ Inline marks:
 | ------------- | --------------- |
 | `**bold**`    | `strong`        |
 | `_italic_`    | `em`            |
+| `*italic*`    | `em`            |
 | `` `code` ``  | `code`          |
 | `~~strike~~`  | `strikethrough` |
 | `[text](url)` | link annotation |
@@ -139,27 +145,23 @@ If you try to update without `--rev`, the CLI rejects the command. This ensures 
 
 ### Conflict Handling
 
-If someone else updated the item between your read and write:
+If someone else updated the item between your read and write, the CLI exits with code 1 and prints:
 
-```
-EmDashApiError: Content has been modified since last read (version conflict)
-  status: 409
-  code: CONFLICT
+```text
+ ERROR  Content has been modified since last read (version conflict)
 ```
 
-Resolution: re-read with `get`, inspect the new state, then `update` with the fresh `_rev`.
+Re-read with `get`, inspect the new state, then `update` with the fresh `_rev`.
 
 ### Locked Entries
 
-A 409 does not always mean the item changed. If someone has the entry open in the admin, the write is refused with a different code:
+A 409 does not always mean the item changed. If someone has the entry open in the admin, the CLI exits with code 1 and prints the lock holder's name:
 
-```
-EmDashApiError: Ada is holding this entry
-  status: 409
-  code: ENTRY_LOCKED
+```text
+ ERROR  Ada is holding this entry
 ```
 
-Re-reading does not clear this one. The item has not changed, so a fresh `_rev` produces the same refusal. Check `code` before you retry. Either wait, or pass `--override-lock` to write anyway. An editor releases the lock when they close the entry, and a lock left behind by a crashed tab lapses seven minutes after their last heartbeat.
+The CLI prints only the error message, not the HTTP status or error code. REST API consumers can distinguish this refusal by its `ENTRY_LOCKED` code. Re-reading does not clear it: the item has not changed, so a fresh `_rev` produces the same refusal. Either wait, or pass `--override-lock` to write anyway. An editor releases the lock when they close the entry, and a lock left behind by a crashed tab lapses seven minutes after their last heartbeat.
 
 Overriding does not take the lock. The editor keeps it and their next save is rejected as a version conflict, so wait unless you know they have gone.
 
