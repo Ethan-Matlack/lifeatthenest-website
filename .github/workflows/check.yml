@@ -1,0 +1,48 @@
+# Checks every pull request (including Dependabot's) before it's merged:
+# types, unit tests, a production build, and packaging the Worker.
+# Needs no secrets and deploys nothing; production deploys stay with
+# Cloudflare Workers Builds.
+name: Check
+
+on:
+  pull_request:
+    branches: [main, dev]
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .node-version
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      # Bundles the Worker exactly as a deploy would, without uploading
+      # anything or needing Cloudflare credentials.
+      - name: Package Worker (dry run)
+        run: npx wrangler deploy --dry-run --outdir "$RUNNER_TEMP/worker"
